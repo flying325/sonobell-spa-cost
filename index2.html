@@ -1,0 +1,2958 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>소노벨 & 스파 비용관리시스템</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-dark: #3730a3;
+      --primary-light: #818cf8;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --info: #3b82f6;
+      --bg: #f1f5f9;
+      --card: #ffffff;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --sidebar-bg: #1e1b4b;
+      --sidebar-text: #c7d2fe;
+      --sidebar-active: #4f46e5;
+      --shadow: 0 1px 3px rgba(0,0,0,0.1);
+      --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Segoe UI','Malgun Gothic',sans-serif; background:var(--bg); color:var(--text); }
+
+    /* ===== 로그인 ===== */
+    #loginScreen {
+      position:fixed; inset:0;
+      background:linear-gradient(135deg,#1e1b4b 0%,#312e81 50%,#4338ca 100%);
+      display:flex; align-items:center; justify-content:center; z-index:9999;
+    }
+    #loginScreen.hidden { display:none; }
+    .login-box {
+      background:#fff; border-radius:24px; padding:40px 36px;
+      width:360px; box-shadow:0 25px 50px rgba(0,0,0,0.4); text-align:center;
+    }
+    .user-select-area { margin-bottom:24px; }
+    .user-select-title { font-size:13px; color:var(--text-muted); margin-bottom:12px; }
+    .user-tabs { display:flex; gap:12px; justify-content:center; }
+    .user-tab {
+      flex:1; padding:14px 10px; border:2px solid var(--border);
+      border-radius:14px; background:#f8fafc; cursor:pointer; transition:all 0.2s;
+    }
+    .user-tab:hover { border-color:var(--primary-light); background:#eef2ff; }
+    .user-tab.active { border-color:var(--primary); background:#eef2ff; box-shadow:0 0 0 3px rgba(79,70,229,0.15); }
+    .user-tab .tab-emoji { font-size:32px; display:block; margin-bottom:6px; }
+    .user-tab .tab-name  { font-size:14px; font-weight:700; color:var(--text); }
+    .user-tab .tab-role  { font-size:11px; color:var(--text-muted); margin-top:2px; }
+    .login-system-name { font-size:20px; font-weight:800; color:var(--text); margin-bottom:4px; }
+    .login-system-sub  { font-size:13px; color:var(--text-muted); margin-bottom:24px; }
+    .pin-dots { display:flex; gap:12px; justify-content:center; margin-bottom:24px; }
+    .pin-dot {
+      width:14px; height:14px; border-radius:50%;
+      border:2px solid #c7d2fe; background:transparent; transition:all 0.2s;
+    }
+    .pin-dot.filled { background:var(--primary); border-color:var(--primary); }
+    .pin-keypad { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+    .pin-key {
+      padding:16px 10px; border:1.5px solid var(--border); border-radius:12px;
+      background:#f8fafc; font-size:18px; font-weight:600; color:var(--text);
+      cursor:pointer; transition:all 0.15s; user-select:none;
+    }
+    .pin-key:hover  { background:#eef2ff; border-color:var(--primary-light); transform:scale(1.04); }
+    .pin-key:active { transform:scale(0.96); background:#e0e7ff; }
+    .pin-key.delete-key  { color:var(--danger); font-size:14px; }
+    .pin-key.confirm-key { background:var(--primary); color:#fff; border-color:var(--primary); font-size:14px; }
+    .pin-key.confirm-key:hover { background:var(--primary-dark); }
+    .login-error { color:var(--danger); font-size:13px; margin-top:14px; min-height:20px; }
+
+    /* ===== 앱 레이아웃 ===== */
+    #app { display:flex; height:100vh; }
+    #app.hidden { display:none; }
+    #sidebar {
+      width:240px; background:var(--sidebar-bg);
+      display:flex; flex-direction:column;
+      transition:width 0.3s; overflow:hidden; flex-shrink:0;
+    }
+    #sidebar.collapsed { width:64px; }
+    .sidebar-logo {
+      padding:20px 16px; border-bottom:1px solid rgba(255,255,255,0.1);
+      display:flex; align-items:center; gap:10px;
+    }
+    .sidebar-logo .logo-icon { font-size:28px; flex-shrink:0; }
+    .sidebar-logo .logo-text { color:#fff; font-size:13px; font-weight:700; line-height:1.4; }
+    .sidebar-logo .logo-text small { color:var(--primary-light); font-size:10px; font-weight:400; display:block; }
+    .sidebar-user {
+      padding:14px 16px; border-bottom:1px solid rgba(255,255,255,0.08);
+      display:flex; align-items:center; gap:10px;
+    }
+    .sidebar-user .user-avatar {
+      width:36px; height:36px; border-radius:50%; background:var(--primary);
+      display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0;
+    }
+    .sidebar-user .user-info .name { color:#fff; font-size:13px; font-weight:600; }
+    .sidebar-user .user-info .role { color:var(--primary-light); font-size:11px; }
+    .sidebar-nav { flex:1; overflow-y:auto; padding:8px 0; }
+    .nav-group-label {
+      padding:12px 16px 4px; font-size:10px; font-weight:700;
+      color:rgba(199,210,254,0.5); text-transform:uppercase; letter-spacing:0.8px;
+    }
+    .nav-item {
+      display:flex; align-items:center; gap:10px; padding:10px 16px;
+      cursor:pointer; color:var(--sidebar-text); font-size:13px;
+      transition:all 0.2s; white-space:nowrap;
+    }
+    .nav-item:hover  { background:rgba(255,255,255,0.08); color:#fff; }
+    .nav-item.active { background:var(--sidebar-active); color:#fff; font-weight:600; }
+    .nav-item .nav-icon { font-size:16px; flex-shrink:0; width:20px; text-align:center; }
+    .sidebar-footer { padding:12px 16px; border-top:1px solid rgba(255,255,255,0.1); }
+    .logout-btn {
+      display:flex; align-items:center; gap:8px; color:rgba(199,210,254,0.7);
+      font-size:12px; cursor:pointer; padding:8px; border-radius:8px; transition:all 0.2s;
+    }
+    .logout-btn:hover { background:rgba(255,255,255,0.08); color:#fff; }
+    #mainArea { flex:1; display:flex; flex-direction:column; overflow:hidden; }
+    #header {
+      background:#fff; padding:14px 24px;
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+      box-shadow:var(--shadow);
+    }
+    .header-left { display:flex; align-items:center; gap:12px; }
+    .toggle-btn {
+      background:none; border:1px solid var(--border); border-radius:8px;
+      width:36px; height:36px; cursor:pointer; font-size:16px;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .page-title { font-size:18px; font-weight:700; color:var(--text); }
+    .header-right { display:flex; align-items:center; gap:12px; }
+    .header-date { font-size:13px; color:var(--text-muted); }
+    #content { flex:1; overflow-y:auto; padding:24px; }
+
+    /* ===== 공통 컴포넌트 ===== */
+    .kpi-grid {
+      display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+      gap:14px; margin-bottom:20px;
+    }
+    .kpi-card {
+      background:var(--card); border-radius:var(--radius); padding:18px;
+      box-shadow:var(--shadow); border-left:4px solid var(--primary); transition:transform 0.2s;
+    }
+    .kpi-card:hover { transform:translateY(-2px); box-shadow:var(--shadow-lg); }
+    .kpi-card.success { border-left-color:var(--success); }
+    .kpi-card.warning { border-left-color:var(--warning); }
+    .kpi-card.danger  { border-left-color:var(--danger);  }
+    .kpi-card.info    { border-left-color:var(--info);    }
+    .kpi-label { font-size:12px; color:var(--text-muted); margin-bottom:6px; }
+    .kpi-value { font-size:22px; font-weight:800; color:var(--text); }
+    .kpi-sub   { font-size:11px; color:var(--text-muted); margin-top:4px; }
+
+    .card {
+      background:var(--card); border-radius:var(--radius);
+      padding:20px; box-shadow:var(--shadow); margin-bottom:20px;
+    }
+    .card-header {
+      display:flex; align-items:center; justify-content:space-between;
+      margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--border);
+    }
+    .card-title { font-size:15px; font-weight:700; color:var(--text); }
+
+    /* 기간 검색 바 */
+    .search-bar {
+      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+      margin-bottom:20px; background:var(--card); padding:16px;
+      border-radius:var(--radius); box-shadow:var(--shadow);
+    }
+    .search-bar label { font-size:13px; color:var(--text-muted); font-weight:600; }
+    .search-bar input[type="date"],
+    .search-bar select {
+      padding:8px 12px; border:1.5px solid var(--border);
+      border-radius:var(--radius-sm); font-size:13px; color:var(--text);
+    }
+    .search-bar input[type="date"]:focus,
+    .search-bar select:focus { outline:none; border-color:var(--primary); }
+    .date-separator { font-size:14px; color:var(--text-muted); font-weight:600; }
+    .search-shortcut-btns { display:flex; gap:6px; flex-wrap:wrap; }
+    .btn-shortcut {
+      padding:5px 10px; border:1.5px solid var(--border); border-radius:20px;
+      background:#f8fafc; font-size:12px; color:var(--text-muted);
+      cursor:pointer; transition:all 0.2s;
+    }
+    .btn-shortcut:hover { border-color:var(--primary); color:var(--primary); background:#eef2ff; }
+
+    .btn {
+      padding:8px 16px; border-radius:var(--radius-sm); border:none;
+      cursor:pointer; font-size:13px; font-weight:600;
+      transition:all 0.2s; display:inline-flex; align-items:center; gap:6px;
+    }
+    .btn-primary { background:var(--primary); color:#fff; }
+    .btn-primary:hover { background:var(--primary-dark); }
+    .btn-success { background:var(--success); color:#fff; }
+    .btn-success:hover { background:#059669; }
+    .btn-danger  { background:var(--danger);  color:#fff; }
+    .btn-danger:hover  { background:#dc2626; }
+    .btn-warning { background:var(--warning); color:#fff; }
+    .btn-warning:hover { background:#d97706; }
+    .btn-outline { background:transparent; color:var(--primary); border:1.5px solid var(--primary); }
+    .btn-outline:hover { background:#eef2ff; }
+    .btn-sm { padding:5px 10px; font-size:12px; }
+
+    .table-wrap { overflow-x:auto; }
+    table { width:100%; border-collapse:collapse; font-size:13px; }
+    thead tr { background:#f8fafc; }
+    th {
+      padding:10px 12px; text-align:left; font-weight:600;
+      color:var(--text-muted); border-bottom:2px solid var(--border); white-space:nowrap;
+    }
+    td { padding:10px 12px; border-bottom:1px solid var(--border); color:var(--text); }
+    tbody tr:hover { background:#f8fafc; }
+    tfoot tr { background:#f1f5f9; font-weight:700; }
+    tfoot td { padding:10px 12px; border-top:2px solid var(--border); }
+
+    .modal-overlay {
+      position:fixed; inset:0; background:rgba(0,0,0,0.5);
+      display:flex; align-items:center; justify-content:center; z-index:1000;
+    }
+    .modal-overlay.hidden { display:none; }
+    .modal {
+      background:#fff; border-radius:var(--radius); padding:28px;
+      width:520px; max-width:95vw; max-height:90vh; overflow-y:auto;
+    }
+    .modal-title { font-size:18px; font-weight:700; margin-bottom:20px; color:var(--text); }
+    .form-group { margin-bottom:14px; }
+    .form-group label { display:block; font-size:13px; font-weight:600; color:var(--text-muted); margin-bottom:5px; }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width:100%; padding:9px 12px; border:1.5px solid var(--border);
+      border-radius:var(--radius-sm); font-size:14px; color:var(--text); transition:border-color 0.2s;
+    }
+    .form-group input:focus,
+    .form-group select:focus { outline:none; border-color:var(--primary); }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .form-row3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
+    .modal-footer { display:flex; gap:10px; justify-content:flex-end; margin-top:20px; padding-top:16px; border-top:1px solid var(--border); }
+
+    #toast {
+      position:fixed; bottom:24px; right:24px;
+      background:#1e293b; color:#fff; padding:12px 20px;
+      border-radius:var(--radius-sm); font-size:14px;
+      box-shadow:var(--shadow-lg); z-index:9999;
+      transform:translateY(80px); opacity:0; transition:all 0.3s;
+    }
+    #toast.show    { transform:translateY(0); opacity:1; }
+    #toast.success { background:var(--success); }
+    #toast.error   { background:var(--danger);  }
+
+    .badge { padding:3px 8px; border-radius:20px; font-size:11px; font-weight:700; }
+    .badge-success { background:#d1fae5; color:#065f46; }
+    .badge-warning { background:#fef3c7; color:#92400e; }
+    .badge-danger  { background:#fee2e2; color:#991b1b; }
+    .badge-info    { background:#dbeafe; color:#1e40af; }
+    .badge-primary { background:#e0e7ff; color:#3730a3; }
+    .badge-purple  { background:#ede9fe; color:#5b21b6; }
+
+    .empty-state { text-align:center; padding:48px 24px; color:var(--text-muted); }
+    .empty-state .empty-icon { font-size:48px; margin-bottom:12px; }
+    .empty-state p { font-size:14px; }
+
+    .chart-container { position:relative; height:280px; }
+    .chart-grid {
+      display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+      gap:20px; margin-bottom:20px;
+    }
+
+    /* 합계 행 강조 */
+    .total-row td { background:#f0fdf4; font-weight:700; color:var(--success); }
+    .minus-val { color:var(--danger) !important; }
+    .plus-val  { color:var(--success) !important; }
+
+    .settings-row {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:12px 0; border-bottom:1px solid #f1f5f9;
+    }
+    .settings-row label { font-size:13px; color:var(--text); font-weight:500; }
+    .settings-row input,
+    .settings-row select {
+      padding:7px 10px; border:1px solid var(--border);
+      border-radius:var(--radius-sm); font-size:13px; width:220px;
+    }
+
+    @media (max-width:768px) {
+      #sidebar { width:64px; }
+      #sidebar .logo-text,
+      #sidebar .user-info,
+      #sidebar .nav-item span,
+      #sidebar .nav-group-label { display:none; }
+      #content { padding:12px; }
+      .kpi-grid { grid-template-columns:repeat(2,1fr); }
+      .search-bar { flex-direction:column; align-items:flex-start; }
+      .form-row, .form-row3 { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== 로그인 화면 ===== -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="user-select-area">
+      <div class="user-select-title">사용자를 선택하세요</div>
+      <div class="user-tabs">
+        <div class="user-tab active" id="tabUser1" onclick="selectUser('user1')">
+          <span class="tab-emoji">👨</span>
+          <div class="tab-name">쭌대디</div>
+          <div class="tab-role">관리자</div>
+        </div>
+        <div class="user-tab" id="tabUser2" onclick="selectUser('user2')">
+          <span class="tab-emoji">👩</span>
+          <div class="tab-name">쭌마미</div>
+          <div class="tab-role">스태프</div>
+        </div>
+      </div>
+    </div>
+    <div class="login-system-name">소노벨 & 스파</div>
+    <div class="login-system-sub">비용관리시스템 v2026</div>
+    <div class="pin-dots" id="pinDots">
+      <div class="pin-dot" id="dot0"></div>
+      <div class="pin-dot" id="dot1"></div>
+      <div class="pin-dot" id="dot2"></div>
+      <div class="pin-dot" id="dot3"></div>
+    </div>
+    <div class="pin-keypad">
+      <div class="pin-key" onclick="pinInput('1')">1</div>
+      <div class="pin-key" onclick="pinInput('2')">2</div>
+      <div class="pin-key" onclick="pinInput('3')">3</div>
+      <div class="pin-key" onclick="pinInput('4')">4</div>
+      <div class="pin-key" onclick="pinInput('5')">5</div>
+      <div class="pin-key" onclick="pinInput('6')">6</div>
+      <div class="pin-key" onclick="pinInput('7')">7</div>
+      <div class="pin-key" onclick="pinInput('8')">8</div>
+      <div class="pin-key" onclick="pinInput('9')">9</div>
+      <div class="pin-key delete-key"  onclick="pinDelete()">⌫ 삭제</div>
+      <div class="pin-key" onclick="pinInput('0')">0</div>
+      <div class="pin-key confirm-key" onclick="pinConfirm()">확인 ✓</div>
+    </div>
+    <div class="login-error" id="loginError"></div>
+  </div>
+</div>
+
+<!-- ===== 앱 본체 ===== -->
+<div id="app" class="hidden">
+  <div id="sidebar">
+    <div class="sidebar-logo">
+      <span class="logo-icon">🏨</span>
+      <div class="logo-text">소노벨 & 스파<small>비용관리시스템 v2026</small></div>
+    </div>
+    <div class="sidebar-user">
+      <div class="user-avatar" id="sideUserEmoji">👨</div>
+      <div class="user-info">
+        <div class="name" id="sideUserName">쭌대디</div>
+        <div class="role" id="sideUserRole">관리자</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav" id="sidebarNav"></nav>
+    <div class="sidebar-footer">
+      <div class="logout-btn" onclick="doLogout()">🚪 <span>로그아웃</span></div>
+    </div>
+  </div>
+  <div id="mainArea">
+    <div id="header">
+      <div class="header-left">
+        <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+        <span class="page-title" id="pageTitle">대시보드</span>
+      </div>
+      <div class="header-right">
+        <span class="header-date" id="headerDate"></span>
+        <span style="font-size:13px;color:var(--text)">👤 <span id="headerUser">쭌대디</span></span>
+      </div>
+    </div>
+    <div id="content"></div>
+  </div>
+</div>
+<div id="toast"></div>
+
+<!-- ✅ Part 1 완료 → Part 2를 바로 아래에 붙여넣으세요 -->
+<script>
+/* ================================================
+   PART 2 — 상수 / DB / 서비스 / 로그인 / 앱초기화
+   ================================================ */
+
+const APP_VERSION = '2026.v3.0';
+
+const KEYS = {
+  users      : 'spa_users',
+  settings   : 'spa_settings',
+  sonobel    : 'spa_sonobel',    /* 소노벨 일일관리 */
+  spa        : 'spa_spa',        /* 스파 일일관리   */
+  freelancer : 'spa_freelancer', /* 프리샘 일일관리 */
+  reservation: 'spa_reservation',/* 예약관리        */
+  expense    : 'spa_expense',    /* 지출비용        */
+  therapist  : 'spa_therapist'   /* 프리샘 관리     */
+};
+
+const DEFAULT_USERS = [
+  { id:'user1', name:'쭌대디', emoji:'👨', pin:'1234', role:'admin' },
+  { id:'user2', name:'쭌마미', emoji:'👩', pin:'1234', role:'staff' }
+];
+
+const DEFAULT_SETTINGS = {
+  businessName      : '소노벨 & 스파',
+  address           : '',
+  phone             : '',
+  expenseCategories : ['월 임대료','재료비','인건비','공과금','식대','이자','기타'],
+  customerTypes     : ['투숙객','관광객','도민','기타']
+};
+
+const MENU_ITEMS = [
+  { id:'dashboard',   label:'대시보드',        icon:'📊', group:'메인'     },
+  { id:'sonobel',     label:'소노벨 일일관리',  icon:'🏠', group:'일일관리' },
+  { id:'spa',         label:'스파 일일관리',    icon:'💆', group:'일일관리' },
+  { id:'settlement',  label:'결산내역',         icon:'📋', group:'일일관리' },
+  { id:'freesam',     label:'프리샘 일일관리',  icon:'🧖', group:'인력관리' },
+  { id:'therapist',   label:'프리샘 관리',      icon:'👥', group:'인력관리' },
+  { id:'reservation', label:'예약관리',         icon:'📅', group:'운영관리' },
+  { id:'expense',     label:'지출비용',         icon:'💸', group:'운영관리' },
+  { id:'analysis',    label:'분석/통계',        icon:'📈', group:'분석'     },
+  { id:'settings',    label:'설정',             icon:'⚙️',  group:'시스템'   },
+  { id:'backup',      label:'백업/복원',        icon:'💾', group:'시스템'   }
+];
+
+/* ===== 앱 상태 ===== */
+const App = {
+  currentUser     : null,
+  currentPage     : 'dashboard',
+  sidebarCollapsed: false
+};
+
+/* ===== 유틸 ===== */
+const num    = v => Number(String(v).replace(/[^0-9.-]/g,'')) || 0;
+const fmtNum = v => num(v).toLocaleString('ko-KR');
+const fmtDate= d => d ? d.replace(/-/g,'.') : '';
+const today  = () => new Date().toISOString().split('T')[0];
+
+/* 요일 반환 */
+const WEEK_DAYS = ['일','월','화','수','목','금','토'];
+const getWeekDay = d => {
+  if (!d) return '';
+  return WEEK_DAYS[new Date(d).getDay()];
+};
+
+/* 이번 달 시작/끝 */
+const monthStart = (base) => {
+  const d = base ? new Date(base) : new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-01`;
+};
+const monthEnd = (base) => {
+  const d    = base ? new Date(base) : new Date();
+  const last = new Date(d.getFullYear(), d.getMonth()+1, 0);
+  return last.toISOString().split('T')[0];
+};
+
+const genId = () => Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+
+/* 토스트 */
+function showToast(msg, type='success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className   = 'show ' + type;
+  setTimeout(() => { t.className = ''; }, 2500);
+}
+
+/* ===== LocalStorage DB ===== */
+const DB = {
+  get : (k, def=[]) => {
+    try { return JSON.parse(localStorage.getItem(k)) ?? def; }
+    catch { return def; }
+  },
+  set : (k,v) => localStorage.setItem(k, JSON.stringify(v))
+};
+
+/* ===== 서비스 ===== */
+const UserService = {
+  getAll   : () => {
+    const u = DB.get(KEYS.users, null);
+    if (!u) { DB.set(KEYS.users, DEFAULT_USERS); return DEFAULT_USERS; }
+    return u;
+  },
+  findById : id      => UserService.getAll().find(u => u.id === id),
+  verify   : (id,pin)=> {
+    const u = UserService.findById(id);
+    return (u && u.pin === pin) ? u : null;
+  },
+  updatePin: (id,pin)=> {
+    const list = UserService.getAll().map(u => u.id===id ? {...u,pin} : u);
+    DB.set(KEYS.users, list);
+  }
+};
+
+const SettingsService = {
+  get : () => {
+    const s = DB.get(KEYS.settings, null);
+    if (!s) { DB.set(KEYS.settings, DEFAULT_SETTINGS); return DEFAULT_SETTINGS; }
+    return { ...DEFAULT_SETTINGS, ...s };
+  },
+  set : s => DB.set(KEYS.settings, s)
+};
+
+/* 공통 CRUD + 기간 필터 */
+const DataService = {
+  getAll : key        => DB.get(key, []),
+  add    : (key,item) => {
+    const list = DataService.getAll(key);
+    list.push({ ...item, id:genId(), createdAt:today() });
+    DB.set(key, list);
+  },
+  update : (key,id,item) => {
+    const list = DataService.getAll(key).map(r => r.id===id ? {...r,...item} : r);
+    DB.set(key, list);
+  },
+  delete : (key,id) => {
+    const list = DataService.getAll(key).filter(r => r.id !== id);
+    DB.set(key, list);
+  },
+  filter : (key,from,to) =>
+    DataService.getAll(key).filter(r => r.date >= from && r.date <= to)
+};
+
+/* 프리샘(치료사) 서비스 */
+const TherapistService = {
+  getAll : ()       => DB.get(KEYS.therapist, []),
+  add    : t        => {
+    const list = TherapistService.getAll();
+    list.push({...t, id:genId(), createdAt:today()});
+    DB.set(KEYS.therapist, list);
+  },
+  update : (id,t)   => {
+    const list = TherapistService.getAll().map(r => r.id===id ? {...r,...t} : r);
+    DB.set(KEYS.therapist, list);
+  },
+  delete : id       => {
+    const list = TherapistService.getAll().filter(r => r.id !== id);
+    DB.set(KEYS.therapist, list);
+  }
+};
+
+/* ===== 로그인 ===== */
+let pinBuffer      = '';
+let selectedUserId = 'user1';
+
+function selectUser(uid) {
+  selectedUserId = uid;
+  pinBuffer      = '';
+  updateDots();
+  document.getElementById('loginError').textContent = '';
+  document.getElementById('tabUser1').classList.toggle('active', uid==='user1');
+  document.getElementById('tabUser2').classList.toggle('active', uid==='user2');
+}
+
+function pinInput(d) {
+  if (pinBuffer.length >= 4) return;
+  pinBuffer += d;
+  updateDots();
+  if (pinBuffer.length === 4) setTimeout(pinConfirm, 200);
+}
+
+function pinDelete() {
+  pinBuffer = pinBuffer.slice(0,-1);
+  updateDots();
+}
+
+function updateDots() {
+  for (let i=0; i<4; i++)
+    document.getElementById('dot'+i).classList.toggle('filled', i < pinBuffer.length);
+}
+
+function pinConfirm() {
+  const user = UserService.verify(selectedUserId, pinBuffer);
+  if (user) {
+    App.currentUser = user;
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('app').classList.remove('hidden');
+    initApp();
+  } else {
+    document.getElementById('loginError').textContent = '❌ PIN이 올바르지 않습니다';
+    pinBuffer = '';
+    updateDots();
+    setTimeout(() => { document.getElementById('loginError').textContent=''; }, 2000);
+  }
+}
+
+function doLogout() {
+  App.currentUser = null;
+  pinBuffer = '';
+  updateDots();
+  document.getElementById('app').classList.add('hidden');
+  document.getElementById('loginScreen').classList.remove('hidden');
+  selectUser('user1');
+}
+
+/* ===== 앱 초기화 ===== */
+function initApp() {
+  buildSidebar();
+  updateHeaderUser();
+  updateHeaderDate();
+  navigateTo('dashboard');
+}
+
+function updateHeaderUser() {
+  const u = App.currentUser;
+  if (!u) return;
+  document.getElementById('headerUser').textContent   = u.name;
+  document.getElementById('sideUserName').textContent = u.name;
+  document.getElementById('sideUserRole').textContent = u.role==='admin' ? '관리자' : '스태프';
+  document.getElementById('sideUserEmoji').textContent= u.emoji;
+}
+
+function updateHeaderDate() {
+  const now = new Date();
+  document.getElementById('headerDate').textContent =
+    now.toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric',weekday:'short'});
+}
+
+function toggleSidebar() {
+  App.sidebarCollapsed = !App.sidebarCollapsed;
+  document.getElementById('sidebar').classList.toggle('collapsed', App.sidebarCollapsed);
+}
+
+function buildSidebar() {
+  const nav = document.getElementById('sidebarNav');
+  nav.innerHTML = '';
+  let lastGroup = '';
+  MENU_ITEMS.forEach(item => {
+    if (item.group !== lastGroup) {
+      nav.innerHTML += `<div class="nav-group-label">${item.group}</div>`;
+      lastGroup = item.group;
+    }
+    nav.innerHTML += `
+      <div class="nav-item" id="nav_${item.id}" onclick="navigateTo('${item.id}')">
+        <span class="nav-icon">${item.icon}</span>
+        <span>${item.label}</span>
+      </div>`;
+  });
+}
+
+function navigateTo(page) {
+  App.currentPage = page;
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  const navEl = document.getElementById('nav_'+page);
+  if (navEl) navEl.classList.add('active');
+  const item = MENU_ITEMS.find(m => m.id===page);
+  document.getElementById('pageTitle').textContent = item ? item.label : '';
+  renderPage(page);
+}
+
+function renderPage(page) {
+  const content = document.getElementById('content');
+  content.innerHTML = '';
+  const map = {
+    dashboard  : renderDashboard,
+    sonobel    : renderSonobel,
+    spa        : renderSpa,
+    settlement : renderSettlement,
+    freesam    : renderFreesam,
+    therapist  : renderTherapist,
+    reservation: renderReservation,
+    expense    : renderExpense,
+    analysis   : renderAnalysis,
+    settings   : renderSettings,
+    backup     : renderBackup
+  };
+  if (map[page]) map[page](content);
+}
+
+/* ===== 공통 — 기간검색 바 HTML ===== */
+function searchBarHTML(prefix, searchFn, addFn, addLabel) {
+  return `
+  <div class="search-bar">
+    <label>📅 기간</label>
+    <input type="date" id="${prefix}_from" value="${monthStart()}">
+    <span class="date-separator">~</span>
+    <input type="date" id="${prefix}_to" value="${monthEnd()}">
+    <div class="search-shortcut-btns">
+      <button class="btn-shortcut" onclick="setRange('${prefix}','today')">오늘</button>
+      <button class="btn-shortcut" onclick="setRange('${prefix}','week')">이번주</button>
+      <button class="btn-shortcut" onclick="setRange('${prefix}','month')">이번달</button>
+      <button class="btn-shortcut" onclick="setRange('${prefix}','last')">지난달</button>
+    </div>
+    <button class="btn btn-primary" onclick="${searchFn}()">🔍 조회</button>
+    ${addFn ? `<button class="btn btn-success" onclick="${addFn}()">➕ ${addLabel||'추가'}</button>` : ''}
+  </div>`;
+}
+
+/* 단축 날짜 설정 */
+function setRange(prefix, type) {
+  const now = new Date();
+  let from, to;
+  if (type==='today') {
+    from = to = today();
+  } else if (type==='week') {
+    const day = now.getDay();
+    const mon = new Date(now); mon.setDate(now.getDate()-(day===0?6:day-1));
+    const sun = new Date(mon); sun.setDate(mon.getDate()+6);
+    from = mon.toISOString().split('T')[0];
+    to   = sun.toISOString().split('T')[0];
+  } else if (type==='month') {
+    from = monthStart(); to = monthEnd();
+  } else if (type==='last') {
+    const prev = new Date(now.getFullYear(), now.getMonth()-1, 1);
+    from = monthStart(prev.toISOString().split('T')[0]);
+    to   = monthEnd(prev.toISOString().split('T')[0]);
+  }
+  document.getElementById(prefix+'_from').value = from;
+  document.getElementById(prefix+'_to').value   = to;
+}
+
+window.addEventListener('load', () => {
+  updateDots();
+  console.log('🏨 소노벨 & 스파 v2026 — Part 2 로드 완료');
+});
+</script>
+<!-- ✅ Part 2 완료 → "Part 3 해줘" 라고 말씀해 주세요! -->
+<script>
+/* ================================================
+   PART 3 — 대시보드 / 소노벨 / 스파 / 결산내역
+   엑셀 양식 기준: 수익금, 관리비, 이익금,
+                   현금, 이체, 카드, 결산합
+   ================================================ */
+
+/* ===== 대시보드 ===== */
+function renderDashboard(el) {
+  const from = monthStart();
+  const to   = monthEnd();
+
+  const sonoData = DataService.filter(KEYS.sonobel,    from, to);
+  const spaData  = DataService.filter(KEYS.spa,        from, to);
+  const freeData = DataService.filter(KEYS.freelancer, from, to);
+  const expData  = DataService.filter(KEYS.expense,    from, to);
+
+  const sonoRev  = sonoData.reduce((a,r) => a+num(r.revenue),  0);
+  const spaRev   = spaData.reduce( (a,r) => a+num(r.revenue),  0);
+  const freeRev  = freeData.reduce((a,r) => a+num(r.revenue),  0);
+  const sonoProfit = sonoData.reduce((a,r) => a+num(r.profit), 0);
+  const spaProfit  = spaData.reduce( (a,r) => a+num(r.profit), 0);
+  const expTotal = expData.reduce(  (a,r) => a+num(r.amount),  0);
+
+  const totalRev    = sonoRev + spaRev + freeRev;
+  const totalProfit = sonoProfit + spaProfit;
+  const netProfit   = totalProfit - expTotal;
+  const thisMonth   = today().slice(0,7);
+
+  el.innerHTML = `
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">🏠 소노벨 수익금</div>
+      <div class="kpi-value">${fmtNum(sonoRev)}원</div>
+      <div class="kpi-sub">${thisMonth}</div>
+    </div>
+    <div class="kpi-card success">
+      <div class="kpi-label">💆 스파 수익금</div>
+      <div class="kpi-value">${fmtNum(spaRev)}원</div>
+      <div class="kpi-sub">${thisMonth}</div>
+    </div>
+    <div class="kpi-card info">
+      <div class="kpi-label">🧖 프리샘 수익금</div>
+      <div class="kpi-value">${fmtNum(freeRev)}원</div>
+      <div class="kpi-sub">${thisMonth}</div>
+    </div>
+    <div class="kpi-card warning">
+      <div class="kpi-label">💸 지출비용</div>
+      <div class="kpi-value">${fmtNum(expTotal)}원</div>
+      <div class="kpi-sub">${thisMonth}</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">💰 총 수익금</div>
+      <div class="kpi-value">${fmtNum(totalRev)}원</div>
+      <div class="kpi-sub">소노벨+스파+프리샘</div>
+    </div>
+    <div class="kpi-card ${netProfit>=0?'success':'danger'}">
+      <div class="kpi-label">📊 순이익금</div>
+      <div class="kpi-value">${fmtNum(netProfit)}원</div>
+      <div class="kpi-sub">이익금 합계 - 지출</div>
+    </div>
+  </div>
+
+  <div class="chart-grid">
+    <div class="card">
+      <div class="card-header"><span class="card-title">📊 이번달 수익 구성</span></div>
+      <div class="chart-container"><canvas id="dashPie"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">📅 최근 등록 내역</span></div>
+      <div class="table-wrap" id="dashRecent"></div>
+    </div>
+  </div>`;
+
+  setTimeout(() => {
+    const ctx = document.getElementById('dashPie');
+    if (ctx) new Chart(ctx, {
+      type:'doughnut',
+      data:{
+        labels:['소노벨','스파','프리샘'],
+        datasets:[{
+          data:[sonoRev, spaRev, freeRev],
+          backgroundColor:['#4f46e5','#10b981','#f59e0b'],
+          borderWidth:0
+        }]
+      },
+      options:{responsive:true, maintainAspectRatio:false,
+        plugins:{legend:{position:'bottom'}}}
+    });
+
+    const recent = [
+      ...sonoData.map(r=>({...r, type:'소노벨', rev:num(r.revenue)})),
+      ...spaData.map( r=>({...r, type:'스파',   rev:num(r.revenue)})),
+      ...freeData.map(r=>({...r, type:'프리샘', rev:num(r.revenue)}))
+    ].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,8);
+
+    const t = document.getElementById('dashRecent');
+    if (!recent.length) {
+      t.innerHTML=`<div class="empty-state">
+        <div class="empty-icon">📭</div><p>이번 달 데이터가 없습니다</p></div>`;
+      return;
+    }
+    t.innerHTML=`
+    <table>
+      <thead><tr><th>날짜</th><th>요일</th><th>구분</th><th style="text-align:right">수익금</th></tr></thead>
+      <tbody>
+        ${recent.map(r=>`
+        <tr>
+          <td>${fmtDate(r.date)}</td>
+          <td>${getWeekDay(r.date)}</td>
+          <td><span class="badge ${
+            r.type==='소노벨'?'badge-primary':
+            r.type==='스파'  ?'badge-success':'badge-warning'
+          }">${r.type}</span></td>
+          <td style="text-align:right;font-weight:600">${fmtNum(r.rev)}원</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
+  }, 100);
+}
+
+/* =====================================================
+   소노벨 일일관리
+   컬럼: 날짜, 요일, 수익금, 관리비, 이익금, 현금, 이체, 카드, 결산합
+   ===================================================== */
+function renderSonobel(el) {
+  renderDailyLedger(el, {
+    key   : KEYS.sonobel,
+    prefix: 'sono',
+    title : '소노벨 일일관리',
+    icon  : '🏠',
+    color : 'var(--primary)'
+  });
+}
+
+/* =====================================================
+   스파 일일관리
+   ===================================================== */
+function renderSpa(el) {
+  renderDailyLedger(el, {
+    key   : KEYS.spa,
+    prefix: 'spa2',
+    title : '스파 일일관리',
+    icon  : '💆',
+    color : 'var(--success)'
+  });
+}
+
+/* =====================================================
+   공통 일일 장부 렌더 (소노벨 / 스파 공용)
+   ===================================================== */
+function renderDailyLedger(el, cfg) {
+  const {key, prefix, title, icon} = cfg;
+
+  el.innerHTML = `
+  ${searchBarHTML(prefix, `search_${prefix}`, `openLedger_${prefix}`, '일일 추가')}
+
+  <div id="${prefix}_kpi" class="kpi-grid"></div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">${icon} ${title}</span>
+      <span id="${prefix}_cnt" style="font-size:12px;color:var(--text-muted)"></span>
+    </div>
+    <div class="table-wrap" id="${prefix}_tbl"></div>
+  </div>
+
+  <!-- 입력 모달 -->
+  <div class="modal-overlay hidden" id="${prefix}_modal">
+    <div class="modal">
+      <div class="modal-title" id="${prefix}_mtitle">➕ ${title} 추가</div>
+      <input type="hidden" id="${prefix}_eid">
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>날짜 *</label>
+          <input type="date" id="${prefix}_date" value="${today()}">
+        </div>
+        <div class="form-group">
+          <label>요일</label>
+          <input type="text" id="${prefix}_wday" placeholder="자동입력" readonly
+            style="background:#f8fafc;color:var(--text-muted)">
+        </div>
+      </div>
+
+      <div class="form-row3">
+        <div class="form-group">
+          <label>수익금 *</label>
+          <input type="number" id="${prefix}_revenue" placeholder="0" min="0">
+        </div>
+        <div class="form-group">
+          <label>관리비 *</label>
+          <input type="number" id="${prefix}_mgmt" placeholder="0" min="0">
+        </div>
+        <div class="form-group">
+          <label>이익금</label>
+          <input type="number" id="${prefix}_profit" placeholder="자동계산" readonly
+            style="background:#f0fdf4;font-weight:700;color:var(--success)">
+        </div>
+      </div>
+
+      <div class="form-row3">
+        <div class="form-group">
+          <label>현금</label>
+          <input type="number" id="${prefix}_cash" placeholder="0" min="0">
+        </div>
+        <div class="form-group">
+          <label>이체</label>
+          <input type="number" id="${prefix}_transfer" placeholder="0" min="0">
+        </div>
+        <div class="form-group">
+          <label>카드</label>
+          <input type="number" id="${prefix}_card" placeholder="0" min="0">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>결산합</label>
+          <input type="number" id="${prefix}_settle" placeholder="자동계산" readonly
+            style="background:#eff6ff;font-weight:700;color:var(--info)">
+        </div>
+        <div class="form-group">
+          <label>메모</label>
+          <input type="text" id="${prefix}_note" placeholder="메모 (선택)">
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeLedger('${prefix}')">취소</button>
+        <button class="btn btn-primary"  onclick="saveLedger('${key}','${prefix}')">💾 저장</button>
+      </div>
+    </div>
+  </div>`;
+
+  /* 동적 함수 등록 */
+  window[`search_${prefix}`]  = () => searchLedger(key, prefix);
+  window[`openLedger_${prefix}`] = () => openLedger(prefix, null);
+
+  /* 날짜 변경 시 요일 자동입력 */
+  setTimeout(() => {
+    const dateEl = document.getElementById(prefix+'_date');
+    if (dateEl) {
+      dateEl.addEventListener('change', () => {
+        document.getElementById(prefix+'_wday').value = getWeekDay(dateEl.value);
+        calcLedger(prefix);
+      });
+      document.getElementById(prefix+'_wday').value = getWeekDay(dateEl.value);
+    }
+    /* 수익금/관리비 변경 시 이익금 자동계산 */
+    ['_revenue','_mgmt'].forEach(s => {
+      const el2 = document.getElementById(prefix+s);
+      if (el2) el2.addEventListener('input', () => calcLedger(prefix));
+    });
+    /* 현금/이체/카드 변경 시 결산합 자동계산 */
+    ['_cash','_transfer','_card'].forEach(s => {
+      const el2 = document.getElementById(prefix+s);
+      if (el2) el2.addEventListener('input', () => calcSettle(prefix));
+    });
+  }, 50);
+
+  searchLedger(key, prefix);
+}
+
+/* 이익금 자동계산 */
+function calcLedger(prefix) {
+  const rev  = num(document.getElementById(prefix+'_revenue')?.value);
+  const mgmt = num(document.getElementById(prefix+'_mgmt')?.value);
+  const profEl = document.getElementById(prefix+'_profit');
+  if (profEl) profEl.value = rev - mgmt;
+}
+
+/* 결산합 자동계산 */
+function calcSettle(prefix) {
+  const cash     = num(document.getElementById(prefix+'_cash')?.value);
+  const transfer = num(document.getElementById(prefix+'_transfer')?.value);
+  const card     = num(document.getElementById(prefix+'_card')?.value);
+  const setEl    = document.getElementById(prefix+'_settle');
+  if (setEl) setEl.value = cash + transfer + card;
+}
+
+/* 조회 */
+function searchLedger(key, prefix) {
+  const from = document.getElementById(prefix+'_from')?.value || monthStart();
+  const to   = document.getElementById(prefix+'_to')?.value   || monthEnd();
+  const data = DataService.filter(key, from, to)
+                          .sort((a,b) => b.date.localeCompare(a.date));
+
+  const totRev    = data.reduce((a,r) => a+num(r.revenue),  0);
+  const totMgmt   = data.reduce((a,r) => a+num(r.mgmt),     0);
+  const totProfit = data.reduce((a,r) => a+num(r.profit),   0);
+  const totCash   = data.reduce((a,r) => a+num(r.cash),     0);
+  const totTrans  = data.reduce((a,r) => a+num(r.transfer), 0);
+  const totCard   = data.reduce((a,r) => a+num(r.card),     0);
+  const totSettle = data.reduce((a,r) => a+num(r.settle),   0);
+
+  /* KPI */
+  const kpiEl = document.getElementById(prefix+'_kpi');
+  if (kpiEl) kpiEl.innerHTML = `
+    <div class="kpi-card">
+      <div class="kpi-label">📝 건수</div>
+      <div class="kpi-value">${data.length}건</div>
+      <div class="kpi-sub">${from} ~ ${to}</div>
+    </div>
+    <div class="kpi-card success">
+      <div class="kpi-label">💰 수익금 합계</div>
+      <div class="kpi-value">${fmtNum(totRev)}원</div>
+      <div class="kpi-sub">기간 합산</div>
+    </div>
+    <div class="kpi-card warning">
+      <div class="kpi-label">🔧 관리비 합계</div>
+      <div class="kpi-value">${fmtNum(totMgmt)}원</div>
+      <div class="kpi-sub">기간 합산</div>
+    </div>
+    <div class="kpi-card info">
+      <div class="kpi-label">📊 이익금 합계</div>
+      <div class="kpi-value">${fmtNum(totProfit)}원</div>
+      <div class="kpi-sub">수익금 - 관리비</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">💳 현금</div>
+      <div class="kpi-value">${fmtNum(totCash)}원</div>
+      <div class="kpi-sub">기간 합산</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">🏦 이체</div>
+      <div class="kpi-value">${fmtNum(totTrans)}원</div>
+      <div class="kpi-sub">기간 합산</div>
+    </div>`;
+
+  const cntEl = document.getElementById(prefix+'_cnt');
+  if (cntEl) cntEl.textContent = `총 ${data.length}건`;
+
+  const tbl = document.getElementById(prefix+'_tbl');
+  if (!tbl) return;
+
+  if (!data.length) {
+    tbl.innerHTML = `<div class="empty-state">
+      <div class="empty-icon">📭</div>
+      <p>해당 기간에 데이터가 없습니다<br>➕ 버튼으로 추가해 주세요</p></div>`;
+    return;
+  }
+
+  tbl.innerHTML = `
+  <table>
+    <thead>
+      <tr>
+        <th>날짜</th><th>요일</th>
+        <th style="text-align:right">수익금</th>
+        <th style="text-align:right">관리비</th>
+        <th style="text-align:right">이익금</th>
+        <th style="text-align:right">현금</th>
+        <th style="text-align:right">이체</th>
+        <th style="text-align:right">카드</th>
+        <th style="text-align:right">결산합</th>
+        <th>메모</th><th>관리</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${data.map(r => {
+        const profit = num(r.profit);
+        return `
+        <tr>
+          <td>${fmtDate(r.date)}</td>
+          <td><span class="badge badge-primary">${r.wday||getWeekDay(r.date)}</span></td>
+          <td style="text-align:right;font-weight:600">${fmtNum(r.revenue)}원</td>
+          <td style="text-align:right">${fmtNum(r.mgmt)}원</td>
+          <td style="text-align:right;font-weight:600;color:${profit>=0?'var(--success)':'var(--danger)'}">
+            ${fmtNum(profit)}원</td>
+          <td style="text-align:right">${fmtNum(r.cash)}원</td>
+          <td style="text-align:right">${fmtNum(r.transfer)}원</td>
+          <td style="text-align:right">${fmtNum(r.card)}원</td>
+          <td style="text-align:right;font-weight:600;color:var(--info)">${fmtNum(r.settle)}원</td>
+          <td>${r.note||'-'}</td>
+          <td>
+            <button class="btn btn-warning btn-sm"
+              onclick='openLedger("${prefix}",${JSON.stringify(r).replace(/'/g,"&#39;")})'>✏️</button>
+            <button class="btn btn-danger btn-sm"
+              onclick="delLedger('${key}','${prefix}','${r.id}')">🗑️</button>
+          </td>
+        </tr>`;
+      }).join('')}
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="2">합 계</td>
+        <td style="text-align:right">${fmtNum(totRev)}원</td>
+        <td style="text-align:right">${fmtNum(totMgmt)}원</td>
+        <td style="text-align:right;color:var(--success)">${fmtNum(totProfit)}원</td>
+        <td style="text-align:right">${fmtNum(totCash)}원</td>
+        <td style="text-align:right">${fmtNum(totTrans)}원</td>
+        <td style="text-align:right">${fmtNum(totCard)}원</td>
+        <td style="text-align:right;color:var(--info)">${fmtNum(totSettle)}원</td>
+        <td colspan="2"></td>
+      </tr>
+    </tfoot>
+  </table>`;
+}
+
+/* 모달 열기 */
+function openLedger(prefix, rec) {
+  document.getElementById(prefix+'_modal').classList.remove('hidden');
+  const titleEl = document.getElementById(prefix+'_mtitle');
+
+  if (rec) {
+    titleEl.textContent = '✏️ 내역 수정';
+    document.getElementById(prefix+'_eid').value      = rec.id;
+    document.getElementById(prefix+'_date').value     = rec.date;
+    document.getElementById(prefix+'_wday').value     = rec.wday || getWeekDay(rec.date);
+    document.getElementById(prefix+'_revenue').value  = rec.revenue  || 0;
+    document.getElementById(prefix+'_mgmt').value     = rec.mgmt     || 0;
+    document.getElementById(prefix+'_profit').value   = rec.profit   || 0;
+    document.getElementById(prefix+'_cash').value     = rec.cash     || 0;
+    document.getElementById(prefix+'_transfer').value = rec.transfer || 0;
+    document.getElementById(prefix+'_card').value     = rec.card     || 0;
+    document.getElementById(prefix+'_settle').value   = rec.settle   || 0;
+    document.getElementById(prefix+'_note').value     = rec.note     || '';
+  } else {
+    titleEl.textContent = '➕ 일일 추가';
+    document.getElementById(prefix+'_eid').value      = '';
+    document.getElementById(prefix+'_date').value     = today();
+    document.getElementById(prefix+'_wday').value     = getWeekDay(today());
+    document.getElementById(prefix+'_revenue').value  = '';
+    document.getElementById(prefix+'_mgmt').value     = '';
+    document.getElementById(prefix+'_profit').value   = '';
+    document.getElementById(prefix+'_cash').value     = '';
+    document.getElementById(prefix+'_transfer').value = '';
+    document.getElementById(prefix+'_card').value     = '';
+    document.getElementById(prefix+'_settle').value   = '';
+    document.getElementById(prefix+'_note').value     = '';
+  }
+}
+
+function closeLedger(prefix) {
+  document.getElementById(prefix+'_modal').classList.add('hidden');
+}
+
+/* 저장 */
+function saveLedger(key, prefix) {
+  const id       = document.getElementById(prefix+'_eid').value;
+  const date     = document.getElementById(prefix+'_date').value;
+  const revenue  = num(document.getElementById(prefix+'_revenue').value);
+  const mgmt     = num(document.getElementById(prefix+'_mgmt').value);
+
+  if (!date || !revenue) {
+    showToast('날짜와 수익금은 필수입니다','error');
+    return;
+  }
+
+  const profit   = revenue - mgmt;
+  const cash     = num(document.getElementById(prefix+'_cash').value);
+  const transfer = num(document.getElementById(prefix+'_transfer').value);
+  const card     = num(document.getElementById(prefix+'_card').value);
+  const settle   = cash + transfer + card;
+  const wday     = getWeekDay(date);
+  const note     = document.getElementById(prefix+'_note').value;
+
+  const rec = {date, wday, revenue, mgmt, profit, cash, transfer, card, settle, note};
+
+  if (id) DataService.update(key, id, rec);
+  else    DataService.add(key, rec);
+
+  closeLedger(prefix);
+  showToast(id ? '수정되었습니다 ✅' : '추가되었습니다 ✅');
+  searchLedger(key, prefix);
+}
+
+/* 삭제 */
+function delLedger(key, prefix, id) {
+  if (!confirm('삭제하시겠습니까?')) return;
+  DataService.delete(key, id);
+  showToast('삭제되었습니다','error');
+  searchLedger(key, prefix);
+}
+
+/* =====================================================
+   결산내역
+   소노벨 + 스파 + 프리샘 통합 결산
+   ===================================================== */
+function renderSettlement(el) {
+  el.innerHTML = `
+  ${searchBarHTML('set2', 'searchSettlement', null, null)}
+  <div id="set2_kpi" class="kpi-grid"></div>
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">📋 소노벨 & 스파 통합 결산내역</span>
+      <span id="set2_cnt" style="font-size:12px;color:var(--text-muted)"></span>
+    </div>
+    <div class="table-wrap" id="set2_tbl"></div>
+  </div>`;
+  searchSettlement();
+}
+
+function searchSettlement() {
+  const from = document.getElementById('set2_from')?.value || monthStart();
+  const to   = document.getElementById('set2_to')?.value   || monthEnd();
+
+  const sonoData = DataService.filter(KEYS.sonobel,    from, to);
+  const spaData  = DataService.filter(KEYS.spa,        from, to);
+  const freeData = DataService.filter(KEYS.freelancer, from, to);
+  const expData  = DataService.filter(KEYS.expense,    from, to);
+
+  /* 소노벨 합계 */
+  const sonoRev    = sonoData.reduce((a,r) => a+num(r.revenue), 0);
+  const sonoMgmt   = sonoData.reduce((a,r) => a+num(r.mgmt),   0);
+  const sonoProfit = sonoData.reduce((a,r) => a+num(r.profit),  0);
+
+  /* 스파 합계 */
+  const spaRev    = spaData.reduce((a,r) => a+num(r.revenue), 0);
+  const spaMgmt   = spaData.reduce((a,r) => a+num(r.mgmt),   0);
+  const spaProfit = spaData.reduce((a,r) => a+num(r.profit),  0);
+
+  /* 프리샘 합계 */
+  const freeRev    = freeData.reduce((a,r) => a+num(r.revenue), 0);
+  const freeMgmt   = freeData.reduce((a,r) => a+num(r.mgmt),   0);
+  const freeProfit = freeData.reduce((a,r) => a+num(r.profit),  0);
+
+  /* 지출 합계 */
+  const expTotal = expData.reduce((a,r) => a+num(r.amount), 0);
+
+  /* 전체 합계 */
+  const totalRev    = sonoRev + spaRev + freeRev;
+  const totalMgmt   = sonoMgmt + spaMgmt + freeMgmt;
+  const totalProfit = sonoProfit + spaProfit + freeProfit;
+  const netProfit   = totalProfit - expTotal;
+  const perPerson   = Math.round(netProfit / 2);
+
+  /* KPI */
+  document.getElementById('set2_kpi').innerHTML = `
+  <div class="kpi-card">
+    <div class="kpi-label">🏠 소노벨 수익금</div>
+    <div class="kpi-value">${fmtNum(sonoRev)}원</div>
+    <div class="kpi-sub">이익금 ${fmtNum(sonoProfit)}원</div>
+  </div>
+  <div class="kpi-card success">
+    <div class="kpi-label">💆 스파 수익금</div>
+    <div class="kpi-value">${fmtNum(spaRev)}원</div>
+    <div class="kpi-sub">이익금 ${fmtNum(spaProfit)}원</div>
+  </div>
+  <div class="kpi-card info">
+    <div class="kpi-label">🧖 프리샘 수익금</div>
+    <div class="kpi-value">${fmtNum(freeRev)}원</div>
+    <div class="kpi-sub">이익금 ${fmtNum(freeProfit)}원</div>
+  </div>
+  <div class="kpi-card warning">
+    <div class="kpi-label">💸 지출비용</div>
+    <div class="kpi-value">${fmtNum(expTotal)}원</div>
+    <div class="kpi-sub">${from} ~ ${to}</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">💰 총 수익금</div>
+    <div class="kpi-value">${fmtNum(totalRev)}원</div>
+    <div class="kpi-sub">소노벨+스파+프리샘</div>
+  </div>
+  <div class="kpi-card ${netProfit>=0?'success':'danger'}">
+    <div class="kpi-label">📊 순이익금</div>
+    <div class="kpi-value">${fmtNum(netProfit)}원</div>
+    <div class="kpi-sub">1인당 ${fmtNum(perPerson)}원</div>
+  </div>`;
+
+  /* 통합 테이블 — 날짜별 합산 */
+  const allDates = [...new Set([
+    ...sonoData.map(r=>r.date),
+    ...spaData.map( r=>r.date),
+    ...freeData.map(r=>r.date)
+  ])].sort((a,b) => b.localeCompare(a));
+
+  const cntEl = document.getElementById('set2_cnt');
+  if (cntEl) cntEl.textContent = `총 ${allDates.length}일`;
+
+  const tbl = document.getElementById('set2_tbl');
+  if (!tbl) return;
+
+  if (!allDates.length) {
+    tbl.innerHTML = `<div class="empty-state">
+      <div class="empty-icon">📋</div>
+      <p>해당 기간에 데이터가 없습니다</p></div>`;
+    return;
+  }
+
+  tbl.innerHTML = `
+  <table>
+    <thead>
+      <tr>
+        <th>날짜</th><th>요일</th>
+        <th colspan="3" style="text-align:center;background:#eef2ff">소노벨</th>
+        <th colspan="3" style="text-align:center;background:#ecfdf5">스파</th>
+        <th colspan="3" style="text-align:center;background:#fefce8">프리샘</th>
+        <th style="text-align:right">총수익금</th>
+      </tr>
+      <tr>
+        <th></th><th></th>
+        <th style="text-align:right;background:#f5f3ff">수익금</th>
+        <th style="text-align:right;background:#f5f3ff">관리비</th>
+        <th style="text-align:right;background:#f5f3ff">이익금</th>
+        <th style="text-align:right;background:#f0fdf4">수익금</th>
+        <th style="text-align:right;background:#f0fdf4">관리비</th>
+        <th style="text-align:right;background:#f0fdf4">이익금</th>
+        <th style="text-align:right;background:#fefce8">수익금</th>
+        <th style="text-align:right;background:#fefce8">관리비</th>
+        <th style="text-align:right;background:#fefce8">이익금</th>
+        <th style="text-align:right"></th>
+      </tr>
+    </thead>
+    <tbody>
+      ${allDates.map(date => {
+        const sR = sonoData.filter(r=>r.date===date);
+        const pR = spaData.filter( r=>r.date===date);
+        const fR = freeData.filter(r=>r.date===date);
+        const sRev = sR.reduce((a,r)=>a+num(r.revenue),0);
+        const sMgt = sR.reduce((a,r)=>a+num(r.mgmt),0);
+        const sPrf = sR.reduce((a,r)=>a+num(r.profit),0);
+        const pRev = pR.reduce((a,r)=>a+num(r.revenue),0);
+        const pMgt = pR.reduce((a,r)=>a+num(r.mgmt),0);
+        const pPrf = pR.reduce((a,r)=>a+num(r.profit),0);
+        const fRev = fR.reduce((a,r)=>a+num(r.revenue),0);
+        const fMgt = fR.reduce((a,r)=>a+num(r.mgmt),0);
+        const fPrf = fR.reduce((a,r)=>a+num(r.profit),0);
+        const dayTotal = sRev + pRev + fRev;
+        return `
+        <tr>
+          <td>${fmtDate(date)}</td>
+          <td><span class="badge badge-primary">${getWeekDay(date)}</span></td>
+          <td style="text-align:right;background:#f5f3ff">${sRev?fmtNum(sRev)+' 원':'-'}</td>
+          <td style="text-align:right;background:#f5f3ff">${sMgt?fmtNum(sMgt)+' 원':'-'}</td>
+          <td style="text-align:right;background:#f5f3ff;color:var(--success);font-weight:600">
+            ${sPrf?fmtNum(sPrf)+' 원':'-'}</td>
+          <td style="text-align:right;background:#f0fdf4">${pRev?fmtNum(pRev)+' 원':'-'}</td>
+          <td style="text-align:right;background:#f0fdf4">${pMgt?fmtNum(pMgt)+' 원':'-'}</td>
+          <td style="text-align:right;background:#f0fdf4;color:var(--success);font-weight:600">
+            ${pPrf?fmtNum(pPrf)+' 원':'-'}</td>
+          <td style="text-align:right;background:#fefce8">${fRev?fmtNum(fRev)+' 원':'-'}</td>
+          <td style="text-align:right;background:#fefce8">${fMgt?fmtNum(fMgt)+' 원':'-'}</td>
+          <td style="text-align:right;background:#fefce8;color:var(--success);font-weight:600">
+            ${fPrf?fmtNum(fPrf)+' 원':'-'}</td>
+          <td style="text-align:right;font-weight:700">${fmtNum(dayTotal)}원</td>
+        </tr>`;
+      }).join('')}
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="2">합 계</td>
+        <td style="text-align:right">${fmtNum(sonoRev)}원</td>
+        <td style="text-align:right">${fmtNum(sonoMgmt)}원</td>
+        <td style="text-align:right;color:var(--success)">${fmtNum(sonoProfit)}원</td>
+        <td style="text-align:right">${fmtNum(spaRev)}원</td>
+        <td style="text-align:right">${fmtNum(spaMgmt)}원</td>
+        <td style="text-align:right;color:var(--success)">${fmtNum(spaProfit)}원</td>
+        <td style="text-align:right">${fmtNum(freeRev)}원</td>
+        <td style="text-align:right">${fmtNum(freeMgmt)}원</td>
+        <td style="text-align:right;color:var(--success)">${fmtNum(freeProfit)}원</td>
+        <td style="text-align:right;color:var(--primary)">${fmtNum(totalRev)}원</td>
+      </tr>
+    </tfoot>
+  </table>`;
+}
+
+console.log('✅ Part 3 로드 완료 — 대시보드/소노벨/스파/결산내역');
+</script>
+<!-- ✅ Part 3 완료 → "Part 4 해줘" 라고 말씀해 주세요! -->
+<script>
+/* ================================================
+   PART 4 — 프리샘 일일관리 / 예약관리 / 지출비용
+   엑셀 양식 기준:
+   프리샘: 날짜, 영업장, 프리샘명, 수익금, 관리비, 이익금, 고객유형, 비고
+   지출: 날짜, 지출항목, 지출비용
+   ================================================ */
+
+/* =====================================================
+   프리샘 일일관리
+   ===================================================== */
+function renderFreesam(el) {
+  const custTypes = SettingsService.get().customerTypes ||
+                    ['투숙객','관광객','도민','기타'];
+  const custOpts  = custTypes.map(c=>`<option value="${c}">${c}</option>`).join('');
+
+  el.innerHTML = `
+  ${searchBarHTML('fs','searchFreesam','openFreesamNew','추가')}
+
+  <div id="fs_kpi" class="kpi-grid"></div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">🧖 프리샘 일일관리</span>
+      <span id="fs_cnt" style="font-size:12px;color:var(--text-muted)"></span>
+    </div>
+    <div class="table-wrap" id="fs_tbl"></div>
+  </div>
+
+  <!-- 입력 모달 -->
+  <div class="modal-overlay hidden" id="fs_modal">
+    <div class="modal">
+      <div class="modal-title" id="fs_mtitle">🧖 프리샘 내역 추가</div>
+      <input type="hidden" id="fs_eid">
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>날짜 *</label>
+          <input type="date" id="fs_date" value="${today()}">
+        </div>
+        <div class="form-group">
+          <label>요일</label>
+          <input type="text" id="fs_wday" readonly
+            style="background:#f8fafc;color:var(--text-muted)">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>영업장 *</label>
+          <select id="fs_place">
+            <option value="소노벨">🏠 소노벨</option>
+            <option value="스파">💆 스파</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>프리샘명 *</label>
+          <input type="text" id="fs_name" placeholder="프리샘 이름">
+        </div>
+      </div>
+
+      <div class="form-row3">
+        <div class="form-group">
+          <label>수익금 *</label>
+          <input type="number" id="fs_revenue" placeholder="0" min="0">
+        </div>
+        <div class="form-group">
+          <label>관리비 *</label>
+          <input type="number" id="fs_mgmt" placeholder="0" min="0">
+        </div>
+        <div class="form-group">
+          <label>이익금</label>
+          <input type="number" id="fs_profit" placeholder="자동계산" readonly
+            style="background:#f0fdf4;font-weight:700;color:var(--success)">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>고객유형</label>
+          <select id="fs_custtype">${custOpts}</select>
+        </div>
+        <div class="form-group">
+          <label>비고</label>
+          <input type="text" id="fs_note" placeholder="비고 (선택)">
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeFreesamModal()">취소</button>
+        <button class="btn btn-primary"  onclick="saveFreesam()">💾 저장</button>
+      </div>
+    </div>
+  </div>`;
+
+  /* 날짜 변경 → 요일 자동입력 */
+  setTimeout(() => {
+    const dateEl = document.getElementById('fs_date');
+    if (dateEl) {
+      dateEl.addEventListener('change', () => {
+        document.getElementById('fs_wday').value = getWeekDay(dateEl.value);
+      });
+      document.getElementById('fs_wday').value = getWeekDay(dateEl.value);
+    }
+    /* 수익금/관리비 → 이익금 자동계산 */
+    ['fs_revenue','fs_mgmt'].forEach(id => {
+      const e = document.getElementById(id);
+      if (e) e.addEventListener('input', calcFreesamProfit);
+    });
+  }, 50);
+
+  searchFreesam();
+}
+
+function calcFreesamProfit() {
+  const rev  = num(document.getElementById('fs_revenue')?.value);
+  const mgmt = num(document.getElementById('fs_mgmt')?.value);
+  const el   = document.getElementById('fs_profit');
+  if (el) el.value = rev - mgmt;
+}
+
+/* 조회 */
+function searchFreesam() {
+  const from = document.getElementById('fs_from')?.value || monthStart();
+  const to   = document.getElementById('fs_to')?.value   || monthEnd();
+  const data = DataService.filter(KEYS.freelancer, from, to)
+                          .sort((a,b) => b.date.localeCompare(a.date));
+
+  const totRev    = data.reduce((a,r) => a+num(r.revenue), 0);
+  const totMgmt   = data.reduce((a,r) => a+num(r.mgmt),   0);
+  const totProfit = data.reduce((a,r) => a+num(r.profit),  0);
+  const names     = [...new Set(data.map(r=>r.name).filter(Boolean))];
+
+  /* KPI */
+  const kpiEl = document.getElementById('fs_kpi');
+  if (kpiEl) kpiEl.innerHTML = `
+    <div class="kpi-card">
+      <div class="kpi-label">📝 건수</div>
+      <div class="kpi-value">${data.length}건</div>
+      <div class="kpi-sub">${from} ~ ${to}</div>
+    </div>
+    <div class="kpi-card success">
+      <div class="kpi-label">💰 수익금 합계</div>
+      <div class="kpi-value">${fmtNum(totRev)}원</div>
+      <div class="kpi-sub">기간 합산</div>
+    </div>
+    <div class="kpi-card warning">
+      <div class="kpi-label">🔧 관리비 합계</div>
+      <div class="kpi-value">${fmtNum(totMgmt)}원</div>
+      <div class="kpi-sub">기간 합산</div>
+    </div>
+    <div class="kpi-card info">
+      <div class="kpi-label">📊 이익금 합계</div>
+      <div class="kpi-value">${fmtNum(totProfit)}원</div>
+      <div class="kpi-sub">수익금 - 관리비</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">👥 활동 프리샘</div>
+      <div class="kpi-value">${names.length}명</div>
+      <div class="kpi-sub">${names.slice(0,3).join(', ')}${names.length>3?'..':''}</div>
+    </div>`;
+
+  const cntEl = document.getElementById('fs_cnt');
+  if (cntEl) cntEl.textContent = `총 ${data.length}건`;
+
+  const tbl = document.getElementById('fs_tbl');
+  if (!tbl) return;
+
+  if (!data.length) {
+    tbl.innerHTML = `<div class="empty-state">
+      <div class="empty-icon">🧖</div>
+      <p>해당 기간에 데이터가 없습니다<br>➕ 버튼으로 추가해 주세요</p></div>`;
+    return;
+  }
+
+  tbl.innerHTML = `
+  <table>
+    <thead>
+      <tr>
+        <th>날짜</th><th>요일</th><th>영업장</th><th>프리샘명</th>
+        <th style="text-align:right">수익금</th>
+        <th style="text-align:right">관리비</th>
+        <th style="text-align:right">이익금</th>
+        <th>고객유형</th><th>비고</th><th>관리</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${data.map(r => {
+        const profit = num(r.profit);
+        return `
+        <tr>
+          <td>${fmtDate(r.date)}</td>
+          <td><span class="badge badge-primary">${r.wday||getWeekDay(r.date)}</span></td>
+          <td><span class="badge ${r.place==='소노벨'?'badge-primary':'badge-success'}">
+            ${r.place||'-'}</span></td>
+          <td><strong>${r.name||'-'}</strong></td>
+          <td style="text-align:right;font-weight:600">${fmtNum(r.revenue)}원</td>
+          <td style="text-align:right">${fmtNum(r.mgmt)}원</td>
+          <td style="text-align:right;font-weight:600;
+            color:${profit>=0?'var(--success)':'var(--danger)'}">
+            ${fmtNum(profit)}원</td>
+          <td><span class="badge badge-info">${r.custtype||'-'}</span></td>
+          <td>${r.note||'-'}</td>
+          <td>
+            <button class="btn btn-warning btn-sm"
+              onclick='openFreesamModal(${JSON.stringify(r).replace(/'/g,"&#39;")})'>✏️</button>
+            <button class="btn btn-danger btn-sm"
+              onclick="deleteFreesam('${r.id}')">🗑️</button>
+          </td>
+        </tr>`;
+      }).join('')}
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="4">합 계</td>
+        <td style="text-align:right">${fmtNum(totRev)}원</td>
+        <td style="text-align:right">${fmtNum(totMgmt)}원</td>
+        <td style="text-align:right;color:var(--success)">${fmtNum(totProfit)}원</td>
+        <td colspan="3"></td>
+      </tr>
+    </tfoot>
+  </table>`;
+}
+
+function openFreesamNew() { openFreesamModal(null); }
+
+function openFreesamModal(rec) {
+  document.getElementById('fs_modal').classList.remove('hidden');
+  const titleEl = document.getElementById('fs_mtitle');
+  if (rec) {
+    titleEl.textContent = '✏️ 프리샘 내역 수정';
+    document.getElementById('fs_eid').value      = rec.id;
+    document.getElementById('fs_date').value     = rec.date;
+    document.getElementById('fs_wday').value     = rec.wday || getWeekDay(rec.date);
+    document.getElementById('fs_place').value    = rec.place    || '소노벨';
+    document.getElementById('fs_name').value     = rec.name     || '';
+    document.getElementById('fs_revenue').value  = rec.revenue  || 0;
+    document.getElementById('fs_mgmt').value     = rec.mgmt     || 0;
+    document.getElementById('fs_profit').value   = rec.profit   || 0;
+    document.getElementById('fs_custtype').value = rec.custtype || '투숙객';
+    document.getElementById('fs_note').value     = rec.note     || '';
+  } else {
+    titleEl.textContent = '🧖 프리샘 내역 추가';
+    document.getElementById('fs_eid').value      = '';
+    document.getElementById('fs_date').value     = today();
+    document.getElementById('fs_wday').value     = getWeekDay(today());
+    document.getElementById('fs_place').value    = '소노벨';
+    document.getElementById('fs_name').value     = '';
+    document.getElementById('fs_revenue').value  = '';
+    document.getElementById('fs_mgmt').value     = '';
+    document.getElementById('fs_profit').value   = '';
+    document.getElementById('fs_custtype').value = '투숙객';
+    document.getElementById('fs_note').value     = '';
+  }
+}
+
+function closeFreesamModal() {
+  document.getElementById('fs_modal').classList.add('hidden');
+}
+
+function saveFreesam() {
+  const id       = document.getElementById('fs_eid').value;
+  const date     = document.getElementById('fs_date').value;
+  const place    = document.getElementById('fs_place').value;
+  const name     = document.getElementById('fs_name').value.trim();
+  const revenue  = num(document.getElementById('fs_revenue').value);
+  const mgmt     = num(document.getElementById('fs_mgmt').value);
+  const custtype = document.getElementById('fs_custtype').value;
+  const note     = document.getElementById('fs_note').value;
+
+  if (!date || !name || !revenue) {
+    showToast('날짜 · 프리샘명 · 수익금은 필수입니다','error');
+    return;
+  }
+
+  const profit = revenue - mgmt;
+  const wday   = getWeekDay(date);
+  const rec    = {date, wday, place, name, revenue, mgmt, profit, custtype, note};
+
+  if (id) DataService.update(KEYS.freelancer, id, rec);
+  else    DataService.add(KEYS.freelancer, rec);
+
+  closeFreesamModal();
+  showToast(id ? '수정되었습니다 ✅' : '추가되었습니다 ✅');
+  searchFreesam();
+}
+
+function deleteFreesam(id) {
+  if (!confirm('삭제하시겠습니까?')) return;
+  DataService.delete(KEYS.freelancer, id);
+  showToast('삭제되었습니다','error');
+  searchFreesam();
+}
+
+/* =====================================================
+   예약관리
+   ===================================================== */
+function renderReservation(el) {
+  el.innerHTML = `
+  <div class="search-bar">
+    <label>📅 기간</label>
+    <input type="date" id="rv_from" value="${monthStart()}">
+    <span class="date-separator">~</span>
+    <input type="date" id="rv_to"   value="${monthEnd()}">
+    <div class="search-shortcut-btns">
+      <button class="btn-shortcut" onclick="setRange('rv','today')">오늘</button>
+      <button class="btn-shortcut" onclick="setRange('rv','week')">이번주</button>
+      <button class="btn-shortcut" onclick="setRange('rv','month')">이번달</button>
+      <button class="btn-shortcut" onclick="setRange('rv','last')">지난달</button>
+    </div>
+    <select id="rv_status_filter">
+      <option value="">전체 상태</option>
+      <option value="confirmed">✅ 확정</option>
+      <option value="pending">⏳ 대기</option>
+      <option value="cancelled">❌ 취소</option>
+    </select>
+    <button class="btn btn-primary" onclick="searchReservation()">🔍 조회</button>
+    <button class="btn btn-success" onclick="openRvModal(null)">➕ 추가</button>
+  </div>
+
+  <div id="rv_kpi" class="kpi-grid"></div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">📅 예약관리</span>
+      <span id="rv_cnt" style="font-size:12px;color:var(--text-muted)"></span>
+    </div>
+    <div class="table-wrap" id="rv_tbl"></div>
+  </div>
+
+  <div class="modal-overlay hidden" id="rv_modal">
+    <div class="modal">
+      <div class="modal-title" id="rv_mtitle">📅 예약 추가</div>
+      <input type="hidden" id="rv_eid">
+      <div class="form-row">
+        <div class="form-group">
+          <label>날짜 *</label>
+          <input type="date" id="rv_date" value="${today()}">
+        </div>
+        <div class="form-group">
+          <label>예약 시간 *</label>
+          <input type="time" id="rv_time" min="10:00" max="23:59">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>고객명 *</label>
+          <input type="text" id="rv_customer" placeholder="고객 이름">
+        </div>
+        <div class="form-group">
+          <label>연락처</label>
+          <input type="text" id="rv_phone" placeholder="010-0000-0000">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>서비스</label>
+          <input type="text" id="rv_service" placeholder="서비스 종류">
+        </div>
+        <div class="form-group">
+          <label>상태</label>
+          <select id="rv_status_input">
+            <option value="pending">⏳ 대기</option>
+            <option value="confirmed">✅ 확정</option>
+            <option value="cancelled">❌ 취소</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>메모</label>
+        <input type="text" id="rv_note" placeholder="메모 (선택)">
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeRvModal()">취소</button>
+        <button class="btn btn-primary"  onclick="saveReservation()">💾 저장</button>
+      </div>
+    </div>
+  </div>`;
+
+  searchReservation();
+}
+
+function searchReservation() {
+  const from   = document.getElementById('rv_from')?.value          || monthStart();
+  const to     = document.getElementById('rv_to')?.value            || monthEnd();
+  const status = document.getElementById('rv_status_filter')?.value || '';
+
+  let data = DataService.filter(KEYS.reservation, from, to)
+                        .sort((a,b) => b.date.localeCompare(a.date));
+  if (status) data = data.filter(r => r.status===status);
+
+  const confirmed = data.filter(r=>r.status==='confirmed').length;
+  const pending   = data.filter(r=>r.status==='pending').length;
+  const cancelled = data.filter(r=>r.status==='cancelled').length;
+
+  const kpiEl = document.getElementById('rv_kpi');
+  if (kpiEl) kpiEl.innerHTML = `
+    <div class="kpi-card success">
+      <div class="kpi-label">✅ 확정</div>
+      <div class="kpi-value">${confirmed}건</div>
+      <div class="kpi-sub">${from} ~ ${to}</div>
+    </div>
+    <div class="kpi-card warning">
+      <div class="kpi-label">⏳ 대기</div>
+      <div class="kpi-value">${pending}건</div>
+      <div class="kpi-sub">${from} ~ ${to}</div>
+    </div>
+    <div class="kpi-card danger">
+      <div class="kpi-label">❌ 취소</div>
+      <div class="kpi-value">${cancelled}건</div>
+      <div class="kpi-sub">${from} ~ ${to}</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">📋 전체</div>
+      <div class="kpi-value">${data.length}건</div>
+      <div class="kpi-sub">필터 적용 결과</div>
+    </div>`;
+
+  const cntEl = document.getElementById('rv_cnt');
+  if (cntEl) cntEl.textContent = `총 ${data.length}건`;
+
+  const tbl = document.getElementById('rv_tbl');
+  if (!tbl) return;
+
+  if (!data.length) {
+    tbl.innerHTML = `<div class="empty-state">
+      <div class="empty-icon">📅</div>
+      <p>해당 기간에 예약 데이터가 없습니다</p></div>`;
+    return;
+  }
+
+  tbl.innerHTML = `
+  <table>
+    <thead>
+      <tr>
+        <th>날짜</th><th>시간</th><th>고객명</th>
+        <th>서비스</th><th>연락처</th><th>상태</th><th>메모</th><th>관리</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${data.map(r=>`
+      <tr>
+        <td>${fmtDate(r.date)}</td>
+        <td>${r.time||'-'}</td>
+        <td><strong>${r.customer||'-'}</strong></td>
+        <td>${r.service||'-'}</td>
+        <td>${r.phone||'-'}</td>
+        <td><span class="badge ${
+          r.status==='confirmed'?'badge-success':
+          r.status==='pending'  ?'badge-warning':'badge-danger'}">
+          ${r.status==='confirmed'?'✅ 확정':
+            r.status==='pending'  ?'⏳ 대기':'❌ 취소'}
+        </span></td>
+        <td>${r.note||'-'}</td>
+        <td>
+          <button class="btn btn-warning btn-sm"
+            onclick='openRvModal(${JSON.stringify(r).replace(/'/g,"&#39;")})'>✏️</button>
+          <button class="btn btn-danger btn-sm"
+            onclick="deleteReservation('${r.id}')">🗑️</button>
+        </td>
+      </tr>`).join('')}
+    </tbody>
+  </table>`;
+}
+
+function openRvModal(rec) {
+  document.getElementById('rv_modal').classList.remove('hidden');
+  const titleEl = document.getElementById('rv_mtitle');
+  if (rec) {
+    titleEl.textContent = '✏️ 예약 수정';
+    document.getElementById('rv_eid').value          = rec.id;
+    document.getElementById('rv_date').value         = rec.date;
+    document.getElementById('rv_time').value         = rec.time     || '';
+    document.getElementById('rv_customer').value     = rec.customer || '';
+    document.getElementById('rv_phone').value        = rec.phone    || '';
+    document.getElementById('rv_service').value      = rec.service  || '';
+    document.getElementById('rv_status_input').value = rec.status   || 'pending';
+    document.getElementById('rv_note').value         = rec.note     || '';
+  } else {
+    titleEl.textContent = '📅 예약 추가';
+    document.getElementById('rv_eid').value          = '';
+    document.getElementById('rv_date').value         = today();
+    document.getElementById('rv_time').value         = '';
+    document.getElementById('rv_customer').value     = '';
+    document.getElementById('rv_phone').value        = '';
+    document.getElementById('rv_service').value      = '';
+    document.getElementById('rv_status_input').value = 'pending';
+    document.getElementById('rv_note').value         = '';
+  }
+}
+
+function closeRvModal() {
+  document.getElementById('rv_modal').classList.add('hidden');
+}
+
+function saveReservation() {
+  const id       = document.getElementById('rv_eid').value;
+  const date     = document.getElementById('rv_date').value;
+  const time     = document.getElementById('rv_time').value;
+  const customer = document.getElementById('rv_customer').value.trim();
+  const phone    = document.getElementById('rv_phone').value;
+  const service  = document.getElementById('rv_service').value;
+  const status   = document.getElementById('rv_status_input').value;
+  const note     = document.getElementById('rv_note').value;
+
+  if (!date || !customer || !time) {
+    showToast('날짜 · 고객명 · 시간은 필수입니다','error');
+    return;
+  }
+
+  const rec = {date, time, customer, phone, service, status, note};
+  if (id) DataService.update(KEYS.reservation, id, rec);
+  else    DataService.add(KEYS.reservation, rec);
+
+  closeRvModal();
+  showToast(id ? '수정되었습니다 ✅' : '예약이 추가되었습니다 ✅');
+  searchReservation();
+}
+
+function deleteReservation(id) {
+  if (!confirm('예약을 삭제하시겠습니까?')) return;
+  DataService.delete(KEYS.reservation, id);
+  showToast('삭제되었습니다','error');
+  searchReservation();
+}
+
+/* =====================================================
+   지출비용
+   엑셀 양식: 날짜, 지출항목, 지출비용
+   ===================================================== */
+function renderExpense(el) {
+  const cats = SettingsService.get().expenseCategories ||
+               ['월 임대료','재료비','인건비','공과금','식대','이자','기타'];
+  const catOpts    = cats.map(c=>`<option value="${c}">${c}</option>`).join('');
+  const catOptAll  = `<option value="">전체 항목</option>${catOpts}`;
+
+  el.innerHTML = `
+  <div class="search-bar">
+    <label>📅 기간</label>
+    <input type="date" id="ex_from" value="${monthStart()}">
+    <span class="date-separator">~</span>
+    <input type="date" id="ex_to"   value="${monthEnd()}">
+    <div class="search-shortcut-btns">
+      <button class="btn-shortcut" onclick="setRange('ex','today')">오늘</button>
+      <button class="btn-shortcut" onclick="setRange('ex','week')">이번주</button>
+      <button class="btn-shortcut" onclick="setRange('ex','month')">이번달</button>
+      <button class="btn-shortcut" onclick="setRange('ex','last')">지난달</button>
+    </div>
+    <select id="ex_cat_filter">${catOptAll}</select>
+    <button class="btn btn-primary" onclick="searchExpense()">🔍 조회</button>
+    <button class="btn btn-success" onclick="openExpModal(null)">➕ 추가</button>
+  </div>
+
+  <div id="ex_kpi" class="kpi-grid"></div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">💸 지출비용</span>
+      <span id="ex_cnt" style="font-size:12px;color:var(--text-muted)"></span>
+    </div>
+    <div class="table-wrap" id="ex_tbl"></div>
+  </div>
+
+  <!-- 입력 모달 -->
+  <div class="modal-overlay hidden" id="ex_modal">
+    <div class="modal">
+      <div class="modal-title" id="ex_mtitle">💸 지출 추가</div>
+      <input type="hidden" id="ex_eid">
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>날짜 *</label>
+          <input type="date" id="ex_date" value="${today()}">
+        </div>
+        <div class="form-group">
+          <label>지출항목 *</label>
+          <select id="ex_cat">${catOpts}</select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>세부내용 *</label>
+          <input type="text" id="ex_item" placeholder="세부 지출 내용">
+        </div>
+        <div class="form-group">
+          <label>지출비용 *</label>
+          <input type="number" id="ex_amount" placeholder="0" min="0">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>메모</label>
+        <input type="text" id="ex_note" placeholder="메모 (선택)">
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeExpModal()">취소</button>
+        <button class="btn btn-primary"  onclick="saveExpense()">💾 저장</button>
+      </div>
+    </div>
+  </div>`;
+
+  searchExpense();
+}
+
+function searchExpense() {
+  const from = document.getElementById('ex_from')?.value       || monthStart();
+  const to   = document.getElementById('ex_to')?.value         || monthEnd();
+  const cat  = document.getElementById('ex_cat_filter')?.value || '';
+
+  let data = DataService.filter(KEYS.expense, from, to)
+                        .sort((a,b) => b.date.localeCompare(a.date));
+  if (cat) data = data.filter(r => r.cat===cat);
+
+  const total = data.reduce((a,r) => a+num(r.amount), 0);
+  const avg   = data.length ? Math.round(total/data.length) : 0;
+
+  /* 카테고리별 합계 */
+  const cats = SettingsService.get().expenseCategories ||
+               ['월 임대료','재료비','인건비','공과금','식대','이자','기타'];
+  const catTotals = cats.map(c => ({
+    name : c,
+    total: data.filter(r=>r.cat===c).reduce((a,r)=>a+num(r.amount),0)
+  })).filter(c => c.total > 0);
+
+  /* KPI */
+  const kpiEl = document.getElementById('ex_kpi');
+  if (kpiEl) kpiEl.innerHTML = `
+    <div class="kpi-card danger">
+      <div class="kpi-label">💸 총 지출</div>
+      <div class="kpi-value">${fmtNum(total)}원</div>
+      <div class="kpi-sub">${from} ~ ${to}</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">📝 건수</div>
+      <div class="kpi-value">${data.length}건</div>
+      <div class="kpi-sub">선택 기간</div>
+    </div>
+    <div class="kpi-card info">
+      <div class="kpi-label">📊 건당 평균</div>
+      <div class="kpi-value">${fmtNum(avg)}원</div>
+      <div class="kpi-sub">평균 지출액</div>
+    </div>
+    ${catTotals.map(c=>`
+    <div class="kpi-card warning">
+      <div class="kpi-label">${c.name}</div>
+      <div class="kpi-value">${fmtNum(c.total)}원</div>
+      <div class="kpi-sub">항목 합계</div>
+    </div>`).join('')}`;
+
+  const cntEl = document.getElementById('ex_cnt');
+  if (cntEl) cntEl.textContent = `총 ${data.length}건`;
+
+  const tbl = document.getElementById('ex_tbl');
+  if (!tbl) return;
+
+  if (!data.length) {
+    tbl.innerHTML = `<div class="empty-state">
+      <div class="empty-icon">💸</div>
+      <p>해당 기간에 지출 데이터가 없습니다<br>➕ 버튼으로 추가해 주세요</p></div>`;
+    return;
+  }
+
+  tbl.innerHTML = `
+  <table>
+    <thead>
+      <tr>
+        <th>날짜</th><th>지출항목</th><th>세부내용</th>
+        <th style="text-align:right">지출비용</th><th>메모</th><th>관리</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${data.map(r=>`
+      <tr>
+        <td>${fmtDate(r.date)}</td>
+        <td><span class="badge badge-warning">${r.cat||'-'}</span></td>
+        <td>${r.item||'-'}</td>
+        <td style="text-align:right;font-weight:600;color:var(--danger)">
+          ${fmtNum(r.amount)}원</td>
+        <td>${r.note||'-'}</td>
+        <td>
+          <button class="btn btn-warning btn-sm"
+            onclick='openExpModal(${JSON.stringify(r).replace(/'/g,"&#39;")})'>✏️</button>
+          <button class="btn btn-danger btn-sm"
+            onclick="deleteExpense('${r.id}')">🗑️</button>
+        </td>
+      </tr>`).join('')}
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="3">합 계</td>
+        <td style="text-align:right;color:var(--danger)">${fmtNum(total)}원</td>
+        <td colspan="2"></td>
+      </tr>
+    </tfoot>
+  </table>`;
+}
+
+function openExpModal(rec) {
+  document.getElementById('ex_modal').classList.remove('hidden');
+  const titleEl = document.getElementById('ex_mtitle');
+  if (rec) {
+    titleEl.textContent = '✏️ 지출 수정';
+    document.getElementById('ex_eid').value    = rec.id;
+    document.getElementById('ex_date').value   = rec.date;
+    document.getElementById('ex_cat').value    = rec.cat    || '';
+    document.getElementById('ex_item').value   = rec.item   || '';
+    document.getElementById('ex_amount').value = rec.amount || 0;
+    document.getElementById('ex_note').value   = rec.note   || '';
+  } else {
+    titleEl.textContent = '💸 지출 추가';
+    document.getElementById('ex_eid').value    = '';
+    document.getElementById('ex_date').value   = today();
+    document.getElementById('ex_item').value   = '';
+    document.getElementById('ex_amount').value = '';
+    document.getElementById('ex_note').value   = '';
+  }
+}
+
+function closeExpModal() {
+  document.getElementById('ex_modal').classList.add('hidden');
+}
+
+function saveExpense() {
+  const id     = document.getElementById('ex_eid').value;
+  const date   = document.getElementById('ex_date').value;
+  const cat    = document.getElementById('ex_cat').value;
+  const item   = document.getElementById('ex_item').value.trim();
+  const amount = num(document.getElementById('ex_amount').value);
+  const note   = document.getElementById('ex_note').value;
+
+  if (!date || !cat || !item || !amount) {
+    showToast('날짜 · 지출항목 · 세부내용 · 금액은 필수입니다','error');
+    return;
+  }
+
+  const rec = {date, cat, item, amount, note};
+  if (id) DataService.update(KEYS.expense, id, rec);
+  else    DataService.add(KEYS.expense, rec);
+
+  closeExpModal();
+  showToast(id ? '수정되었습니다 ✅' : '추가되었습니다 ✅');
+  searchExpense();
+}
+
+function deleteExpense(id) {
+  if (!confirm('삭제하시겠습니까?')) return;
+  DataService.delete(KEYS.expense, id);
+  showToast('삭제되었습니다','error');
+  searchExpense();
+}
+
+console.log('✅ Part 4 로드 완료 — 프리샘일일관리/예약관리/지출비용');
+</script>
+<!-- ✅ Part 4 완료 → "Part 5 해줘" 라고 말씀해 주세요! -->
+<script>
+/* ================================================
+   PART 5 — 프리샘 관리 / 분석통계 / 설정 / 백업복원
+   ================================================ */
+
+/* =====================================================
+   프리샘 관리
+   ===================================================== */
+function renderTherapist(el) {
+  const list     = TherapistService.getAll();
+  const active   = list.filter(t => t.status==='active').length;
+  const inactive = list.filter(t => t.status!=='active').length;
+
+  el.innerHTML = `
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">👥 전체 프리샘</div>
+      <div class="kpi-value" id="th_kpi_tot">${list.length}명</div>
+      <div class="kpi-sub">등록 전체</div>
+    </div>
+    <div class="kpi-card success">
+      <div class="kpi-label">✅ 활성</div>
+      <div class="kpi-value" id="th_kpi_act">${active}명</div>
+      <div class="kpi-sub">현재 활동 중</div>
+    </div>
+    <div class="kpi-card warning">
+      <div class="kpi-label">⏸️ 비활성</div>
+      <div class="kpi-value" id="th_kpi_ina">${inactive}명</div>
+      <div class="kpi-sub">활동 중지</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">👥 프리샘 목록</span>
+      <button class="btn btn-success" onclick="openThModal(null)">➕ 프리샘 추가</button>
+    </div>
+    <div class="table-wrap" id="th_tbl"></div>
+  </div>
+
+  <!-- 입력 모달 -->
+  <div class="modal-overlay hidden" id="th_modal">
+    <div class="modal">
+      <div class="modal-title" id="th_mtitle">👤 프리샘 추가</div>
+      <input type="hidden" id="th_eid">
+      <div class="form-row">
+        <div class="form-group">
+          <label>이름 *</label>
+          <input type="text" id="th_name" placeholder="프리샘 이름">
+        </div>
+        <div class="form-group">
+          <label>전화번호</label>
+          <input type="text" id="th_phone" placeholder="010-0000-0000">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>전문 분야</label>
+          <input type="text" id="th_spec" placeholder="스웨디시, 아로마 등">
+        </div>
+        <div class="form-group">
+          <label>수수료율 (%)</label>
+          <input type="number" id="th_rate" placeholder="예: 50" min="0" max="100">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>소속 영업장</label>
+          <select id="th_place">
+            <option value="소노벨">🏠 소노벨</option>
+            <option value="스파">💆 스파</option>
+            <option value="양쪽">🏠💆 양쪽</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>상태</label>
+          <select id="th_status">
+            <option value="active">✅ 활성</option>
+            <option value="inactive">⏸️ 비활성</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>메모</label>
+        <textarea id="th_note" rows="2" placeholder="메모 (선택)"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeThModal()">취소</button>
+        <button class="btn btn-primary"  onclick="saveTherapist()">💾 저장</button>
+      </div>
+    </div>
+  </div>`;
+
+  renderThTable();
+}
+
+function renderThTable() {
+  const list = TherapistService.getAll();
+  const tbl  = document.getElementById('th_tbl');
+  if (!tbl) return;
+
+  if (!list.length) {
+    tbl.innerHTML = `<div class="empty-state">
+      <div class="empty-icon">👥</div>
+      <p>등록된 프리샘이 없습니다<br>➕ 버튼으로 추가해 주세요</p></div>`;
+    return;
+  }
+
+  /* 이번달 프리샘별 실적 */
+  const from     = monthStart();
+  const to       = monthEnd();
+  const freeData = DataService.filter(KEYS.freelancer, from, to);
+
+  tbl.innerHTML = `
+  <table>
+    <thead>
+      <tr>
+        <th>이름</th><th>소속</th><th>전문분야</th>
+        <th>수수료율</th><th>전화번호</th>
+        <th style="text-align:right">이번달 수익금</th>
+        <th style="text-align:right">이번달 이익금</th>
+        <th>상태</th><th>관리</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${list.map(t => {
+        const myData   = freeData.filter(r => r.name===t.name);
+        const myRev    = myData.reduce((a,r) => a+num(r.revenue), 0);
+        const myProfit = myData.reduce((a,r) => a+num(r.profit),  0);
+        return `
+        <tr>
+          <td><strong>${t.name}</strong></td>
+          <td>${t.place||'-'}</td>
+          <td>${t.spec||'-'}</td>
+          <td>${t.rate ? t.rate+'%' : '-'}</td>
+          <td>${t.phone||'-'}</td>
+          <td style="text-align:right;font-weight:600;color:var(--primary)">
+            ${fmtNum(myRev)}원</td>
+          <td style="text-align:right;font-weight:600;color:var(--success)">
+            ${fmtNum(myProfit)}원</td>
+          <td><span class="badge ${t.status==='active'?'badge-success':'badge-warning'}">
+            ${t.status==='active'?'✅ 활성':'⏸️ 비활성'}</span></td>
+          <td>
+            <button class="btn btn-warning btn-sm"
+              onclick='openThModal(${JSON.stringify(t).replace(/'/g,"&#39;")})'>✏️</button>
+            <button class="btn btn-danger btn-sm"
+              onclick="deleteTherapist('${t.id}')">🗑️</button>
+          </td>
+        </tr>`;
+      }).join('')}
+    </tbody>
+  </table>`;
+}
+
+function openThModal(rec) {
+  document.getElementById('th_modal').classList.remove('hidden');
+  const titleEl = document.getElementById('th_mtitle');
+  if (rec) {
+    titleEl.textContent = '✏️ 프리샘 수정';
+    document.getElementById('th_eid').value    = rec.id;
+    document.getElementById('th_name').value   = rec.name   || '';
+    document.getElementById('th_phone').value  = rec.phone  || '';
+    document.getElementById('th_spec').value   = rec.spec   || '';
+    document.getElementById('th_rate').value   = rec.rate   || '';
+    document.getElementById('th_place').value  = rec.place  || '소노벨';
+    document.getElementById('th_status').value = rec.status || 'active';
+    document.getElementById('th_note').value   = rec.note   || '';
+  } else {
+    titleEl.textContent = '👤 프리샘 추가';
+    ['th_eid','th_name','th_phone','th_spec','th_rate','th_note']
+      .forEach(id => { document.getElementById(id).value = ''; });
+    document.getElementById('th_place').value  = '소노벨';
+    document.getElementById('th_status').value = 'active';
+  }
+}
+
+function closeThModal() {
+  document.getElementById('th_modal').classList.add('hidden');
+}
+
+function saveTherapist() {
+  const id     = document.getElementById('th_eid').value;
+  const name   = document.getElementById('th_name').value.trim();
+  const phone  = document.getElementById('th_phone').value;
+  const spec   = document.getElementById('th_spec').value;
+  const rate   = document.getElementById('th_rate').value;
+  const place  = document.getElementById('th_place').value;
+  const status = document.getElementById('th_status').value;
+  const note   = document.getElementById('th_note').value;
+
+  if (!name) { showToast('이름은 필수입니다','error'); return; }
+
+  const rec = {name, phone, spec, rate, place, status, note};
+  if (id) TherapistService.update(id, rec);
+  else    TherapistService.add(rec);
+
+  closeThModal();
+  showToast(id ? '수정되었습니다 ✅' : '프리샘이 추가되었습니다 ✅');
+
+  /* KPI 갱신 */
+  const list = TherapistService.getAll();
+  const totEl = document.getElementById('th_kpi_tot');
+  const actEl = document.getElementById('th_kpi_act');
+  const inaEl = document.getElementById('th_kpi_ina');
+  if (totEl) totEl.textContent = list.length+'명';
+  if (actEl) actEl.textContent = list.filter(t=>t.status==='active').length+'명';
+  if (inaEl) inaEl.textContent = list.filter(t=>t.status!=='active').length+'명';
+
+  renderThTable();
+}
+
+function deleteTherapist(id) {
+  if (!confirm('프리샘을 삭제하시겠습니까?')) return;
+  TherapistService.delete(id);
+  showToast('삭제되었습니다','error');
+
+  const list = TherapistService.getAll();
+  const totEl = document.getElementById('th_kpi_tot');
+  const actEl = document.getElementById('th_kpi_act');
+  const inaEl = document.getElementById('th_kpi_ina');
+  if (totEl) totEl.textContent = list.length+'명';
+  if (actEl) actEl.textContent = list.filter(t=>t.status==='active').length+'명';
+  if (inaEl) inaEl.textContent = list.filter(t=>t.status!=='active').length+'명';
+
+  renderThTable();
+}
+
+/* =====================================================
+   분석 / 통계
+   ===================================================== */
+let anCharts = {};
+
+function renderAnalysis(el) {
+  const year = new Date().getFullYear();
+  el.innerHTML = `
+  <div class="search-bar">
+    <label>📅 연도 선택</label>
+    <select id="an_year">
+      <option value="${year-1}">${year-1}년</option>
+      <option value="${year}" selected>${year}년</option>
+      <option value="${year+1}">${year+1}년</option>
+    </select>
+    <button class="btn btn-primary" onclick="runAnalysis()">📊 분석 실행</button>
+  </div>
+
+  <div id="an_kpi" class="kpi-grid"></div>
+
+  <div class="chart-grid">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">📈 월별 수익금 추이</span>
+      </div>
+      <div class="chart-container"><canvas id="an_bar"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">🥧 연간 수익 구성비</span>
+      </div>
+      <div class="chart-container"><canvas id="an_pie"></canvas></div>
+    </div>
+  </div>
+
+  <div class="chart-grid">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">💸 지출 항목별 분석</span>
+      </div>
+      <div class="chart-container"><canvas id="an_exp"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">🏆 프리샘 연간 성과 순위</span>
+      </div>
+      <div class="table-wrap" id="an_rank"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">📋 월별 상세 결산표</span>
+    </div>
+    <div class="table-wrap" id="an_monthly"></div>
+  </div>`;
+
+  runAnalysis();
+}
+
+function runAnalysis() {
+  const year = parseInt(
+    document.getElementById('an_year')?.value || new Date().getFullYear()
+  );
+
+  /* 월별 데이터 수집 */
+  const monthly = Array.from({length:12}, (_,i) => {
+    const m    = String(i+1).padStart(2,'0');
+    const from = `${year}-${m}-01`;
+    const base = new Date(year, i+1, 0);
+    const to   = base.toISOString().split('T')[0];
+
+    const sD = DataService.filter(KEYS.sonobel,    from, to);
+    const pD = DataService.filter(KEYS.spa,        from, to);
+    const fD = DataService.filter(KEYS.freelancer, from, to);
+    const eD = DataService.filter(KEYS.expense,    from, to);
+
+    const sRev = sD.reduce((a,r)=>a+num(r.revenue),0);
+    const pRev = pD.reduce((a,r)=>a+num(r.revenue),0);
+    const fRev = fD.reduce((a,r)=>a+num(r.revenue),0);
+    const sPrf = sD.reduce((a,r)=>a+num(r.profit), 0);
+    const pPrf = pD.reduce((a,r)=>a+num(r.profit), 0);
+    const fPrf = fD.reduce((a,r)=>a+num(r.profit), 0);
+    const exp  = eD.reduce((a,r)=>a+num(r.amount), 0);
+
+    return {
+      label : `${i+1}월`,
+      sonoRev:sRev, spaRev:pRev, freeRev:fRev,
+      sonoPrf:sPrf, spaPrf:pPrf, freePrf:fPrf,
+      totalRev: sRev+pRev+fRev,
+      totalPrf: sPrf+pPrf+fPrf,
+      exp, net: sPrf+pPrf+fPrf-exp
+    };
+  });
+
+  const totSonoRev = monthly.reduce((a,m)=>a+m.sonoRev,0);
+  const totSpaRev  = monthly.reduce((a,m)=>a+m.spaRev, 0);
+  const totFreeRev = monthly.reduce((a,m)=>a+m.freeRev,0);
+  const totPrf     = monthly.reduce((a,m)=>a+m.totalPrf,0);
+  const totExp     = monthly.reduce((a,m)=>a+m.exp,    0);
+  const totNet     = monthly.reduce((a,m)=>a+m.net,    0);
+  const totRev     = totSonoRev+totSpaRev+totFreeRev;
+  const perPerson  = Math.round(totNet/2);
+
+  /* KPI */
+  document.getElementById('an_kpi').innerHTML = `
+  <div class="kpi-card">
+    <div class="kpi-label">🏠 연 소노벨 수익금</div>
+    <div class="kpi-value">${fmtNum(totSonoRev)}원</div>
+    <div class="kpi-sub">${year}년 합계</div>
+  </div>
+  <div class="kpi-card success">
+    <div class="kpi-label">💆 연 스파 수익금</div>
+    <div class="kpi-value">${fmtNum(totSpaRev)}원</div>
+    <div class="kpi-sub">${year}년 합계</div>
+  </div>
+  <div class="kpi-card info">
+    <div class="kpi-label">🧖 연 프리샘 수익금</div>
+    <div class="kpi-value">${fmtNum(totFreeRev)}원</div>
+    <div class="kpi-sub">${year}년 합계</div>
+  </div>
+  <div class="kpi-card warning">
+    <div class="kpi-label">💸 연 지출비용</div>
+    <div class="kpi-value">${fmtNum(totExp)}원</div>
+    <div class="kpi-sub">${year}년 합계</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">💰 연 총수익금</div>
+    <div class="kpi-value">${fmtNum(totRev)}원</div>
+    <div class="kpi-sub">전체 합산</div>
+  </div>
+  <div class="kpi-card ${totNet>=0?'success':'danger'}">
+    <div class="kpi-label">📊 연 순이익금</div>
+    <div class="kpi-value">${fmtNum(totNet)}원</div>
+    <div class="kpi-sub">1인당 ${fmtNum(perPerson)}원</div>
+  </div>`;
+
+  /* 기존 차트 제거 */
+  Object.values(anCharts).forEach(c => { try{c.destroy();}catch(e){} });
+  anCharts = {};
+
+  /* 월별 수익금 막대 차트 */
+  const barCtx = document.getElementById('an_bar');
+  if (barCtx) {
+    anCharts.bar = new Chart(barCtx, {
+      type:'bar',
+      data:{
+        labels: monthly.map(m=>m.label),
+        datasets:[
+          { label:'소노벨', data:monthly.map(m=>m.sonoRev),
+            backgroundColor:'#4f46e5', borderRadius:4 },
+          { label:'스파',   data:monthly.map(m=>m.spaRev),
+            backgroundColor:'#10b981', borderRadius:4 },
+          { label:'프리샘', data:monthly.map(m=>m.freeRev),
+            backgroundColor:'#f59e0b', borderRadius:4 }
+        ]
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{legend:{position:'bottom'}},
+        scales:{x:{stacked:true}, y:{stacked:true, beginAtZero:true}}
+      }
+    });
+  }
+
+  /* 수익 구성 파이 차트 */
+  const pieCtx = document.getElementById('an_pie');
+  if (pieCtx) {
+    anCharts.pie = new Chart(pieCtx, {
+      type:'doughnut',
+      data:{
+        labels:['소노벨','스파','프리샘'],
+        datasets:[{
+          data:[totSonoRev, totSpaRev, totFreeRev],
+          backgroundColor:['#4f46e5','#10b981','#f59e0b'],
+          borderWidth:0
+        }]
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{legend:{position:'bottom'}}
+      }
+    });
+  }
+
+  /* 지출 항목별 차트 */
+  const cats    = SettingsService.get().expenseCategories ||
+                  ['월 임대료','재료비','인건비','공과금','식대','이자','기타'];
+  const yearFrom = `${year}-01-01`;
+  const yearTo   = `${year}-12-31`;
+  const expAll   = DataService.filter(KEYS.expense, yearFrom, yearTo);
+  const expByCat = cats.map(c =>
+    expAll.filter(r=>r.cat===c).reduce((a,r)=>a+num(r.amount),0)
+  );
+
+  const expCtx = document.getElementById('an_exp');
+  if (expCtx) {
+    anCharts.exp = new Chart(expCtx, {
+      type:'bar',
+      data:{
+        labels: cats,
+        datasets:[{
+          label:'지출',
+          data: expByCat,
+          backgroundColor:'#ef4444',
+          borderRadius:6
+        }]
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{legend:{display:false}},
+        scales:{y:{beginAtZero:true}}
+      }
+    });
+  }
+
+  /* 프리샘 성과 순위 */
+  const therapists = TherapistService.getAll();
+  const freeAll    = DataService.filter(KEYS.freelancer, yearFrom, yearTo);
+  const ranking    = therapists.map(t => ({
+    name  : t.name,
+    place : t.place || '-',
+    rev   : freeAll.filter(r=>r.name===t.name).reduce((a,r)=>a+num(r.revenue),0),
+    profit: freeAll.filter(r=>r.name===t.name).reduce((a,r)=>a+num(r.profit), 0),
+    count : freeAll.filter(r=>r.name===t.name).length
+  })).sort((a,b) => b.rev-a.rev);
+
+  const rankEl = document.getElementById('an_rank');
+  if (rankEl) {
+    if (!ranking.length) {
+      rankEl.innerHTML = `<div class="empty-state">
+        <div class="empty-icon">🏆</div>
+        <p>프리샘 데이터가 없습니다<br>프리샘 관리에서 먼저 등록해 주세요</p></div>`;
+    } else {
+      rankEl.innerHTML = `
+      <table>
+        <thead>
+          <tr>
+            <th>순위</th><th>이름</th><th>소속</th><th>건수</th>
+            <th style="text-align:right">연 수익금</th>
+            <th style="text-align:right">연 이익금</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${ranking.map((t,i)=>`
+          <tr>
+            <td><span class="badge ${
+              i===0?'badge-warning':i===1?'badge-primary':'badge-info'}">
+              ${i+1}위</span></td>
+            <td><strong>${t.name}</strong></td>
+            <td>${t.place}</td>
+            <td>${t.count}건</td>
+            <td style="text-align:right;font-weight:600;color:var(--primary)">
+              ${fmtNum(t.rev)}원</td>
+            <td style="text-align:right;font-weight:600;color:var(--success)">
+              ${fmtNum(t.profit)}원</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>`;
+    }
+  }
+
+  /* 월별 상세 결산표 */
+  const monEl = document.getElementById('an_monthly');
+  if (monEl) {
+    monEl.innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th>월</th>
+          <th style="text-align:right">소노벨 수익금</th>
+          <th style="text-align:right">스파 수익금</th>
+          <th style="text-align:right">프리샘 수익금</th>
+          <th style="text-align:right">총 수익금</th>
+          <th style="text-align:right">총 이익금</th>
+          <th style="text-align:right">지출비용</th>
+          <th style="text-align:right">순이익금</th>
+          <th style="text-align:right">1인 결산</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${monthly.map(m=>`
+        <tr>
+          <td><strong>${m.label}</strong></td>
+          <td style="text-align:right">${m.sonoRev?fmtNum(m.sonoRev)+'원':'-'}</td>
+          <td style="text-align:right">${m.spaRev ?fmtNum(m.spaRev) +'원':'-'}</td>
+          <td style="text-align:right">${m.freeRev?fmtNum(m.freeRev)+'원':'-'}</td>
+          <td style="text-align:right;font-weight:600">${fmtNum(m.totalRev)}원</td>
+          <td style="text-align:right;color:var(--success)">${fmtNum(m.totalPrf)}원</td>
+          <td style="text-align:right;color:var(--danger)">${m.exp?fmtNum(m.exp)+'원':'-'}</td>
+          <td style="text-align:right;font-weight:700;
+            color:${m.net>=0?'var(--success)':'var(--danger)'}">
+            ${fmtNum(m.net)}원</td>
+          <td style="text-align:right;font-weight:700;color:var(--primary)">
+            ${fmtNum(Math.round(m.net/2))}원</td>
+        </tr>`).join('')}
+      </tbody>
+      <tfoot>
+        <tr>
+          <td>연 합계</td>
+          <td style="text-align:right">${fmtNum(totSonoRev)}원</td>
+          <td style="text-align:right">${fmtNum(totSpaRev)}원</td>
+          <td style="text-align:right">${fmtNum(totFreeRev)}원</td>
+          <td style="text-align:right;font-weight:700">${fmtNum(totRev)}원</td>
+          <td style="text-align:right;color:var(--success)">${fmtNum(totPrf)}원</td>
+          <td style="text-align:right;color:var(--danger)">${fmtNum(totExp)}원</td>
+          <td style="text-align:right;font-weight:700;
+            color:${totNet>=0?'var(--success)':'var(--danger)'}">
+            ${fmtNum(totNet)}원</td>
+          <td style="text-align:right;font-weight:700;color:var(--primary)">
+            ${fmtNum(perPerson)}원</td>
+        </tr>
+      </tfoot>
+    </table>`;
+  }
+}
+
+/* =====================================================
+   설정
+   ===================================================== */
+function renderSettings(el) {
+  const s = SettingsService.get();
+  el.innerHTML = `
+  <div class="card">
+    <div class="card-header"><span class="card-title">🏢 사업장 정보</span></div>
+    <div class="settings-row">
+      <label>사업장명</label>
+      <input type="text" id="set_biz" value="${s.businessName||''}">
+    </div>
+    <div class="settings-row">
+      <label>주소</label>
+      <input type="text" id="set_addr" value="${s.address||''}">
+    </div>
+    <div class="settings-row">
+      <label>전화번호</label>
+      <input type="text" id="set_phone" value="${s.phone||''}">
+    </div>
+    <div style="text-align:right;margin-top:14px">
+      <button class="btn btn-primary" onclick="saveBizSettings()">💾 사업장 정보 저장</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">🏷️ 지출 카테고리 관리</span>
+      <button class="btn btn-success btn-sm" onclick="addCat()">➕ 추가</button>
+    </div>
+    <div id="cat_list"
+      style="display:flex;flex-wrap:wrap;gap:8px;padding:8px 0;min-height:44px"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">👥 고객 유형 관리</span>
+      <button class="btn btn-success btn-sm" onclick="addCustType()">➕ 추가</button>
+    </div>
+    <div id="cust_list"
+      style="display:flex;flex-wrap:wrap;gap:8px;padding:8px 0;min-height:44px"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="card-title">🔑 PIN 번호 변경</span></div>
+    <div class="settings-row">
+      <label>사용자 선택</label>
+      <select id="set_pin_user">
+        <option value="user1">👨 쭌대디</option>
+        <option value="user2">👩 쭌마미</option>
+      </select>
+    </div>
+    <div class="settings-row">
+      <label>새 PIN (숫자 4자리)</label>
+      <input type="password" id="set_pin_new" maxlength="4" placeholder="****">
+    </div>
+    <div class="settings-row">
+      <label>새 PIN 확인</label>
+      <input type="password" id="set_pin_chk" maxlength="4" placeholder="****">
+    </div>
+    <div style="text-align:right;margin-top:14px">
+      <button class="btn btn-warning" onclick="changePIN()">🔑 PIN 변경</button>
+    </div>
+  </div>`;
+
+  renderCatList();
+  renderCustList();
+}
+
+function renderCatList() {
+  const s  = SettingsService.get();
+  const el = document.getElementById('cat_list');
+  if (!el) return;
+  el.innerHTML = s.expenseCategories.map((c,i)=>`
+  <span style="display:inline-flex;align-items:center;gap:6px;
+    background:#eef2ff;padding:6px 12px;border-radius:20px;
+    font-size:13px;color:var(--primary)">
+    ${c}
+    <span onclick="removeCat(${i})"
+      style="cursor:pointer;color:var(--danger);font-weight:700;font-size:16px">×</span>
+  </span>`).join('');
+}
+
+function renderCustList() {
+  const s  = SettingsService.get();
+  const el = document.getElementById('cust_list');
+  if (!el) return;
+  const types = s.customerTypes || ['투숙객','관광객','도민','기타'];
+  el.innerHTML = types.map((c,i)=>`
+  <span style="display:inline-flex;align-items:center;gap:6px;
+    background:#ecfdf5;padding:6px 12px;border-radius:20px;
+    font-size:13px;color:var(--success)">
+    ${c}
+    <span onclick="removeCustType(${i})"
+      style="cursor:pointer;color:var(--danger);font-weight:700;font-size:16px">×</span>
+  </span>`).join('');
+}
+
+function addCat() {
+  const name = prompt('새 지출 카테고리 이름:');
+  if (!name||!name.trim()) return;
+  const s = SettingsService.get();
+  if (s.expenseCategories.includes(name.trim())) {
+    showToast('이미 존재하는 카테고리입니다','error'); return;
+  }
+  s.expenseCategories.push(name.trim());
+  SettingsService.set(s);
+  showToast('추가되었습니다 ✅');
+  renderCatList();
+}
+
+function removeCat(idx) {
+  if (!confirm('삭제하시겠습니까?')) return;
+  const s = SettingsService.get();
+  s.expenseCategories.splice(idx,1);
+  SettingsService.set(s);
+  showToast('삭제되었습니다','error');
+  renderCatList();
+}
+
+function addCustType() {
+  const name = prompt('새 고객 유형 이름:');
+  if (!name||!name.trim()) return;
+  const s = SettingsService.get();
+  const types = s.customerTypes || ['투숙객','관광객','도민','기타'];
+  if (types.includes(name.trim())) {
+    showToast('이미 존재합니다','error'); return;
+  }
+  types.push(name.trim());
+  s.customerTypes = types;
+  SettingsService.set(s);
+  showToast('추가되었습니다 ✅');
+  renderCustList();
+}
+
+function removeCustType(idx) {
+  if (!confirm('삭제하시겠습니까?')) return;
+  const s     = SettingsService.get();
+  const types = s.customerTypes || ['투숙객','관광객','도민','기타'];
+  types.splice(idx,1);
+  s.customerTypes = types;
+  SettingsService.set(s);
+  showToast('삭제되었습니다','error');
+  renderCustList();
+}
+
+function saveBizSettings() {
+  const s          = SettingsService.get();
+  s.businessName   = document.getElementById('set_biz').value;
+  s.address        = document.getElementById('set_addr').value;
+  s.phone          = document.getElementById('set_phone').value;
+  SettingsService.set(s);
+  showToast('사업장 정보가 저장되었습니다 ✅');
+}
+
+function changePIN() {
+  const uid  = document.getElementById('set_pin_user').value;
+  const np   = document.getElementById('set_pin_new').value;
+  const chk  = document.getElementById('set_pin_chk').value;
+  if (!/^\d{4}$/.test(np)) {
+    showToast('PIN은 숫자 4자리여야 합니다','error'); return;
+  }
+  if (np !== chk) {
+    showToast('PIN이 일치하지 않습니다','error'); return;
+  }
+  UserService.updatePin(uid, np);
+  showToast('PIN이 변경되었습니다 ✅');
+  document.getElementById('set_pin_new').value = '';
+  document.getElementById('set_pin_chk').value = '';
+}
+
+/* =====================================================
+   백업 / 복원
+   ===================================================== */
+function renderBackup(el) {
+  const stats = Object.entries(KEYS).map(([name,key]) => {
+    const d   = DB.get(key,[]);
+    const cnt = Array.isArray(d) ? d.length : '설정';
+    return {name, key, cnt};
+  });
+
+  el.innerHTML = `
+  <div class="kpi-grid">
+    ${stats.map(s=>`
+    <div class="kpi-card info">
+      <div class="kpi-label">${s.name}</div>
+      <div class="kpi-value">${s.cnt==='설정'?'설정':s.cnt+'건'}</div>
+      <div class="kpi-sub">${s.key}</div>
+    </div>`).join('')}
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="card-title">📥 데이터 백업</span></div>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;line-height:1.8">
+      현재 저장된 모든 데이터를 JSON 파일로 내보냅니다.<br>
+      파일을 안전한 곳에 보관해 두시면 언제든 복원할 수 있습니다.
+    </p>
+    <button class="btn btn-primary" onclick="exportBackup()">
+      📥 JSON 백업 다운로드
+    </button>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="card-title">📤 데이터 복원</span></div>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;line-height:1.8">
+      백업된 JSON 파일을 선택하여 데이터를 복원합니다.<br>
+      ⚠️ 복원 시 현재 데이터는 백업 파일 내용으로 덮어씌워집니다.
+    </p>
+    <input type="file" id="restore_file" accept=".json"
+      style="display:block;margin-bottom:14px;font-size:13px">
+    <button class="btn btn-warning" onclick="importBackup()">📤 복원 실행</button>
+  </div>
+
+  <div class="card" style="border:2px solid var(--danger)">
+    <div class="card-header">
+      <span class="card-title" style="color:var(--danger)">⚠️ 데이터 초기화</span>
+    </div>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;line-height:1.8">
+      모든 데이터를 영구 삭제합니다.<br>
+      ⚠️ 이 작업은 되돌릴 수 없으니 반드시 백업 후 진행하세요!
+    </p>
+    <button class="btn btn-danger" onclick="resetAll()">🗑️ 전체 데이터 초기화</button>
+  </div>`;
+}
+
+function exportBackup() {
+  const backup = {
+    _exportedAt : new Date().toISOString(),
+    _version    : APP_VERSION
+  };
+  Object.values(KEYS).forEach(k => { backup[k] = DB.get(k, null); });
+
+  const blob = new Blob([JSON.stringify(backup,null,2)], {type:'application/json'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = `sonobel_backup_${today()}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('백업 파일이 다운로드 되었습니다 ✅');
+}
+
+function importBackup() {
+  const file = document.getElementById('restore_file')?.files[0];
+  if (!file) { showToast('파일을 선택해 주세요','error'); return; }
+  if (!confirm('현재 데이터를 백업 파일로 덮어씁니다.\n계속하시겠습니까?')) return;
+
+  const reader  = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      Object.values(KEYS).forEach(k => {
+        if (data[k] !== undefined) DB.set(k, data[k]);
+      });
+      showToast('복원 완료! 페이지를 새로고침합니다 ✅');
+      setTimeout(() => location.reload(), 1500);
+    } catch {
+      showToast('파일 형식이 올바르지 않습니다','error');
+    }
+  };
+  reader.readAsText(file);
+}
+
+function resetAll() {
+  if (!confirm('⚠️ 정말로 모든 데이터를 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다!')) return;
+  if (!confirm('마지막 확인입니다.\n모든 데이터가 영구 삭제됩니다. 계속하시겠습니까?')) return;
+  Object.values(KEYS).forEach(k => localStorage.removeItem(k));
+  showToast('초기화 완료. 페이지를 새로고침합니다','error');
+  setTimeout(() => location.reload(), 1500);
+}
+
+console.log('✅ Part 5 로드 완료');
+console.log('🏨 소노벨 & 스파 비용관리시스템 v2026 — 전체 로드 완료!');
+</script>
+
+</body>
+</html>
