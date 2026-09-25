@@ -67,26 +67,17 @@
   .sync-dot.syncing{background:var(--warning);animation:blink 1s infinite;}
   .sync-dot.error{background:var(--danger);}
   @keyframes blink{0%,100%{opacity:1;}50%{opacity:0.2;}}
-
-  /* ★ 4단계 추가: 오프라인 배너 */
   #offlineBanner{display:none;position:fixed;top:0;left:0;right:0;z-index:99999;background:#ef4444;color:#fff;text-align:center;padding:10px 16px;font-size:13px;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,0.2);}
   #offlineBanner.show{display:block;}
-
-  /* ★ 4단계 추가: 로딩 스피너 오버레이 */
   #loadingOverlay{display:none;position:fixed;inset:0;background:rgba(30,27,75,0.45);z-index:88888;align-items:center;justify-content:center;flex-direction:column;gap:16px;}
   #loadingOverlay.show{display:flex;}
   .spinner{width:48px;height:48px;border:5px solid rgba(255,255,255,0.25);border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite;}
   @keyframes spin{to{transform:rotate(360deg);}}
   .spinner-text{color:#fff;font-size:14px;font-weight:600;}
-
-  /* ★ 4단계 추가: 오프라인 큐 뱃지 */
   #queueBadge{display:none;position:fixed;bottom:72px;right:24px;background:var(--warning);color:#fff;border-radius:20px;padding:6px 14px;font-size:12px;font-weight:700;z-index:9998;box-shadow:var(--shadow-lg);cursor:pointer;}
   #queueBadge.show{display:block;}
-
-  /* ★ 4단계 추가: 자동 새로고침 카운터 */
   #autoSyncBar{display:none;padding:4px 16px;background:rgba(255,255,255,0.05);font-size:10px;color:rgba(199,210,254,0.5);text-align:center;border-top:1px solid rgba(255,255,255,0.04);}
   #autoSyncBar.show{display:block;}
-
   #mainArea{flex:1;display:flex;flex-direction:column;overflow:hidden;}
   #header{background:#fff;padding:14px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow);}
   .header-left{display:flex;align-items:center;gap:12px;}
@@ -94,12 +85,9 @@
   .page-title{font-size:18px;font-weight:700;color:var(--text);}
   .header-right{display:flex;align-items:center;gap:12px;}
   .header-date{font-size:13px;color:var(--text-muted);}
-
-  /* ★ 4단계 추가: 헤더 수동 새로고침 버튼 */
   .sync-btn{background:none;border:1.5px solid var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:4px;transition:all 0.2s;}
   .sync-btn:hover{border-color:var(--primary);color:var(--primary);background:#eef2ff;}
   .sync-btn.spinning .sync-icon{animation:spin 1s linear infinite;display:inline-block;}
-
   #content{flex:1;overflow-y:auto;padding:24px;}
   .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:20px;}
   .kpi-card{background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);border-left:4px solid var(--primary);transition:transform 0.2s;}
@@ -187,87 +175,46 @@
 </head>
 <body>
 
-<!-- ★ 4단계 추가: 오프라인 배너 -->
-<div id="offlineBanner">
-  📡 인터넷 연결이 끊어졌습니다. 데이터는 로컬에 저장되며 연결 복구 시 자동 동기화됩니다.
-</div>
+<div id="offlineBanner">📡 인터넷 연결이 끊어졌습니다. 데이터는 로컬에 저장되며 연결 복구 시 자동 동기화됩니다.</div>
+<div id="loadingOverlay"><div class="spinner"></div><div class="spinner-text">Google Sheets 동기화 중...</div></div>
+<div id="queueBadge" onclick="flushQueue()">📤 <span id="queueCount">0</span>건 전송 대기 — 탭하여 전송</div>
 
-<!-- ★ 4단계 추가: 로딩 스피너 오버레이 -->
-<div id="loadingOverlay">
-  <div class="spinner"></div>
-  <div class="spinner-text">Google Sheets 동기화 중...</div>
-</div>
-
-<!-- ★ 4단계 추가: 오프라인 큐 뱃지 -->
-<div id="queueBadge" onclick="flushQueue()">
-  📤 <span id="queueCount">0</span>건 전송 대기 — 탭하여 전송
-</div>
-
-<!-- 로그인 화면 -->
 <div id="loginScreen">
   <div class="login-box">
     <div class="user-select-area">
       <div class="user-select-title">사용자를 선택하세요</div>
       <div class="user-tabs">
-        <div class="user-tab active" id="tabUser1" onclick="selectUser('user1')">
-          <span class="tab-emoji">👨</span>
-          <div class="tab-name">쭌대디</div>
-          <div class="tab-role">관리자</div>
-        </div>
-        <div class="user-tab" id="tabUser2" onclick="selectUser('user2')">
-          <span class="tab-emoji">👩</span>
-          <div class="tab-name">쭌마미</div>
-          <div class="tab-role">스태프</div>
-        </div>
+        <div class="user-tab active" id="tabUser1" onclick="selectUser('user1')"><span class="tab-emoji">👨</span><div class="tab-name">쭌대디</div><div class="tab-role">관리자</div></div>
+        <div class="user-tab" id="tabUser2" onclick="selectUser('user2')"><span class="tab-emoji">👩</span><div class="tab-name">쭌마미</div><div class="tab-role">스태프</div></div>
       </div>
     </div>
     <div class="login-system-name">소노벨 & 스파</div>
     <div class="login-system-sub">비용관리 플랫폼 v2026</div>
     <div class="pin-dots" id="pinDots">
-      <div class="pin-dot" id="dot0"></div>
-      <div class="pin-dot" id="dot1"></div>
-      <div class="pin-dot" id="dot2"></div>
-      <div class="pin-dot" id="dot3"></div>
+      <div class="pin-dot" id="dot0"></div><div class="pin-dot" id="dot1"></div>
+      <div class="pin-dot" id="dot2"></div><div class="pin-dot" id="dot3"></div>
     </div>
     <div class="pin-keypad">
-      <div class="pin-key" onclick="pinInput('1')">1</div>
-      <div class="pin-key" onclick="pinInput('2')">2</div>
-      <div class="pin-key" onclick="pinInput('3')">3</div>
-      <div class="pin-key" onclick="pinInput('4')">4</div>
-      <div class="pin-key" onclick="pinInput('5')">5</div>
-      <div class="pin-key" onclick="pinInput('6')">6</div>
-      <div class="pin-key" onclick="pinInput('7')">7</div>
-      <div class="pin-key" onclick="pinInput('8')">8</div>
-      <div class="pin-key" onclick="pinInput('9')">9</div>
-      <div class="pin-key delete-key" onclick="pinDelete()">⌫ 삭제</div>
-      <div class="pin-key" onclick="pinInput('0')">0</div>
+      <div class="pin-key" onclick="pinInput('1')">1</div><div class="pin-key" onclick="pinInput('2')">2</div><div class="pin-key" onclick="pinInput('3')">3</div>
+      <div class="pin-key" onclick="pinInput('4')">4</div><div class="pin-key" onclick="pinInput('5')">5</div><div class="pin-key" onclick="pinInput('6')">6</div>
+      <div class="pin-key" onclick="pinInput('7')">7</div><div class="pin-key" onclick="pinInput('8')">8</div><div class="pin-key" onclick="pinInput('9')">9</div>
+      <div class="pin-key delete-key" onclick="pinDelete()">⌫ 삭제</div><div class="pin-key" onclick="pinInput('0')">0</div>
       <div class="pin-key confirm-key" onclick="pinConfirm()">확인 ✓</div>
     </div>
     <div class="login-error" id="loginError"></div>
   </div>
 </div>
 
-<!-- 앱 본체 -->
 <div id="app" class="hidden">
   <div id="sidebar">
-    <div class="sidebar-logo">
-      <span class="logo-icon">🏨</span>
-      <div class="logo-text">소노벨 & 스파<small>비용관리 플랫폼 v2026</small></div>
-    </div>
+    <div class="sidebar-logo"><span class="logo-icon">🏨</span><div class="logo-text">소노벨 & 스파<small>비용관리 플랫폼 v2026</small></div></div>
     <div class="sidebar-user">
       <div class="user-avatar" id="sideUserEmoji">👨</div>
-      <div class="user-info">
-        <div class="name" id="sideUserName">쭌대디</div>
-        <div class="role" id="sideUserRole">관리자</div>
-      </div>
+      <div class="user-info"><div class="name" id="sideUserName">쭌대디</div><div class="role" id="sideUserRole">관리자</div></div>
     </div>
     <nav class="sidebar-nav" id="sidebarNav"></nav>
     <div class="sidebar-footer">
-      <div class="sync-bar">
-        <div class="sync-dot" id="syncDot"></div>
-        <span id="syncText">동기화됨</span>
-      </div>
-      <!-- ★ 4단계 추가: 자동 새로고침 카운터 표시 -->
+      <div class="sync-bar"><div class="sync-dot" id="syncDot"></div><span id="syncText">동기화됨</span></div>
       <div id="autoSyncBar" class="show">🔄 자동동기화: <span id="autoSyncCount">30</span>초 후</div>
       <div class="logout-btn" onclick="doLogout()">🚪 <span>로그아웃</span></div>
     </div>
@@ -280,10 +227,7 @@
       </div>
       <div class="header-right">
         <span class="header-date" id="headerDate"></span>
-        <!-- ★ 4단계 추가: 수동 새로고침 버튼 -->
-        <button class="sync-btn" id="manualSyncBtn" onclick="manualSync()" title="지금 동기화">
-          <span class="sync-icon">🔄</span> 동기화
-        </button>
+        <button class="sync-btn" id="manualSyncBtn" onclick="manualSync()" title="지금 동기화"><span class="sync-icon">🔄</span> 동기화</button>
         <span style="font-size:13px;color:var(--text)">👤 <span id="headerUser">쭌대디</span></span>
       </div>
     </div>
@@ -294,14 +238,8 @@
 <div id="toast"></div>
 
 <script>
-/* ===== Google Sheets API 설정 ===== */
 const GAS_URL='https://script.google.com/macros/s/AKfycbzq7MvPlhqjMT8CUE2YzADeiHjyCML-skMlEmoCmOkKGVD9r9h8YhYhtCDD8pyDnE85/exec';
-
-/* ===== 상수 ===== */
-const USERS={
-  user1:{name:'쭌대디',role:'관리자',emoji:'👨',pin:'1234'},
-  user2:{name:'쭌마미',role:'스태프',emoji:'👩',pin:'5678'}
-};
+const USERS={user1:{name:'쭌대디',role:'관리자',emoji:'👨',pin:'1234'},user2:{name:'쭌마미',role:'스태프',emoji:'👩',pin:'5678'}};
 const MENU_ITEMS=[
   {id:'reservation',label:'예약관리',icon:'📅',group:'운영관리'},
   {id:'expense',label:'지출비용',icon:'💸',group:'운영관리'},
@@ -315,123 +253,37 @@ const MENU_ITEMS=[
   {id:'settings',label:'설정',icon:'⚙️',group:'시스템'},
   {id:'backup',label:'백업/복원',icon:'💾',group:'시스템'}
 ];
-const KEYS={
-  sonobel:'spa_sonobel',spa:'spa_spa',freelancer:'spa_freelancer',
-  reservation:'spa_reservation',expense:'spa_expense',settings:'spa_settings'
-};
+const KEYS={sonobel:'spa_sonobel',spa:'spa_spa',freelancer:'spa_freelancer',reservation:'spa_reservation',expense:'spa_expense',settings:'spa_settings'};
 const EXP_CATS=['월임대료','재료비','인건비','공과금','마케팅','기타'];
-const RSV_SERVICES=[
-  '전신아로마케어 120분','아로마케어 90분','아로마케어 60분',
-  '스파 70분','발관리 40분','페이셜케어 40분','커플케어 90분','상품권'
-];
+const RSV_SERVICES=['전신아로마케어 120분','아로마케어 90분','아로마케어 60분','스파 70분','발관리 40분','페이셜케어 40분','커플케어 90분','상품권'];
 const TIMES=(()=>{const t=[];for(let h=10;h<=23;h++){t.push(`${String(h).padStart(2,'0')}:00`);t.push(`${String(h).padStart(2,'0')}:30`);}t.push('24:00');return t;})();
 const THERAPIST_KEY='spa_therapist_detail';
 
-/* ===== DB ===== */
 const DB={
   get:(key,def=[])=>{try{return JSON.parse(localStorage.getItem(key))??def;}catch{return def;}},
   set:(key,val)=>localStorage.setItem(key,JSON.stringify(val))
 };
+const SettingsService={get:()=>DB.get(KEYS.settings,{}),save:(obj)=>DB.set(KEYS.settings,obj)};
 
-/* ===== SettingsService ===== */
-const SettingsService={
-  get:()=>DB.get(KEYS.settings,{}),
-  save:(obj)=>DB.set(KEYS.settings,obj)
-};
-
-/* ★ ===== 4단계: 오프라인 큐 관리 ===== */
 const QUEUE_KEY='spa_offline_queue';
 const OfflineQueue={
   get:()=>DB.get(QUEUE_KEY,[]),
   add:(item)=>{const q=DB.get(QUEUE_KEY,[]);q.push({...item,queuedAt:new Date().toISOString()});DB.set(QUEUE_KEY,q);updateQueueBadge();},
   clear:()=>{DB.set(QUEUE_KEY,[]);updateQueueBadge();}
 };
+function updateQueueBadge(){const q=OfflineQueue.get();const badge=document.getElementById('queueBadge');const cnt=document.getElementById('queueCount');if(!badge||!cnt)return;if(q.length>0){badge.classList.add('show');cnt.textContent=q.length;}else{badge.classList.remove('show');}}
+async function flushQueue(){const q=OfflineQueue.get();if(!q.length)return;if(!navigator.onLine){showToast('인터넷 연결 후 다시 시도해 주세요','error');return;}showToast(`📤 ${q.length}건 전송 중...`);let ok=0;for(const item of q){try{if(item.action==='syncRecord'){await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'syncRecord',sheet:item.sheet,record:item.record})});}else if(item.action==='deleteRecord'){await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'deleteRecord',sheet:item.sheet,id:item.id})});}ok++;}catch(e){}}OfflineQueue.clear();showToast(`✅ ${ok}건 전송 완료!`);}
 
-function updateQueueBadge(){
-  const q=OfflineQueue.get();const badge=document.getElementById('queueBadge');const cnt=document.getElementById('queueCount');
-  if(!badge||!cnt)return;
-  if(q.length>0){badge.classList.add('show');cnt.textContent=q.length;}
-  else{badge.classList.remove('show');}
-}
-
-async function flushQueue(){
-  const q=OfflineQueue.get();if(!q.length)return;if(!navigator.onLine){showToast('인터넷 연결 후 다시 시도해 주세요','error');return;}
-  showToast(`📤 ${q.length}건 전송 중...`);let ok=0;
-  for(const item of q){
-    try{
-      if(item.action==='syncRecord'){await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'syncRecord',sheet:item.sheet,record:item.record})});}
-      else if(item.action==='deleteRecord'){await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'deleteRecord',sheet:item.sheet,id:item.id})});}
-      ok++;
-    }catch(e){}
-  }
-  OfflineQueue.clear();showToast(`✅ ${ok}건 전송 완료!`);
-}
-
-/* ★ ===== 4단계: 오프라인 감지 ===== */
-function updateOnlineStatus(){
-  const banner=document.getElementById('offlineBanner');
-  if(!banner)return;
-  if(!navigator.onLine){
-    banner.classList.add('show');setSyncStatus('error');
-  }else{
-    banner.classList.remove('show');
-    flushQueue(); // 온라인 복귀 시 큐 자동 전송
-  }
-}
+function updateOnlineStatus(){const banner=document.getElementById('offlineBanner');if(!banner)return;if(!navigator.onLine){banner.classList.add('show');setSyncStatus('error');}else{banner.classList.remove('show');flushQueue();}}
 window.addEventListener('online',()=>{updateOnlineStatus();showToast('🌐 인터넷에 연결되었습니다');syncFromSheets();});
 window.addEventListener('offline',()=>{updateOnlineStatus();showToast('📡 인터넷 연결이 끊어졌습니다','error');});
+function showLoading(show){const el=document.getElementById('loadingOverlay');if(!el)return;if(show)el.classList.add('show');else el.classList.remove('show');}
+function setSyncStatus(state){const dot=document.getElementById('syncDot');const txt=document.getElementById('syncText');if(!dot||!txt)return;if(state==='syncing'){dot.className='sync-dot syncing';txt.textContent='동기화 중...';}else if(state==='error'){dot.className='sync-dot error';txt.textContent='연결 오류';}else{dot.className='sync-dot';txt.textContent='동기화됨';}}
 
-/* ★ ===== 4단계: 로딩 스피너 ===== */
-function showLoading(show){
-  const el=document.getElementById('loadingOverlay');
-  if(!el)return;
-  if(show)el.classList.add('show');else el.classList.remove('show');
-}
+async function syncFromSheets(showSpinner=false){if(!navigator.onLine){setSyncStatus('error');return;}setSyncStatus('syncing');if(showSpinner)showLoading(true);try{const res=await fetch(GAS_URL+'?action=getAllData');const json=await res.json();if(json.status==='ok'&&json.data){const d=json.data;if(Array.isArray(d.sonobel)&&d.sonobel.length)DB.set(KEYS.sonobel,d.sonobel);if(Array.isArray(d.spa)&&d.spa.length)DB.set(KEYS.spa,d.spa);if(Array.isArray(d.freelancer)&&d.freelancer.length)DB.set(KEYS.freelancer,d.freelancer);if(Array.isArray(d.reservation)&&d.reservation.length)DB.set(KEYS.reservation,d.reservation);if(Array.isArray(d.expense)&&d.expense.length)DB.set(KEYS.expense,d.expense);}setSyncStatus('ok');}catch(e){setSyncStatus('error');}finally{if(showSpinner)showLoading(false);}}
+async function pushToSheets(sheetName,rec){if(!navigator.onLine){OfflineQueue.add({action:'syncRecord',sheet:sheetName,record:rec});return;}try{await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'syncRecord',sheet:sheetName,record:rec})});}catch(e){OfflineQueue.add({action:'syncRecord',sheet:sheetName,record:rec});}}
+async function deleteFromSheets(sheetName,id){if(!navigator.onLine){OfflineQueue.add({action:'deleteRecord',sheet:sheetName,id:id});return;}try{await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'deleteRecord',sheet:sheetName,id:id})});}catch(e){OfflineQueue.add({action:'deleteRecord',sheet:sheetName,id:id});}}
 
-/* ===== 동기화 상태 표시 ===== */
-function setSyncStatus(state){
-  const dot=document.getElementById('syncDot');const txt=document.getElementById('syncText');
-  if(!dot||!txt)return;
-  if(state==='syncing'){dot.className='sync-dot syncing';txt.textContent='동기화 중...';}
-  else if(state==='error'){dot.className='sync-dot error';txt.textContent='연결 오류';}
-  else{dot.className='sync-dot';txt.textContent='동기화됨';}
-}
-
-/* ===== Sheets → LocalStorage 동기화 (4단계: 스피너 추가) ===== */
-async function syncFromSheets(showSpinner=false){
-  if(!navigator.onLine){setSyncStatus('error');return;}
-  setSyncStatus('syncing');
-  if(showSpinner)showLoading(true);
-  try{
-    const res=await fetch(GAS_URL+'?action=getAllData');
-    const json=await res.json();
-    if(json.status==='ok'&&json.data){
-      const d=json.data;
-      if(Array.isArray(d.sonobel)&&d.sonobel.length)DB.set(KEYS.sonobel,d.sonobel);
-      if(Array.isArray(d.spa)&&d.spa.length)DB.set(KEYS.spa,d.spa);
-      if(Array.isArray(d.freelancer)&&d.freelancer.length)DB.set(KEYS.freelancer,d.freelancer);
-      if(Array.isArray(d.reservation)&&d.reservation.length)DB.set(KEYS.reservation,d.reservation);
-      if(Array.isArray(d.expense)&&d.expense.length)DB.set(KEYS.expense,d.expense);
-    }
-    setSyncStatus('ok');
-  }catch(e){setSyncStatus('error');}
-  finally{if(showSpinner)showLoading(false);}
-}
-
-/* ===== LocalStorage → Sheets (4단계: 오프라인 큐 추가) ===== */
-async function pushToSheets(sheetName,rec){
-  if(!navigator.onLine){OfflineQueue.add({action:'syncRecord',sheet:sheetName,record:rec});return;}
-  try{await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'syncRecord',sheet:sheetName,record:rec})});}
-  catch(e){OfflineQueue.add({action:'syncRecord',sheet:sheetName,record:rec});}
-}
-
-async function deleteFromSheets(sheetName,id){
-  if(!navigator.onLine){OfflineQueue.add({action:'deleteRecord',sheet:sheetName,id:id});return;}
-  try{await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'deleteRecord',sheet:sheetName,id:id})});}
-  catch(e){OfflineQueue.add({action:'deleteRecord',sheet:sheetName,id:id});}
-}
-
-/* ===== DataService ===== */
 const DataService={
   getAll:(key)=>DB.get(key,[]),
   add:(key,rec)=>{const list=DB.get(key,[]);rec.id=genId();list.push(rec);DB.set(key,list);pushToSheets(key,rec);return rec;},
@@ -439,40 +291,12 @@ const DataService={
   remove:(key,id)=>{DB.set(key,DB.get(key,[]).filter(r=>r.id!==id));deleteFromSheets(key,id);}
 };
 
-/* ★ ===== 4단계: 자동 동기화 (30초) ===== */
 let _autoSyncTimer=null;let _autoSyncCount=30;
-function startAutoSync(){
-  stopAutoSync();
-  _autoSyncCount=30;
-  updateAutoSyncBar();
-  _autoSyncTimer=setInterval(()=>{
-    _autoSyncCount--;
-    updateAutoSyncBar();
-    if(_autoSyncCount<=0){
-      _autoSyncCount=30;
-      syncFromSheets();
-      const curPage=document.querySelector('.nav-item.active')?.id?.replace('nav_','');
-      if(curPage)renderPage(curPage);
-    }
-  },1000);
-}
+function startAutoSync(){stopAutoSync();_autoSyncCount=30;updateAutoSyncBar();_autoSyncTimer=setInterval(()=>{_autoSyncCount--;updateAutoSyncBar();if(_autoSyncCount<=0){_autoSyncCount=30;syncFromSheets();const curPage=document.querySelector('.nav-item.active')?.id?.replace('nav_','');if(curPage)renderPage(curPage);}},1000);}
 function stopAutoSync(){if(_autoSyncTimer){clearInterval(_autoSyncTimer);_autoSyncTimer=null;}}
-function updateAutoSyncBar(){
-  const el=document.getElementById('autoSyncCount');if(el)el.textContent=_autoSyncCount;
-}
+function updateAutoSyncBar(){const el=document.getElementById('autoSyncCount');if(el)el.textContent=_autoSyncCount;}
+async function manualSync(){const btn=document.getElementById('manualSyncBtn');if(btn)btn.classList.add('spinning');await syncFromSheets(false);const curPage=document.querySelector('.nav-item.active')?.id?.replace('nav_','');if(curPage)renderPage(curPage);if(btn)btn.classList.remove('spinning');showToast('✅ 동기화 완료!');_autoSyncCount=30;updateAutoSyncBar();}
 
-/* ★ ===== 4단계: 수동 동기화 버튼 ===== */
-async function manualSync(){
-  const btn=document.getElementById('manualSyncBtn');if(btn)btn.classList.add('spinning');
-  await syncFromSheets(false);
-  const curPage=document.querySelector('.nav-item.active')?.id?.replace('nav_','');
-  if(curPage)renderPage(curPage);
-  if(btn)btn.classList.remove('spinning');
-  showToast('✅ 동기화 완료!');
-  _autoSyncCount=30;updateAutoSyncBar();
-}
-
-/* ===== 유틸리티 함수 ===== */
 function genId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
 function today(){return new Date().toISOString().slice(0,10);}
 function monthStart(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-01`;}
@@ -481,103 +305,28 @@ function getWeekDay(dateStr){if(!dateStr)return '';const days=['일','월','화'
 function num(v){const n=parseFloat(String(v).replace(/,/g,''));return isNaN(n)?0:n;}
 function fmtNum(n){return Number(n).toLocaleString('ko-KR');}
 function fmtDate(d){if(!d)return '';return d.replace(/-/g,'.');}
-function setRange(prefix,mode){
-  const d=new Date();let from=today(),to=today();
-  if(mode==='today'){from=to=today();}
-  else if(mode==='week'){const day=d.getDay();const mon=new Date(d);mon.setDate(d.getDate()-(day===0?6:day-1));from=mon.toISOString().slice(0,10);}
-  else if(mode==='month'){from=monthStart();to=monthEnd();}
-  else if(mode==='last'){const first=new Date(d.getFullYear(),d.getMonth()-1,1);const last=new Date(d.getFullYear(),d.getMonth(),0);from=first.toISOString().slice(0,10);to=last.toISOString().slice(0,10);}
-  const fEl=document.getElementById(`${prefix}_from`);const tEl=document.getElementById(`${prefix}_to`);
-  if(fEl)fEl.value=from;if(tEl)tEl.value=to;
-}
+function setRange(prefix,mode){const d=new Date();let from=today(),to=today();if(mode==='today'){from=to=today();}else if(mode==='week'){const day=d.getDay();const mon=new Date(d);mon.setDate(d.getDate()-(day===0?6:day-1));from=mon.toISOString().slice(0,10);}else if(mode==='month'){from=monthStart();to=monthEnd();}else if(mode==='last'){const first=new Date(d.getFullYear(),d.getMonth()-1,1);const last=new Date(d.getFullYear(),d.getMonth(),0);from=first.toISOString().slice(0,10);to=last.toISOString().slice(0,10);}const fEl=document.getElementById(`${prefix}_from`);const tEl=document.getElementById(`${prefix}_to`);if(fEl)fEl.value=from;if(tEl)tEl.value=to;}
 let _toastTimer;
-function showToast(msg,type='success'){
-  const el=document.getElementById('toast');el.textContent=msg;el.className='show '+type;
-  clearTimeout(_toastTimer);_toastTimer=setTimeout(()=>{el.className='';},3000);
-}
+function showToast(msg,type='success'){const el=document.getElementById('toast');el.textContent=msg;el.className='show '+type;clearTimeout(_toastTimer);_toastTimer=setTimeout(()=>{el.className='';},3000);}
 function loadTherapistDetail(){try{return JSON.parse(localStorage.getItem(THERAPIST_KEY)||'[]');}catch(e){return [];}}
 function saveTherapistDetail(arr){localStorage.setItem(THERAPIST_KEY,JSON.stringify(arr));}
-function loadFreesamNames(){
-  const detail=loadTherapistDetail();if(detail.length)return detail.filter(t=>t.active!==false).map(t=>t.name);
-  const cfg=SettingsService.get();return Array.isArray(cfg.freesamNames)?cfg.freesamNames:[];
-}
+function loadFreesamNames(){const detail=loadTherapistDetail();if(detail.length)return detail.filter(t=>t.active!==false).map(t=>t.name);const cfg=SettingsService.get();return Array.isArray(cfg.freesamNames)?cfg.freesamNames:[];}
 
-/* ===== 로그인 ===== */
 let _selUser='user1',_pinBuf='';
-function selectUser(uid){
-  _selUser=uid;_pinBuf='';updateDots();document.getElementById('loginError').textContent='';
-  document.querySelectorAll('.user-tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById('tab'+uid.charAt(0).toUpperCase()+uid.slice(1)).classList.add('active');
-}
+function selectUser(uid){_selUser=uid;_pinBuf='';updateDots();document.getElementById('loginError').textContent='';document.querySelectorAll('.user-tab').forEach(t=>t.classList.remove('active'));document.getElementById('tab'+uid.charAt(0).toUpperCase()+uid.slice(1)).classList.add('active');}
 function updateDots(){for(let i=0;i<4;i++)document.getElementById('dot'+i).classList.toggle('filled',i<_pinBuf.length);}
 function pinInput(v){if(_pinBuf.length<4){_pinBuf+=v;updateDots();if(_pinBuf.length===4)pinConfirm();}}
 function pinDelete(){if(_pinBuf.length>0){_pinBuf=_pinBuf.slice(0,-1);updateDots();}}
-function pinConfirm(){
-  const defaultPin=USERS[_selUser]?.pin||'';const cfg=SettingsService.get();const users=cfg.users||{};
-  const storedPin=users[_selUser]?.pin||defaultPin;
-  if(!storedPin){document.getElementById('loginError').textContent='PIN 설정 오류. 관리자에게 문의하세요.';return;}
-  if(_pinBuf===storedPin){doLogin(_selUser);}
-  else{document.getElementById('loginError').textContent='PIN이 올바르지 않습니다';_pinBuf='';updateDots();}
-}
-function doLogin(uid){
-  document.getElementById('loginScreen').classList.add('hidden');
-  document.getElementById('app').classList.remove('hidden');
-  updateHeader(uid);buildNav();
-  syncFromSheets(true); // ★ 4단계: 로그인 시 스피너 표시
-  startAutoSync();       // ★ 4단계: 자동 동기화 시작
-  updateQueueBadge();    // ★ 4단계: 큐 뱃지 초기화
-  navigateTo(MENU_ITEMS[0].id);
-}
-function doLogout(){
-  stopAutoSync(); // ★ 4단계: 자동 동기화 중지
-  _pinBuf='';updateDots();
-  document.getElementById('app').classList.add('hidden');
-  document.getElementById('loginScreen').classList.remove('hidden');
-  document.getElementById('loginError').textContent='';
-  selectUser('user1');
-}
+function pinConfirm(){const defaultPin=USERS[_selUser]?.pin||'';const cfg=SettingsService.get();const users=cfg.users||{};const storedPin=users[_selUser]?.pin||defaultPin;if(!storedPin){document.getElementById('loginError').textContent='PIN 설정 오류. 관리자에게 문의하세요.';return;}if(_pinBuf===storedPin){doLogin(_selUser);}else{document.getElementById('loginError').textContent='PIN이 올바르지 않습니다';_pinBuf='';updateDots();}}
+function doLogin(uid){document.getElementById('loginScreen').classList.add('hidden');document.getElementById('app').classList.remove('hidden');updateHeader(uid);buildNav();syncFromSheets(true);startAutoSync();updateQueueBadge();navigateTo(MENU_ITEMS[0].id);}
+function doLogout(){stopAutoSync();_pinBuf='';updateDots();document.getElementById('app').classList.add('hidden');document.getElementById('loginScreen').classList.remove('hidden');document.getElementById('loginError').textContent='';selectUser('user1');}
 
-/* ===== 네비게이션 ===== */
-function updateHeader(uid){
-  const u=USERS[uid];
-  document.getElementById('sideUserEmoji').textContent=u.emoji;document.getElementById('sideUserName').textContent=u.name;
-  document.getElementById('sideUserRole').textContent=u.role;document.getElementById('headerUser').textContent=u.name;
-}
-function updateHeaderDate(){
-  const now=new Date();const days=['일','월','화','수','목','금','토'];
-  document.getElementById('headerDate').textContent=`${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} (${days[now.getDay()]})`;
-}
-function buildNav(){
-  const nav=document.getElementById('sidebarNav');let html='',lastGroup='';
-  MENU_ITEMS.forEach(item=>{
-    if(item.group!==lastGroup){html+=`<div class="nav-group-label">${item.group}</div>`;lastGroup=item.group;}
-    html+=`<div class="nav-item" id="nav_${item.id}" onclick="navigateTo('${item.id}')"><span class="nav-icon">${item.icon}</span><span>${item.label}</span></div>`;
-  });
-  nav.innerHTML=html;
-}
-function navigateTo(page){
-  document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
-  const navEl=document.getElementById('nav_'+page);if(navEl)navEl.classList.add('active');
-  const item=MENU_ITEMS.find(m=>m.id===page);
-  document.getElementById('pageTitle').textContent=item?item.label:'';
-  syncFromSheets(); // 메뉴 이동 시 동기화
-  renderPage(page);
-}
+function updateHeader(uid){const u=USERS[uid];document.getElementById('sideUserEmoji').textContent=u.emoji;document.getElementById('sideUserName').textContent=u.name;document.getElementById('sideUserRole').textContent=u.role;document.getElementById('headerUser').textContent=u.name;}
+function updateHeaderDate(){const now=new Date();const days=['일','월','화','수','목','금','토'];document.getElementById('headerDate').textContent=`${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} (${days[now.getDay()]})`;}
+function buildNav(){const nav=document.getElementById('sidebarNav');let html='',lastGroup='';MENU_ITEMS.forEach(item=>{if(item.group!==lastGroup){html+=`<div class="nav-group-label">${item.group}</div>`;lastGroup=item.group;}html+=`<div class="nav-item" id="nav_${item.id}" onclick="navigateTo('${item.id}')"><span class="nav-icon">${item.icon}</span><span>${item.label}</span></div>`;});nav.innerHTML=html;}
+function navigateTo(page){document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));const navEl=document.getElementById('nav_'+page);if(navEl)navEl.classList.add('active');const item=MENU_ITEMS.find(m=>m.id===page);document.getElementById('pageTitle').textContent=item?item.label:'';syncFromSheets();renderPage(page);}
 function toggleSidebar(){document.getElementById('sidebar').classList.toggle('collapsed');}
-function renderPage(page){
-  const el=document.getElementById('content');el.innerHTML='';
-  if(page==='reservation')renderReservation(el);
-  else if(page==='expense')renderExpense(el);
-  else if(page==='freesam')renderFreesam(el);
-  else if(page==='therapist')renderTherapist(el);
-  else if(page==='therapistStats')renderTherapistStats(el);
-  else if(page==='sonobel')renderSonobel(el);
-  else if(page==='spa')renderSpa(el);
-  else if(page==='settlement')renderSettlement(el);
-  else if(page==='analysis')renderAnalysis(el);
-  else if(page==='settings')renderSettings(el);
-  else if(page==='backup')renderBackup(el);
-}
+function renderPage(page){const el=document.getElementById('content');el.innerHTML='';if(page==='reservation')renderReservation(el);else if(page==='expense')renderExpense(el);else if(page==='freesam')renderFreesam(el);else if(page==='therapist')renderTherapist(el);else if(page==='therapistStats')renderTherapistStats(el);else if(page==='sonobel')renderSonobel(el);else if(page==='spa')renderSpa(el);else if(page==='settlement')renderSettlement(el);else if(page==='analysis')renderAnalysis(el);else if(page==='settings')renderSettings(el);else if(page==='backup')renderBackup(el);}
 
 /* ===== 예약관리 ===== */
 function renderReservation(el){
@@ -649,66 +398,13 @@ function renderReservation(el){
 function selectRsvPlace(place){document.getElementById('rsv_place').value=place;document.getElementById('rsv_place_sono').classList.toggle('active',place==='소노벨');document.getElementById('rsv_place_spa').classList.toggle('active',place==='스파');}
 function selectRsvSvc(svc){document.getElementById('rsv_svc').value=svc;document.querySelectorAll('#rsv_svc_chips .chip-btn').forEach(b=>b.classList.remove('active'));const el=document.getElementById('rsv_svc_'+svc.replace(/\s+/g,'_'));if(el)el.classList.add('active');}
 function selectRsvFs(fs){document.getElementById('rsv_fs').value=fs;document.querySelectorAll('#rsv_fs_chips .chip-btn').forEach(b=>b.classList.remove('active'));const el=fs?document.getElementById('rsv_fs_'+fs.replace(/\s+/g,'_')):document.getElementById('rsv_fs_none');if(el)el.classList.add('active');}
-function openRsvNew(){
-  document.getElementById('rsv_mtitle').textContent='📅 예약 추가';document.getElementById('rsv_eid').value='';document.getElementById('rsv_date').value=today();document.getElementById('rsv_time').value='10:00';
-  selectRsvPlace('소노벨');document.getElementById('rsv_svc').value='';document.querySelectorAll('#rsv_svc_chips .chip-btn').forEach(b=>b.classList.remove('active'));
-  selectRsvFs('');document.getElementById('rsv_cust').value='';document.getElementById('rsv_phone').value='';document.getElementById('rsv_deposit').value='';document.getElementById('rsv_status').value='확정';document.getElementById('rsv_memo').value='';
-  document.getElementById('rsv_modal').classList.remove('hidden');
-}
-function openRsvEdit(id){
-  const rec=DataService.getAll(KEYS.reservation).find(r=>r.id===id);if(!rec)return;
-  document.getElementById('rsv_mtitle').textContent='📅 예약 수정';document.getElementById('rsv_eid').value=id;
-  document.getElementById('rsv_date').value=rec.date||'';document.getElementById('rsv_time').value=rec.time||'10:00';
-  selectRsvPlace(rec.place||'소노벨');document.getElementById('rsv_svc').value=rec.svc||'';
-  document.querySelectorAll('#rsv_svc_chips .chip-btn').forEach(b=>b.classList.remove('active'));
-  if(rec.svc){const el=document.getElementById('rsv_svc_'+rec.svc.replace(/\s+/g,'_'));if(el)el.classList.add('active');}
-  selectRsvFs(rec.fs||'');document.getElementById('rsv_cust').value=rec.cust||'';document.getElementById('rsv_phone').value=rec.phone||'';
-  document.getElementById('rsv_deposit').value=rec.deposit||'';document.getElementById('rsv_status').value=rec.status||'확정';document.getElementById('rsv_memo').value=rec.memo||'';
-  document.getElementById('rsv_modal').classList.remove('hidden');
-}
+function openRsvNew(){document.getElementById('rsv_mtitle').textContent='📅 예약 추가';document.getElementById('rsv_eid').value='';document.getElementById('rsv_date').value=today();document.getElementById('rsv_time').value='10:00';selectRsvPlace('소노벨');document.getElementById('rsv_svc').value='';document.querySelectorAll('#rsv_svc_chips .chip-btn').forEach(b=>b.classList.remove('active'));selectRsvFs('');document.getElementById('rsv_cust').value='';document.getElementById('rsv_phone').value='';document.getElementById('rsv_deposit').value='';document.getElementById('rsv_status').value='확정';document.getElementById('rsv_memo').value='';document.getElementById('rsv_modal').classList.remove('hidden');}
+function openRsvEdit(id){const rec=DataService.getAll(KEYS.reservation).find(r=>r.id===id);if(!rec)return;document.getElementById('rsv_mtitle').textContent='📅 예약 수정';document.getElementById('rsv_eid').value=id;document.getElementById('rsv_date').value=rec.date||'';document.getElementById('rsv_time').value=rec.time||'10:00';selectRsvPlace(rec.place||'소노벨');document.getElementById('rsv_svc').value=rec.svc||'';document.querySelectorAll('#rsv_svc_chips .chip-btn').forEach(b=>b.classList.remove('active'));if(rec.svc){const el=document.getElementById('rsv_svc_'+rec.svc.replace(/\s+/g,'_'));if(el)el.classList.add('active');}selectRsvFs(rec.fs||'');document.getElementById('rsv_cust').value=rec.cust||'';document.getElementById('rsv_phone').value=rec.phone||'';document.getElementById('rsv_deposit').value=rec.deposit||'';document.getElementById('rsv_status').value=rec.status||'확정';document.getElementById('rsv_memo').value=rec.memo||'';document.getElementById('rsv_modal').classList.remove('hidden');}
 function closeRsvModal(){document.getElementById('rsv_modal').classList.add('hidden');}
-function saveReservation(){
-  const id=document.getElementById('rsv_eid').value;const date=document.getElementById('rsv_date').value;const time=document.getElementById('rsv_time').value;
-  const place=document.getElementById('rsv_place').value;const svc=document.getElementById('rsv_svc').value;const fs=document.getElementById('rsv_fs').value;
-  const cust=document.getElementById('rsv_cust').value.trim();const phone=document.getElementById('rsv_phone').value;
-  const deposit=num(document.getElementById('rsv_deposit').value);const status=document.getElementById('rsv_status').value;const memo=document.getElementById('rsv_memo').value;
-  if(!date){showToast('날짜를 입력해 주세요','error');return;}if(!cust){showToast('고객명을 입력해 주세요','error');return;}
-  const rec={date,time,place,svc,fs,cust,phone,deposit,status,memo};
-  if(id)DataService.update(KEYS.reservation,id,rec);else DataService.add(KEYS.reservation,rec);
-  closeRsvModal();showToast(id?'수정되었습니다 ✅':'예약이 추가되었습니다 ✅');searchReservation();
-}
+function saveReservation(){const id=document.getElementById('rsv_eid').value;const date=document.getElementById('rsv_date').value;const time=document.getElementById('rsv_time').value;const place=document.getElementById('rsv_place').value;const svc=document.getElementById('rsv_svc').value;const fs=document.getElementById('rsv_fs').value;const cust=document.getElementById('rsv_cust').value.trim();const phone=document.getElementById('rsv_phone').value;const deposit=num(document.getElementById('rsv_deposit').value);const status=document.getElementById('rsv_status').value;const memo=document.getElementById('rsv_memo').value;if(!date){showToast('날짜를 입력해 주세요','error');return;}if(!cust){showToast('고객명을 입력해 주세요','error');return;}const rec={date,time,place,svc,fs,cust,phone,deposit,status,memo};if(id)DataService.update(KEYS.reservation,id,rec);else DataService.add(KEYS.reservation,rec);closeRsvModal();showToast(id?'수정되었습니다 ✅':'예약이 추가되었습니다 ✅');searchReservation();}
 function delReservation(id){if(!confirm('삭제하시겠습니까?'))return;DataService.remove(KEYS.reservation,id);showToast('삭제되었습니다');searchReservation();}
-function searchReservation(){
-  const from=document.getElementById('rsv_from')?.value||'';const to=document.getElementById('rsv_to')?.value||'';
-  let list=DataService.getAll(KEYS.reservation);
-  if(from)list=list.filter(r=>r.date>=from);if(to)list=list.filter(r=>r.date<=to);
-  list.sort((a,b)=>a.date===b.date?a.time.localeCompare(b.time):b.date.localeCompare(a.date));
-  const totDep=list.reduce((a,r)=>a+num(r.deposit),0);const statusMap={};list.forEach(r=>{statusMap[r.status]=(statusMap[r.status]||0)+1;});
-  const statusColor={확정:'badge-success',대기:'badge-warning',취소:'badge-danger',완료:'badge-primary'};
-  const kpiEl=document.getElementById('rsv_kpi');
-  if(kpiEl)kpiEl.innerHTML=`<div class="kpi-card"><div class="kpi-label">📅 총 예약</div><div class="kpi-value">${list.length}건</div></div>
-    <div class="kpi-card info"><div class="kpi-label">💰 예약금 합계</div><div class="kpi-value">${fmtNum(totDep)}원</div></div>
-    ${Object.entries(statusMap).map(([k,v])=>`<div class="kpi-card"><div class="kpi-label">${k}</div><div class="kpi-value" style="font-size:18px">${v}건</div></div>`).join('')}`;
-  const cntEl=document.getElementById('rsv_cnt');if(cntEl)cntEl.textContent=`총 ${list.length}건`;
-  const tbl=document.getElementById('rsv_tbl');if(!tbl)return;
-  if(!list.length){tbl.innerHTML=`<div class="empty-state"><div class="empty-icon">📅</div><p>예약 내역이 없습니다</p></div>`;return;}
-  tbl.innerHTML=`<table id="rsv_table_el"><thead><tr><th>예약일</th><th>시간</th><th>영업장</th><th>서비스</th><th>담당 프리샘</th><th>고객명</th><th>연락처</th><th style="text-align:right">예약금</th><th>상태</th><th>메모</th><th>관리</th></tr></thead>
-  <tbody>${list.map(r=>`<tr><td>${fmtDate(r.date)}</td><td><strong>${r.time||''}</strong></td>
-    <td><span class="badge ${r.place==='소노벨'?'badge-primary':'badge-success'}">${r.place||''}</span></td>
-    <td>${r.svc||''}</td><td>${r.fs||'-'}</td><td><strong>${r.cust||''}</strong></td><td>${r.phone||'-'}</td>
-    <td style="text-align:right">${fmtNum(num(r.deposit))}원</td>
-    <td><span class="badge ${statusColor[r.status]||'badge-info'}">${r.status||''}</span></td>
-    <td>${r.memo||'-'}</td>
-    <td><button class="btn btn-sm btn-outline" onclick="openRsvEdit('${r.id}')">✏️</button>
-        <button class="btn btn-sm btn-danger" onclick="delReservation('${r.id}')">🗑️</button></td>
-  </tr>`).join('')}</tbody></table>`;
-}
-function rsvPrint(){
-  const tbl=document.getElementById('rsv_table_el');if(!tbl){showToast('출력할 데이터가 없습니다','error');return;}
-  const from=document.getElementById('rsv_from')?.value||'';const to=document.getElementById('rsv_to')?.value||'';
-  const w=window.open('','_blank','width=1100,height=700');
-  w.document.write(`<html><head><title>예약관리 출력</title><style>body{font-family:'Malgun Gothic',sans-serif;font-size:11px;padding:20px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:5px 7px}thead{background:#f0f0f0;font-weight:bold}@media print{button{display:none}}</style></head><body><h2>📅 예약관리</h2><p>기간: ${fmtDate(from)} ~ ${fmtDate(to)} | 출력일: ${fmtDate(today())}</p><button onclick="window.print()" style="margin-bottom:10px;padding:6px 14px;cursor:pointer">🖨️ 인쇄</button>${tbl.outerHTML}</body></html>`);w.document.close();
-}
+function searchReservation(){const from=document.getElementById('rsv_from')?.value||'';const to=document.getElementById('rsv_to')?.value||'';let list=DataService.getAll(KEYS.reservation);if(from)list=list.filter(r=>r.date>=from);if(to)list=list.filter(r=>r.date<=to);list.sort((a,b)=>a.date===b.date?a.time.localeCompare(b.time):b.date.localeCompare(a.date));const totDep=list.reduce((a,r)=>a+num(r.deposit),0);const statusMap={};list.forEach(r=>{statusMap[r.status]=(statusMap[r.status]||0)+1;});const statusColor={확정:'badge-success',대기:'badge-warning',취소:'badge-danger',완료:'badge-primary'};const kpiEl=document.getElementById('rsv_kpi');if(kpiEl)kpiEl.innerHTML=`<div class="kpi-card"><div class="kpi-label">📅 총 예약</div><div class="kpi-value">${list.length}건</div></div><div class="kpi-card info"><div class="kpi-label">💰 예약금 합계</div><div class="kpi-value">${fmtNum(totDep)}원</div></div>${Object.entries(statusMap).map(([k,v])=>`<div class="kpi-card"><div class="kpi-label">${k}</div><div class="kpi-value" style="font-size:18px">${v}건</div></div>`).join('')}`;const cntEl=document.getElementById('rsv_cnt');if(cntEl)cntEl.textContent=`총 ${list.length}건`;const tbl=document.getElementById('rsv_tbl');if(!tbl)return;if(!list.length){tbl.innerHTML=`<div class="empty-state"><div class="empty-icon">📅</div><p>예약 내역이 없습니다</p></div>`;return;}tbl.innerHTML=`<table id="rsv_table_el"><thead><tr><th>예약일</th><th>시간</th><th>영업장</th><th>서비스</th><th>담당 프리샘</th><th>고객명</th><th>연락처</th><th style="text-align:right">예약금</th><th>상태</th><th>메모</th><th>관리</th></tr></thead><tbody>${list.map(r=>`<tr><td>${fmtDate(r.date)}</td><td><strong>${r.time||''}</strong></td><td><span class="badge ${r.place==='소노벨'?'badge-primary':'badge-success'}">${r.place||''}</span></td><td>${r.svc||''}</td><td>${r.fs||'-'}</td><td><strong>${r.cust||''}</strong></td><td>${r.phone||'-'}</td><td style="text-align:right">${fmtNum(num(r.deposit))}원</td><td><span class="badge ${statusColor[r.status]||'badge-info'}">${r.status||''}</span></td><td>${r.memo||'-'}</td><td><button class="btn btn-sm btn-outline" onclick="openRsvEdit('${r.id}')">✏️</button><button class="btn btn-sm btn-danger" onclick="delReservation('${r.id}')">🗑️</button></td></tr>`).join('')}</tbody></table>`;}
+function rsvPrint(){const tbl=document.getElementById('rsv_table_el');if(!tbl){showToast('출력할 데이터가 없습니다','error');return;}const from=document.getElementById('rsv_from')?.value||'';const to=document.getElementById('rsv_to')?.value||'';const w=window.open('','_blank','width=1100,height=700');w.document.write(`<html><head><title>예약관리 출력</title><style>body{font-family:'Malgun Gothic',sans-serif;font-size:11px;padding:20px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:5px 7px}thead{background:#f0f0f0;font-weight:bold}@media print{button{display:none}}</style></head><body><h2>📅 예약관리</h2><p>기간: ${fmtDate(from)} ~ ${fmtDate(to)} | 출력일: ${fmtDate(today())}</p><button onclick="window.print()" style="margin-bottom:10px;padding:6px 14px;cursor:pointer">🖨️ 인쇄</button>${tbl.outerHTML}</body></html>`);w.document.close();}
 
 /* ===== 지출비용 ===== */
 function renderExpense(el){
@@ -757,57 +453,13 @@ function renderExpense(el){
   </div>`;
   setTimeout(()=>searchExpense(),50);
 }
-function openExpenseNew(){
-  document.getElementById('exp_mtitle').textContent='💸 지출 추가';document.getElementById('exp_eid').value='';document.getElementById('exp_date').value=today();
-  ['exp_amount','exp_desc','exp_note'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  document.getElementById('exp_modal').classList.remove('hidden');
-}
-function openExpenseEdit(id){
-  const rec=DataService.getAll(KEYS.expense).find(r=>r.id===id);if(!rec)return;
-  document.getElementById('exp_mtitle').textContent='💸 지출 수정';document.getElementById('exp_eid').value=id;
-  document.getElementById('exp_date').value=rec.date||'';document.getElementById('exp_cat').value=rec.cat||'';
-  document.getElementById('exp_amount').value=rec.amount||'';document.getElementById('exp_paytype').value=rec.paytype||'현금';
-  document.getElementById('exp_desc').value=rec.desc||'';document.getElementById('exp_note').value=rec.note||'';
-  document.getElementById('exp_modal').classList.remove('hidden');
-}
+function openExpenseNew(){document.getElementById('exp_mtitle').textContent='💸 지출 추가';document.getElementById('exp_eid').value='';document.getElementById('exp_date').value=today();['exp_amount','exp_desc','exp_note'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});document.getElementById('exp_modal').classList.remove('hidden');}
+function openExpenseEdit(id){const rec=DataService.getAll(KEYS.expense).find(r=>r.id===id);if(!rec)return;document.getElementById('exp_mtitle').textContent='💸 지출 수정';document.getElementById('exp_eid').value=id;document.getElementById('exp_date').value=rec.date||'';document.getElementById('exp_cat').value=rec.cat||'';document.getElementById('exp_amount').value=rec.amount||'';document.getElementById('exp_paytype').value=rec.paytype||'현금';document.getElementById('exp_desc').value=rec.desc||'';document.getElementById('exp_note').value=rec.note||'';document.getElementById('exp_modal').classList.remove('hidden');}
 function closeExpModal(){document.getElementById('exp_modal').classList.add('hidden');}
-function saveExpense(){
-  const id=document.getElementById('exp_eid').value;const date=document.getElementById('exp_date').value;
-  const cat=document.getElementById('exp_cat').value;const amount=num(document.getElementById('exp_amount').value);
-  const paytype=document.getElementById('exp_paytype').value;const desc=document.getElementById('exp_desc').value.trim();const note=document.getElementById('exp_note').value;
-  if(!date){showToast('날짜를 입력해 주세요','error');return;}if(!amount){showToast('금액을 입력해 주세요','error');return;}if(!desc){showToast('내용을 입력해 주세요','error');return;}
-  const rec={date,cat,amount,paytype,desc,note};
-  if(id)DataService.update(KEYS.expense,id,rec);else DataService.add(KEYS.expense,rec);
-  closeExpModal();showToast(id?'수정되었습니다 ✅':'추가되었습니다 ✅');searchExpense();
-}
+function saveExpense(){const id=document.getElementById('exp_eid').value;const date=document.getElementById('exp_date').value;const cat=document.getElementById('exp_cat').value;const amount=num(document.getElementById('exp_amount').value);const paytype=document.getElementById('exp_paytype').value;const desc=document.getElementById('exp_desc').value.trim();const note=document.getElementById('exp_note').value;if(!date){showToast('날짜를 입력해 주세요','error');return;}if(!amount){showToast('금액을 입력해 주세요','error');return;}if(!desc){showToast('내용을 입력해 주세요','error');return;}const rec={date,cat,amount,paytype,desc,note};if(id)DataService.update(KEYS.expense,id,rec);else DataService.add(KEYS.expense,rec);closeExpModal();showToast(id?'수정되었습니다 ✅':'추가되었습니다 ✅');searchExpense();}
 function delExpense(id){if(!confirm('삭제하시겠습니까?'))return;DataService.remove(KEYS.expense,id);showToast('삭제되었습니다');searchExpense();}
-function searchExpense(){
-  const from=document.getElementById('exp_from')?.value||'';const to=document.getElementById('exp_to')?.value||'';const catF=document.getElementById('exp_cat_filter')?.value||'';
-  let list=DataService.getAll(KEYS.expense);
-  if(from)list=list.filter(r=>r.date>=from);if(to)list=list.filter(r=>r.date<=to);if(catF)list=list.filter(r=>r.cat===catF);
-  list.sort((a,b)=>b.date.localeCompare(a.date));
-  const totAmt=list.reduce((a,r)=>a+num(r.amount),0);const catMap={};list.forEach(r=>{catMap[r.cat]=(catMap[r.cat]||0)+num(r.amount);});
-  const kpiEl=document.getElementById('exp_kpi');
-  if(kpiEl)kpiEl.innerHTML=`<div class="kpi-card danger"><div class="kpi-label">💸 총 지출</div><div class="kpi-value">${fmtNum(totAmt)}원</div></div>
-    ${Object.entries(catMap).map(([k,v])=>`<div class="kpi-card"><div class="kpi-label">${k}</div><div class="kpi-value" style="font-size:18px">${fmtNum(v)}원</div></div>`).join('')}`;
-  const cntEl=document.getElementById('exp_cnt');if(cntEl)cntEl.textContent=`총 ${list.length}건`;
-  const tbl=document.getElementById('exp_tbl');if(!tbl)return;
-  if(!list.length){tbl.innerHTML=`<div class="empty-state"><div class="empty-icon">💸</div><p>지출 내역이 없습니다</p></div>`;return;}
-  tbl.innerHTML=`<table id="exp_table_el"><thead><tr><th>날짜</th><th>카테고리</th><th style="text-align:right">금액</th><th>결제방법</th><th>내용</th><th>메모</th><th>관리</th></tr></thead>
-  <tbody>${list.map(r=>`<tr><td>${fmtDate(r.date)}</td><td><span class="badge badge-warning">${r.cat||''}</span></td>
-    <td style="text-align:right;font-weight:600;color:var(--danger)">${fmtNum(num(r.amount))}원</td>
-    <td>${r.paytype||''}</td><td>${r.desc||''}</td><td>${r.note||'-'}</td>
-    <td><button class="btn btn-sm btn-outline" onclick="openExpenseEdit('${r.id}')">✏️</button>
-        <button class="btn btn-sm btn-danger" onclick="delExpense('${r.id}')">🗑️</button></td>
-  </tr>`).join('')}</tbody>
-  <tfoot><tr><td colspan="2"><strong>합계</strong></td><td style="text-align:right;color:var(--danger)"><strong>${fmtNum(totAmt)}원</strong></td><td colspan="4"></td></tr></tfoot></table>`;
-}
-function expensePrint(){
-  const tbl=document.getElementById('exp_table_el');if(!tbl){showToast('출력할 데이터가 없습니다','error');return;}
-  const from=document.getElementById('exp_from')?.value||'';const to=document.getElementById('exp_to')?.value||'';
-  const w=window.open('','_blank','width=900,height=700');
-  w.document.write(`<html><head><title>지출비용 출력</title><style>body{font-family:'Malgun Gothic',sans-serif;font-size:12px;padding:20px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:6px 8px}thead{background:#f0f0f0;font-weight:bold}tfoot{background:#e8e8e8;font-weight:bold}@media print{button{display:none}}</style></head><body><h2>💸 지출비용</h2><p>기간: ${fmtDate(from)} ~ ${fmtDate(to)} | 출력일: ${fmtDate(today())}</p><button onclick="window.print()" style="margin-bottom:10px;padding:6px 14px;cursor:pointer">🖨️ 인쇄</button>${tbl.outerHTML}</body></html>`);w.document.close();
-}
+function searchExpense(){const from=document.getElementById('exp_from')?.value||'';const to=document.getElementById('exp_to')?.value||'';const catF=document.getElementById('exp_cat_filter')?.value||'';let list=DataService.getAll(KEYS.expense);if(from)list=list.filter(r=>r.date>=from);if(to)list=list.filter(r=>r.date<=to);if(catF)list=list.filter(r=>r.cat===catF);list.sort((a,b)=>b.date.localeCompare(a.date));const totAmt=list.reduce((a,r)=>a+num(r.amount),0);const catMap={};list.forEach(r=>{catMap[r.cat]=(catMap[r.cat]||0)+num(r.amount);});const kpiEl=document.getElementById('exp_kpi');if(kpiEl)kpiEl.innerHTML=`<div class="kpi-card danger"><div class="kpi-label">💸 총 지출</div><div class="kpi-value">${fmtNum(totAmt)}원</div></div>${Object.entries(catMap).map(([k,v])=>`<div class="kpi-card"><div class="kpi-label">${k}</div><div class="kpi-value" style="font-size:18px">${fmtNum(v)}원</div></div>`).join('')}`;const cntEl=document.getElementById('exp_cnt');if(cntEl)cntEl.textContent=`총 ${list.length}건`;const tbl=document.getElementById('exp_tbl');if(!tbl)return;if(!list.length){tbl.innerHTML=`<div class="empty-state"><div class="empty-icon">💸</div><p>지출 내역이 없습니다</p></div>`;return;}tbl.innerHTML=`<table id="exp_table_el"><thead><tr><th>날짜</th><th>카테고리</th><th style="text-align:right">금액</th><th>결제방법</th><th>내용</th><th>메모</th><th>관리</th></tr></thead><tbody>${list.map(r=>`<tr><td>${fmtDate(r.date)}</td><td><span class="badge badge-warning">${r.cat||''}</span></td><td style="text-align:right;font-weight:600;color:var(--danger)">${fmtNum(num(r.amount))}원</td><td>${r.paytype||''}</td><td>${r.desc||''}</td><td>${r.note||'-'}</td><td><button class="btn btn-sm btn-outline" onclick="openExpenseEdit('${r.id}')">✏️</button><button class="btn btn-sm btn-danger" onclick="delExpense('${r.id}')">🗑️</button></td></tr>`).join('')}</tbody><tfoot><tr><td colspan="2"><strong>합계</strong></td><td style="text-align:right;color:var(--danger)"><strong>${fmtNum(totAmt)}원</strong></td><td colspan="4"></td></tr></tfoot></table>`;}
+function expensePrint(){const tbl=document.getElementById('exp_table_el');if(!tbl){showToast('출력할 데이터가 없습니다','error');return;}const from=document.getElementById('exp_from')?.value||'';const to=document.getElementById('exp_to')?.value||'';const w=window.open('','_blank','width=900,height=700');w.document.write(`<html><head><title>지출비용 출력</title><style>body{font-family:'Malgun Gothic',sans-serif;font-size:12px;padding:20px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:6px 8px}thead{background:#f0f0f0;font-weight:bold}tfoot{background:#e8e8e8;font-weight:bold}@media print{button{display:none}}</style></head><body><h2>💸 지출비용</h2><p>기간: ${fmtDate(from)} ~ ${fmtDate(to)} | 출력일: ${fmtDate(today())}</p><button onclick="window.print()" style="margin-bottom:10px;padding:6px 14px;cursor:pointer">🖨️ 인쇄</button>${tbl.outerHTML}</body></html>`);w.document.close();}
 
 /* ===== 프리샘 일일관리 ===== */
 function renderFreesam(el){
@@ -879,95 +531,19 @@ function renderFreesam(el){
       </div>
     </div>
   </div>`;
-  setTimeout(()=>{
-    const dateEl=document.getElementById('fs_date');
-    if(dateEl){dateEl.addEventListener('change',()=>{document.getElementById('fs_wday').value=getWeekDay(dateEl.value);});document.getElementById('fs_wday').value=getWeekDay(dateEl.value);}
-    searchFreesam();
-  },50);
+  setTimeout(()=>{const dateEl=document.getElementById('fs_date');if(dateEl){dateEl.addEventListener('change',()=>{document.getElementById('fs_wday').value=getWeekDay(dateEl.value);});document.getElementById('fs_wday').value=getWeekDay(dateEl.value);}searchFreesam();},50);
 }
 function selectFsPlace(place){document.getElementById('fs_place').value=place;document.getElementById('fs_place_sono').classList.toggle('active',place==='소노벨');document.getElementById('fs_place_spa').classList.toggle('active',place==='스파');}
 function selectFsName(name){document.getElementById('fs_name').value=name;document.querySelectorAll('#fs_name_chips .chip-btn').forEach(b=>b.classList.remove('active'));const chipEl=document.getElementById('fs_chip_'+name.replace(/\s+/g,'_'));if(chipEl)chipEl.classList.add('active');}
 function calcFsProfit(){const r=num(document.getElementById('fs_revenue')?.value);const m=num(document.getElementById('fs_mgmt')?.value);const el=document.getElementById('fs_profit');if(el)el.value=r-m;}
 function calcFsSettle(){const c=num(document.getElementById('fs_cash')?.value);const t=num(document.getElementById('fs_transfer')?.value);const k=num(document.getElementById('fs_card')?.value);const v=num(document.getElementById('fs_voucher')?.value);const el=document.getElementById('fs_settle');if(el)el.value=c+t+k+v;}
-function openFreesamNew(){
-  document.getElementById('fs_mtitle').textContent='🧖 프리샘 내역 추가';document.getElementById('fs_eid').value='';
-  const t=today();document.getElementById('fs_date').value=t;document.getElementById('fs_wday').value=getWeekDay(t);
-  selectFsPlace('소노벨');document.getElementById('fs_name').value='';document.querySelectorAll('#fs_name_chips .chip-btn').forEach(b=>b.classList.remove('active'));
-  ['fs_revenue','fs_mgmt','fs_profit','fs_cash','fs_transfer','fs_card','fs_voucher','fs_settle','fs_note'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  document.getElementById('fs_custtype').value='투숙객';document.getElementById('fs_modal').classList.remove('hidden');
-}
-function openFreesamEdit(id){
-  const rec=DataService.getAll(KEYS.freelancer).find(r=>r.id===id);if(!rec)return;
-  document.getElementById('fs_mtitle').textContent='🧖 프리샘 내역 수정';document.getElementById('fs_eid').value=id;
-  document.getElementById('fs_date').value=rec.date||'';document.getElementById('fs_wday').value=rec.wday||'';
-  selectFsPlace(rec.place||'소노벨');document.getElementById('fs_name').value=rec.name||'';
-  document.querySelectorAll('#fs_name_chips .chip-btn').forEach(b=>b.classList.remove('active'));
-  if(rec.name){const chipEl=document.getElementById('fs_chip_'+rec.name.replace(/\s+/g,'_'));if(chipEl)chipEl.classList.add('active');}
-  ['revenue','mgmt','profit','cash','transfer','card','voucher','settle'].forEach(f=>{const el=document.getElementById('fs_'+f);if(el)el.value=rec[f]||'';});
-  document.getElementById('fs_custtype').value=rec.custtype||'투숙객';document.getElementById('fs_note').value=rec.note||'';
-  document.getElementById('fs_modal').classList.remove('hidden');
-}
+function openFreesamNew(){document.getElementById('fs_mtitle').textContent='🧖 프리샘 내역 추가';document.getElementById('fs_eid').value='';const t=today();document.getElementById('fs_date').value=t;document.getElementById('fs_wday').value=getWeekDay(t);selectFsPlace('소노벨');document.getElementById('fs_name').value='';document.querySelectorAll('#fs_name_chips .chip-btn').forEach(b=>b.classList.remove('active'));['fs_revenue','fs_mgmt','fs_profit','fs_cash','fs_transfer','fs_card','fs_voucher','fs_settle','fs_note'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});document.getElementById('fs_custtype').value='투숙객';document.getElementById('fs_modal').classList.remove('hidden');}
+function openFreesamEdit(id){const rec=DataService.getAll(KEYS.freelancer).find(r=>r.id===id);if(!rec)return;document.getElementById('fs_mtitle').textContent='🧖 프리샘 내역 수정';document.getElementById('fs_eid').value=id;document.getElementById('fs_date').value=rec.date||'';document.getElementById('fs_wday').value=rec.wday||'';selectFsPlace(rec.place||'소노벨');document.getElementById('fs_name').value=rec.name||'';document.querySelectorAll('#fs_name_chips .chip-btn').forEach(b=>b.classList.remove('active'));if(rec.name){const chipEl=document.getElementById('fs_chip_'+rec.name.replace(/\s+/g,'_'));if(chipEl)chipEl.classList.add('active');}['revenue','mgmt','profit','cash','transfer','card','voucher','settle'].forEach(f=>{const el=document.getElementById('fs_'+f);if(el)el.value=rec[f]||'';});document.getElementById('fs_custtype').value=rec.custtype||'투숙객';document.getElementById('fs_note').value=rec.note||'';document.getElementById('fs_modal').classList.remove('hidden');}
 function closeFsModal(){document.getElementById('fs_modal').classList.add('hidden');}
-function saveFreesam(){
-  const id=document.getElementById('fs_eid').value;const date=document.getElementById('fs_date').value;const place=document.getElementById('fs_place').value;
-  const name=document.getElementById('fs_name').value.trim();const revenue=num(document.getElementById('fs_revenue').value);const mgmt=num(document.getElementById('fs_mgmt').value);
-  const cash=num(document.getElementById('fs_cash').value);const transfer=num(document.getElementById('fs_transfer').value);const card=num(document.getElementById('fs_card').value);const voucher=num(document.getElementById('fs_voucher').value);
-  const custtype=document.getElementById('fs_custtype').value;const note=document.getElementById('fs_note').value;
-  if(!date){showToast('날짜를 입력해 주세요','error');return;}if(!name){showToast('프리샘명을 선택해 주세요','error');return;}if(!revenue){showToast('수익금을 입력해 주세요','error');return;}
-  const wday=getWeekDay(date);const profit=revenue-mgmt;const settle=cash+transfer+card+voucher;
-  const fsRec={date,wday,place,name,revenue,mgmt,profit,cash,transfer,card,voucher,settle,custtype,note,source:'freesam'};
-  let fsId=id;
-  if(id){DataService.update(KEYS.freelancer,id,fsRec);}else{const added=DataService.add(KEYS.freelancer,fsRec);fsId=added.id;}
-  [KEYS.sonobel,KEYS.spa].forEach(k=>{const linked=DataService.getAll(k).find(r=>r.fsId===fsId);if(linked)DataService.remove(k,linked.id);});
-  const targetKey=(place==='소노벨')?KEYS.sonobel:KEYS.spa;
-  DataService.add(targetKey,{date,wday,revenue,mgmt,profit,cash,transfer,card,voucher,settle,note:`[프리샘:${name}] ${note}`.trim(),source:'freesam',fsId});
-  closeFsModal();showToast((id?'수정':'추가')+'되었습니다 ✅ → '+place+' 자동전달 완료');searchFreesam();
-}
-function delFreesam(id){
-  if(!confirm('삭제하시겠습니까?\n연결된 소노벨/스파 데이터도 함께 삭제됩니다.'))return;
-  const rec=DataService.getAll(KEYS.freelancer).find(r=>r.id===id);
-  if(rec){[KEYS.sonobel,KEYS.spa].forEach(k=>{const linked=DataService.getAll(k).find(r=>r.fsId===id);if(linked)DataService.remove(k,linked.id);});}
-  DataService.remove(KEYS.freelancer,id);showToast('삭제되었습니다');searchFreesam();
-}
-function searchFreesam(){
-  const from=document.getElementById('fs_from')?.value||'';const to=document.getElementById('fs_to')?.value||'';
-  let list=DataService.getAll(KEYS.freelancer);
-  if(from)list=list.filter(r=>r.date>=from);if(to)list=list.filter(r=>r.date<=to);
-  list.sort((a,b)=>b.date.localeCompare(a.date));
-  const sumRev=list.reduce((a,r)=>a+num(r.revenue),0);const sumMgmt=list.reduce((a,r)=>a+num(r.mgmt),0);const sumProfit=list.reduce((a,r)=>a+num(r.profit),0);const sumSettle=list.reduce((a,r)=>a+num(r.settle),0);
-  const kpiEl=document.getElementById('fs_kpi');
-  if(kpiEl)kpiEl.innerHTML=`<div class="kpi-card"><div class="kpi-label">👥 건수</div><div class="kpi-value">${list.length}건</div></div>
-    <div class="kpi-card info"><div class="kpi-label">💰 수익금 합계</div><div class="kpi-value">${fmtNum(sumRev)}원</div></div>
-    <div class="kpi-card warning"><div class="kpi-label">🔧 관리비 합계</div><div class="kpi-value">${fmtNum(sumMgmt)}원</div></div>
-    <div class="kpi-card success"><div class="kpi-label">📈 이익금 합계</div><div class="kpi-value">${fmtNum(sumProfit)}원</div></div>`;
-  const cntEl=document.getElementById('fs_cnt');if(cntEl)cntEl.textContent=`총 ${list.length}건`;
-  const tbl=document.getElementById('fs_tbl');if(!tbl)return;
-  if(!list.length){tbl.innerHTML=`<div class="empty-state"><div class="empty-icon">🧖</div><p>등록된 내역이 없습니다</p></div>`;return;}
-  tbl.innerHTML=`<table id="fs_table_el"><thead><tr><th>날짜</th><th>요일</th><th>영업장</th><th>프리샘명</th><th style="text-align:right">수익금</th><th style="text-align:right">관리비</th><th style="text-align:right">이익금</th><th style="text-align:right">현금</th><th style="text-align:right">이체</th><th style="text-align:right">카드</th><th style="text-align:right">상품권</th><th style="text-align:right">결산합</th><th>고객유형</th><th>비고</th><th>관리</th></tr></thead>
-  <tbody>${list.map(r=>`<tr><td>${fmtDate(r.date)}</td><td>${r.wday||''}</td>
-    <td><span class="badge ${r.place==='소노벨'?'badge-primary':'badge-success'}">${r.place||''}</span></td>
-    <td><strong>${r.name||''}</strong></td>
-    <td style="text-align:right">${fmtNum(num(r.revenue))}원</td><td style="text-align:right">${fmtNum(num(r.mgmt))}원</td>
-    <td style="text-align:right;color:var(--success);font-weight:600">${fmtNum(num(r.profit))}원</td>
-    <td style="text-align:right">${fmtNum(num(r.cash))}원</td><td style="text-align:right">${fmtNum(num(r.transfer))}원</td>
-    <td style="text-align:right">${fmtNum(num(r.card))}원</td><td style="text-align:right">${fmtNum(num(r.voucher||0))}원</td>
-    <td style="text-align:right;color:var(--primary);font-weight:600">${fmtNum(num(r.settle))}원</td>
-    <td>${r.custtype||''}</td><td>${r.note||'-'}</td>
-    <td><button class="btn btn-sm btn-outline" onclick="openFreesamEdit('${r.id}')">✏️</button>
-        <button class="btn btn-sm btn-danger" onclick="delFreesam('${r.id}')">🗑️</button></td>
-  </tr>`).join('')}</tbody>
-  <tfoot><tr><td colspan="4"><strong>합계</strong></td>
-    <td style="text-align:right"><strong>${fmtNum(sumRev)}원</strong></td><td style="text-align:right"><strong>${fmtNum(sumMgmt)}원</strong></td>
-    <td style="text-align:right;color:var(--success)"><strong>${fmtNum(sumProfit)}원</strong></td>
-    <td colspan="4"></td><td style="text-align:right;color:var(--primary)"><strong>${fmtNum(sumSettle)}원</strong></td>
-    <td colspan="3"></td></tr></tfoot></table>`;
-}
-function freesamPrint(){
-  const tbl=document.getElementById('fs_table_el');if(!tbl){showToast('출력할 데이터가 없습니다','error');return;}
-  const from=document.getElementById('fs_from')?.value||'';const to=document.getElementById('fs_to')?.value||'';
-  const w=window.open('','_blank','width=1100,height=700');
-  w.document.write(`<html><head><title>프리샘 일일관리 출력</title><style>body{font-family:'Malgun Gothic',sans-serif;font-size:11px;padding:20px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:5px 7px}thead{background:#f0f0f0;font-weight:bold}tfoot{background:#e8e8e8;font-weight:bold}@media print{button{display:none}}</style></head><body><h2>🧖 프리샘 일일관리</h2><p>기간: ${fmtDate(from)} ~ ${fmtDate(to)} | 출력일: ${fmtDate(today())}</p><button onclick="window.print()" style="margin-bottom:10px;padding:6px 14px;cursor:pointer">🖨️ 인쇄</button>${tbl.outerHTML}</body></html>`);w.document.close();
-}
+function saveFreesam(){const id=document.getElementById('fs_eid').value;const date=document.getElementById('fs_date').value;const place=document.getElementById('fs_place').value;const name=document.getElementById('fs_name').value.trim();const revenue=num(document.getElementById('fs_revenue').value);const mgmt=num(document.getElementById('fs_mgmt').value);const cash=num(document.getElementById('fs_cash').value);const transfer=num(document.getElementById('fs_transfer').value);const card=num(document.getElementById('fs_card').value);const voucher=num(document.getElementById('fs_voucher').value);const custtype=document.getElementById('fs_custtype').value;const note=document.getElementById('fs_note').value;if(!date){showToast('날짜를 입력해 주세요','error');return;}if(!name){showToast('프리샘명을 선택해 주세요','error');return;}if(!revenue){showToast('수익금을 입력해 주세요','error');return;}const wday=getWeekDay(date);const profit=revenue-mgmt;const settle=cash+transfer+card+voucher;const fsRec={date,wday,place,name,revenue,mgmt,profit,cash,transfer,card,voucher,settle,custtype,note,source:'freesam'};let fsId=id;if(id){DataService.update(KEYS.freelancer,id,fsRec);}else{const added=DataService.add(KEYS.freelancer,fsRec);fsId=added.id;}[KEYS.sonobel,KEYS.spa].forEach(k=>{const linked=DataService.getAll(k).find(r=>r.fsId===fsId);if(linked)DataService.remove(k,linked.id);});const targetKey=(place==='소노벨')?KEYS.sonobel:KEYS.spa;DataService.add(targetKey,{date,wday,revenue,mgmt,profit,cash,transfer,card,voucher,settle,note:`[프리샘:${name}] ${note}`.trim(),source:'freesam',fsId});closeFsModal();showToast((id?'수정':'추가')+'되었습니다 ✅ → '+place+' 자동전달 완료');searchFreesam();}
+function delFreesam(id){if(!confirm('삭제하시겠습니까?\n연결된 소노벨/스파 데이터도 함께 삭제됩니다.'))return;const rec=DataService.getAll(KEYS.freelancer).find(r=>r.id===id);if(rec){[KEYS.sonobel,KEYS.spa].forEach(k=>{const linked=DataService.getAll(k).find(r=>r.fsId===id);if(linked)DataService.remove(k,linked.id);});}DataService.remove(KEYS.freelancer,id);showToast('삭제되었습니다');searchFreesam();}
+function searchFreesam(){const from=document.getElementById('fs_from')?.value||'';const to=document.getElementById('fs_to')?.value||'';let list=DataService.getAll(KEYS.freelancer);if(from)list=list.filter(r=>r.date>=from);if(to)list=list.filter(r=>r.date<=to);list.sort((a,b)=>b.date.localeCompare(a.date));const sumRev=list.reduce((a,r)=>a+num(r.revenue),0);const sumMgmt=list.reduce((a,r)=>a+num(r.mgmt),0);const sumProfit=list.reduce((a,r)=>a+num(r.profit),0);const sumSettle=list.reduce((a,r)=>a+num(r.settle),0);const kpiEl=document.getElementById('fs_kpi');if(kpiEl)kpiEl.innerHTML=`<div class="kpi-card"><div class="kpi-label">👥 건수</div><div class="kpi-value">${list.length}건</div></div><div class="kpi-card info"><div class="kpi-label">💰 수익금 합계</div><div class="kpi-value">${fmtNum(sumRev)}원</div></div><div class="kpi-card warning"><div class="kpi-label">🔧 관리비 합계</div><div class="kpi-value">${fmtNum(sumMgmt)}원</div></div><div class="kpi-card success"><div class="kpi-label">📈 이익금 합계</div><div class="kpi-value">${fmtNum(sumProfit)}원</div></div>`;const cntEl=document.getElementById('fs_cnt');if(cntEl)cntEl.textContent=`총 ${list.length}건`;const tbl=document.getElementById('fs_tbl');if(!tbl)return;if(!list.length){tbl.innerHTML=`<div class="empty-state"><div class="empty-icon">🧖</div><p>등록된 내역이 없습니다</p></div>`;return;}tbl.innerHTML=`<table id="fs_table_el"><thead><tr><th>날짜</th><th>요일</th><th>영업장</th><th>프리샘명</th><th style="text-align:right">수익금</th><th style="text-align:right">관리비</th><th style="text-align:right">이익금</th><th style="text-align:right">현금</th><th style="text-align:right">이체</th><th style="text-align:right">카드</th><th style="text-align:right">상품권</th><th style="text-align:right">결산합</th><th>고객유형</th><th>비고</th><th>관리</th></tr></thead><tbody>${list.map(r=>`<tr><td>${fmtDate(r.date)}</td><td>${r.wday||''}</td><td><span class="badge ${r.place==='소노벨'?'badge-primary':'badge-success'}">${r.place||''}</span></td><td><strong>${r.name||''}</strong></td><td style="text-align:right">${fmtNum(num(r.revenue))}원</td><td style="text-align:right">${fmtNum(num(r.mgmt))}원</td><td style="text-align:right;color:var(--success);font-weight:600">${fmtNum(num(r.profit))}원</td><td style="text-align:right">${fmtNum(num(r.cash))}원</td><td style="text-align:right">${fmtNum(num(r.transfer))}원</td><td style="text-align:right">${fmtNum(num(r.card))}원</td><td style="text-align:right">${fmtNum(num(r.voucher||0))}원</td><td style="text-align:right;color:var(--primary);font-weight:600">${fmtNum(num(r.settle))}원</td><td>${r.custtype||''}</td><td>${r.note||'-'}</td><td><button class="btn btn-sm btn-outline" onclick="openFreesamEdit('${r.id}')">✏️</button><button class="btn btn-sm btn-danger" onclick="delFreesam('${r.id}')">🗑️</button></td></tr>`).join('')}</tbody><tfoot><tr><td colspan="4"><strong>합계</strong></td><td style="text-align:right"><strong>${fmtNum(sumRev)}원</strong></td><td style="text-align:right"><strong>${fmtNum(sumMgmt)}원</strong></td><td style="text-align:right;color:var(--success)"><strong>${fmtNum(sumProfit)}원</strong></td><td colspan="4"></td><td style="text-align:right;color:var(--primary)"><strong>${fmtNum(sumSettle)}원</strong></td><td colspan="3"></td></tr></tfoot></table>`;}
+function freesamPrint(){const tbl=document.getElementById('fs_table_el');if(!tbl){showToast('출력할 데이터가 없습니다','error');return;}const from=document.getElementById('fs_from')?.value||'';const to=document.getElementById('fs_to')?.value||'';const w=window.open('','_blank','width=1100,height=700');w.document.write(`<html><head><title>프리샘 일일관리 출력</title><style>body{font-family:'Malgun Gothic',sans-serif;font-size:11px;padding:20px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:5px 7px}thead{background:#f0f0f0;font-weight:bold}tfoot{background:#e8e8e8;font-weight:bold}@media print{button{display:none}}</style></head><body><h2>🧖 프리샘 일일관리</h2><p>기간: ${fmtDate(from)} ~ ${fmtDate(to)} | 출력일: ${fmtDate(today())}</p><button onclick="window.print()" style="margin-bottom:10px;padding:6px 14px;cursor:pointer">🖨️ 인쇄</button>${tbl.outerHTML}</body></html>`);w.document.close();}
 
 /* ===== 프리샘 관리 ===== */
 function renderTherapist(el){
@@ -1019,58 +595,15 @@ function renderTherapist(el){
   </div>`;
   renderTherapistTable();
 }
-function renderTherapistTable(){
-  const list=loadTherapistDetail();const q=(document.getElementById('th_search')?.value||'').toLowerCase();
-  const fa=document.getElementById('th_filter_active')?.value||'';const fp=document.getElementById('th_filter_place')?.value||'';
-  let filtered=list.filter(t=>{
-    if(q&&!t.name?.toLowerCase().includes(q)&&!t.specialty?.toLowerCase().includes(q))return false;
-    if(fa==='active'&&t.active===false)return false;if(fa==='inactive'&&t.active!==false)return false;
-    if(fp&&t.place!==fp)return false;return true;
-  });
-  const wrap=document.getElementById('th_table_wrap');if(!wrap)return;
-  if(!filtered.length){wrap.innerHTML=`<div class="empty-state"><div class="empty-icon">👥</div><p>등록된 프리샘이 없습니다</p></div>`;return;}
-  wrap.innerHTML=`<table><thead><tr><th>이름</th><th>생년월일</th><th>연락처</th><th>전문분야</th><th>소속</th><th>상태</th><th>메모</th><th>관리</th></tr></thead>
-  <tbody>${filtered.map(t=>`<tr><td><strong>${t.name||''}</strong></td><td>${t.dob||'-'}</td><td>${t.phone||'-'}</td><td>${t.specialty||'-'}</td>
-    <td><span class="badge badge-primary">${t.place||'-'}</span></td>
-    <td><span class="badge ${t.active!==false?'badge-success':'badge-warning'}">${t.active!==false?'✅ 활성':'⏸️ 비활성'}</span></td>
-    <td>${t.memo||'-'}</td>
-    <td><button class="btn btn-sm btn-outline" onclick="openTherapistEdit('${t.id}')">✏️</button>
-        <button class="btn btn-sm btn-danger" onclick="delTherapist('${t.id}')">🗑️</button></td>
-  </tr>`).join('')}</tbody></table>`;
-}
-function openTherapistModal(){
-  document.getElementById('th_modal_title').textContent='👤 프리샘 등록';document.getElementById('th_eid').value='';
-  ['th_name','th_dob','th_phone','th_specialty','th_memo'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  document.getElementById('th_place').value='소노벨';document.getElementById('th_active').value='true';document.getElementById('th_modal').classList.remove('hidden');
-}
-function openTherapistEdit(id){
-  const rec=loadTherapistDetail().find(t=>t.id===id);if(!rec)return;
-  document.getElementById('th_modal_title').textContent='👤 프리샘 수정';document.getElementById('th_eid').value=id;
-  document.getElementById('th_name').value=rec.name||'';document.getElementById('th_dob').value=rec.dob||'';
-  document.getElementById('th_phone').value=rec.phone||'';document.getElementById('th_specialty').value=rec.specialty||'';
-  document.getElementById('th_place').value=rec.place||'소노벨';document.getElementById('th_active').value=String(rec.active!==false);document.getElementById('th_memo').value=rec.memo||'';
-  document.getElementById('th_modal').classList.remove('hidden');
-}
+function renderTherapistTable(){const list=loadTherapistDetail();const q=(document.getElementById('th_search')?.value||'').toLowerCase();const fa=document.getElementById('th_filter_active')?.value||'';const fp=document.getElementById('th_filter_place')?.value||'';let filtered=list.filter(t=>{if(q&&!t.name?.toLowerCase().includes(q)&&!t.specialty?.toLowerCase().includes(q))return false;if(fa==='active'&&t.active===false)return false;if(fa==='inactive'&&t.active!==false)return false;if(fp&&t.place!==fp)return false;return true;});const wrap=document.getElementById('th_table_wrap');if(!wrap)return;if(!filtered.length){wrap.innerHTML=`<div class="empty-state"><div class="empty-icon">👥</div><p>등록된 프리샘이 없습니다</p></div>`;return;}wrap.innerHTML=`<table><thead><tr><th>이름</th><th>생년월일</th><th>연락처</th><th>전문분야</th><th>소속</th><th>상태</th><th>메모</th><th>관리</th></tr></thead><tbody>${filtered.map(t=>`<tr><td><strong>${t.name||''}</strong></td><td>${t.dob||'-'}</td><td>${t.phone||'-'}</td><td>${t.specialty||'-'}</td><td><span class="badge badge-primary">${t.place||'-'}</span></td><td><span class="badge ${t.active!==false?'badge-success':'badge-warning'}">${t.active!==false?'✅ 활성':'⏸️ 비활성'}</span></td><td>${t.memo||'-'}</td><td><button class="btn btn-sm btn-outline" onclick="openTherapistEdit('${t.id}')">✏️</button><button class="btn btn-sm btn-danger" onclick="delTherapist('${t.id}')">🗑️</button></td></tr>`).join('')}</tbody></table>`;}
+function openTherapistModal(){document.getElementById('th_modal_title').textContent='👤 프리샘 등록';document.getElementById('th_eid').value='';['th_name','th_dob','th_phone','th_specialty','th_memo'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});document.getElementById('th_place').value='소노벨';document.getElementById('th_active').value='true';document.getElementById('th_modal').classList.remove('hidden');}
+function openTherapistEdit(id){const rec=loadTherapistDetail().find(t=>t.id===id);if(!rec)return;document.getElementById('th_modal_title').textContent='👤 프리샘 수정';document.getElementById('th_eid').value=id;document.getElementById('th_name').value=rec.name||'';document.getElementById('th_dob').value=rec.dob||'';document.getElementById('th_phone').value=rec.phone||'';document.getElementById('th_specialty').value=rec.specialty||'';document.getElementById('th_place').value=rec.place||'소노벨';document.getElementById('th_active').value=rec.active===false?'false':'true';document.getElementById('th_memo').value=rec.memo||'';document.getElementById('th_modal').classList.remove('hidden');}
 function closeTherapistModal(){document.getElementById('th_modal').classList.add('hidden');}
-function saveTherapist(){
-  const id=document.getElementById('th_eid').value;const name=document.getElementById('th_name').value.trim();
-  if(!name){showToast('이름을 입력해 주세요','error');return;}
-  const rec={id:id||genId(),name,dob:document.getElementById('th_dob').value,phone:document.getElementById('th_phone').value,specialty:document.getElementById('th_specialty').value,place:document.getElementById('th_place').value,active:document.getElementById('th_active').value==='true',memo:document.getElementById('th_memo').value};
-  const list=loadTherapistDetail();
-  if(id){const idx=list.findIndex(t=>t.id===id);if(idx>=0)list[idx]=rec;else list.push(rec);}else list.push(rec);
-  saveTherapistDetail(list);closeTherapistModal();showToast(id?'수정되었습니다 ✅':'등록되었습니다 ✅');renderTherapist(document.getElementById('content'));
-}
-function delTherapist(id){
-  if(!confirm('삭제하시겠습니까?'))return;
-  saveTherapistDetail(loadTherapistDetail().filter(t=>t.id!==id));showToast('삭제되었습니다');renderTherapist(document.getElementById('content'));
-}
-function therapistPDF(){
-  const wrap=document.getElementById('th_table_wrap');if(!wrap?.querySelector('table')){showToast('출력할 데이터가 없습니다','error');return;}
-  const w=window.open('','_blank','width=1000,height=700');
-  w.document.write(`<html><head><title>프리샘 관리</title><style>body{font-family:'Malgun Gothic',sans-serif;font-size:12px;padding:20px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:6px 8px}thead{background:#f0f0f0;font-weight:bold}@media print{button{display:none}}</style></head><body><h2>👥 프리샘 관리</h2><p>출력일: ${fmtDate(today())}</p><button onclick="window.print()" style="margin-bottom:10px;padding:6px 14px;cursor:pointer">🖨️ 인쇄</button>${wrap.querySelector('table').outerHTML}</body></html>`);w.document.close();
-}
+function saveTherapist(){const id=document.getElementById('th_eid').value;const name=document.getElementById('th_name').value.trim();if(!name){showToast('이름을 입력해 주세요','error');return;}const rec={id:id||genId(),name,dob:document.getElementById('th_dob').value,phone:document.getElementById('th_phone').value,specialty:document.getElementById('th_specialty').value,place:document.getElementById('th_place').value,active:document.getElementById('th_active').value==='true',memo:document.getElementById('th_memo').value};const list=loadTherapistDetail();if(id){const idx=list.findIndex(t=>t.id===id);if(idx>=0)list[idx]=rec;else list.push(rec);}else list.push(rec);saveTherapistDetail(list);closeTherapistModal();showToast(id?'수정되었습니다 ✅':'등록되었습니다 ✅');renderTherapist(document.getElementById('content'));}
+function delTherapist(id){if(!confirm('삭제하시겠습니까?'))return;saveTherapistDetail(loadTherapistDetail().filter(t=>t.id!==id));showToast('삭제되었습니다');renderTherapist(document.getElementById('content'));}
+function therapistPDF(){const wrap=document.getElementById('th_table_wrap');if(!wrap?.querySelector('table')){showToast('출력할 데이터가 없습니다','error');return;}const w=window.open('','_blank','width=1000,height=700');w.document.write(`<html><head><title>프리샘 관리</title><style>body{font-family:'Malgun Gothic',sans-serif;font-size:12px;padding:20px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:6px 8px}thead{background:#f0f0f0;font-weight:bold}@media print{button{display:none}}</style></head><body><h2>👥 프리샘 관리</h2><p>출력일: ${fmtDate(today())}</p><button onclick="window.print()" style="margin-bottom:10px;padding:6px 14px;cursor:pointer">🖨️ 인쇄</button>${wrap.querySelector('table').outerHTML}</body></html>`);w.document.close();}
 
-/* ===== 프리샘 개인별 통계 ===== */
+/* ===== 프리샘 개인별 마사지 현황 ===== */
 function renderTherapistStats(el){
   const names=loadFreesamNames();
   el.innerHTML=`
@@ -1108,78 +641,14 @@ function renderTherapistStats(el){
   </div>`;
   setTimeout(()=>searchTherapistStats(),50);
 }
-function searchTherapistStats(){
-  const from=document.getElementById('ts_from')?.value||'';const to=document.getElementById('ts_to')?.value||'';
-  const selName=document.getElementById('ts_name')?.value||'';const selPlace=document.getElementById('ts_place')?.value||'';
-  let list=DataService.getAll(KEYS.freelancer);
-  if(from)list=list.filter(r=>r.date>=from);if(to)list=list.filter(r=>r.date<=to);
-  if(selName)list=list.filter(r=>r.name===selName);if(selPlace)list=list.filter(r=>r.place===selPlace);
-  list.sort((a,b)=>a.date.localeCompare(b.date));
-  const totRev=list.reduce((a,r)=>a+num(r.revenue),0);const totMgmt=list.reduce((a,r)=>a+num(r.mgmt),0);const totProfit=list.reduce((a,r)=>a+num(r.profit),0);
-  const kpiEl=document.getElementById('ts_kpi');
-  if(kpiEl)kpiEl.innerHTML=`<div class="kpi-card info"><div class="kpi-label">📋 총 건수</div><div class="kpi-value">${list.length}건</div></div>
-    <div class="kpi-card"><div class="kpi-label">💰 총 수익금</div><div class="kpi-value">${fmtNum(totRev)}원</div></div>
-    <div class="kpi-card warning"><div class="kpi-label">🔧 총 관리비</div><div class="kpi-value">${fmtNum(totMgmt)}원</div></div>
-    <div class="kpi-card success"><div class="kpi-label">📈 총 이익금</div><div class="kpi-value">${fmtNum(totProfit)}원</div></div>`;
-  const periodLbl=document.getElementById('ts_period_label');if(periodLbl)periodLbl.textContent=`${fmtDate(from)||'전체'} ~ ${fmtDate(to)||'전체'}`;
-  renderTsSummary(list);renderTsMonthly(list,selName);renderTsDetail(list,selName);
-}
-function renderTsSummary(list){
-  const nameMap={};list.forEach(r=>{if(!nameMap[r.name])nameMap[r.name]={name:r.name,cnt:0,rev:0,mgmt:0,profit:0,places:new Set()};const m=nameMap[r.name];m.cnt++;m.rev+=num(r.revenue);m.mgmt+=num(r.mgmt);m.profit+=num(r.profit);m.places.add(r.place);});
-  const rows=Object.values(nameMap).sort((a,b)=>b.profit-a.profit);
-  const tbl=document.getElementById('ts_summary_tbl');if(!tbl)return;
-  if(!rows.length){tbl.innerHTML=`<div class="empty-state"><div class="empty-icon">📊</div><p>데이터가 없습니다</p></div>`;return;}
-  tbl.innerHTML=`<table><thead><tr><th>프리샘명</th><th style="text-align:right">건수</th><th style="text-align:right">수익금</th><th style="text-align:right">관리비</th><th style="text-align:right">이익금</th><th>영업장</th></tr></thead>
-  <tbody>${rows.map(r=>`<tr><td><strong>${r.name}</strong></td><td style="text-align:right">${r.cnt}건</td>
-    <td style="text-align:right">${fmtNum(r.rev)}원</td><td style="text-align:right;color:var(--danger)">${fmtNum(r.mgmt)}원</td>
-    <td style="text-align:right;color:var(--success);font-weight:600">${fmtNum(r.profit)}원</td>
-    <td>${[...r.places].join(', ')}</td></tr>`).join('')}</tbody></table>`;
-}
-function renderTsMonthly(list,selName){
-  const mMap={};list.forEach(r=>{const m=r.date?r.date.slice(0,7):'';if(!m)return;if(!mMap[m])mMap[m]={month:m,cnt:0,rev:0,profit:0};mMap[m].cnt++;mMap[m].rev+=num(r.revenue);mMap[m].profit+=num(r.profit);});
-  const rows=Object.values(mMap).sort((a,b)=>a.month.localeCompare(b.month));
-  const tbl=document.getElementById('ts_monthly_tbl');if(!tbl)return;
-  if(!rows.length){tbl.innerHTML=`<div class="empty-state"><div class="empty-icon">📅</div><p>월별 데이터가 없습니다</p></div>`;return;}
-  tbl.innerHTML=`<table><thead><tr><th>년월</th><th style="text-align:right">건수</th><th style="text-align:right">수익금</th><th style="text-align:right">이익금</th></tr></thead>
-  <tbody>${rows.map(r=>`<tr><td>${r.month}</td><td style="text-align:right">${r.cnt}건</td><td style="text-align:right">${fmtNum(r.rev)}원</td><td style="text-align:right;color:var(--success)">${fmtNum(r.profit)}원</td></tr>`).join('')}</tbody></table>`;
-}
-function renderTsDetail(list,selName){
-  const card=document.getElementById('ts_detail_card');if(!card)return;
-  if(!selName){card.style.display='none';return;}
-  card.style.display='block';
-  const title=document.getElementById('ts_detail_title');if(title)title.textContent=`📋 ${selName} 상세 내역`;
-  const cnt=document.getElementById('ts_detail_cnt');if(cnt)cnt.textContent=`총 ${list.length}건`;
-  const tbl=document.getElementById('ts_detail_tbl');if(!tbl)return;
-  if(!list.length){tbl.innerHTML=`<div class="empty-state"><div class="empty-icon">📋</div><p>내역이 없습니다</p></div>`;return;}
-  tbl.innerHTML=`<table><thead><tr><th>날짜</th><th>요일</th><th>영업장</th><th style="text-align:right">수익금</th><th style="text-align:right">관리비</th><th style="text-align:right">이익금</th><th>고객유형</th><th>비고</th></tr></thead>
-  <tbody>${list.map(r=>`<tr><td>${fmtDate(r.date)}</td><td>${r.wday||''}</td>
-    <td><span class="badge ${r.place==='소노벨'?'badge-primary':'badge-success'}">${r.place||''}</span></td>
-    <td style="text-align:right">${fmtNum(num(r.revenue))}원</td><td style="text-align:right;color:var(--danger)">${fmtNum(num(r.mgmt))}원</td>
-    <td style="text-align:right;color:var(--success);font-weight:600">${fmtNum(num(r.profit))}원</td>
-    <td>${r.custtype||''}</td><td>${r.note||'-'}</td></tr>`).join('')}</tbody></table>`;
-}
-function therapistStatsPDF(){
-  const wrap=document.getElementById('ts_summary_tbl');if(!wrap?.querySelector('table')){showToast('출력할 데이터가 없습니다','error');return;}
-  const from=document.getElementById('ts_from')?.value||'';const to=document.getElementById('ts_to')?.value||'';
-  const w=window.open('','_blank','width=1000,height=700');
-  w.document.write(`<html><head><title>프리샘 현황</title><style>body{font-family:'Malgun Gothic',sans-serif;font-size:12px;padding:20px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:6px 8px}thead{background:#f0f0f0;font-weight:bold}@media print{button{display:none}}</style></head><body><h2>📊 프리샘 개인별 마사지 현황</h2><p>기간: ${fmtDate(from)} ~ ${fmtDate(to)} | 출력일: ${fmtDate(today())}</p><button onclick="window.print()" style="margin-bottom:10px;padding:6px 14px;cursor:pointer">🖨️ 인쇄</button>${wrap.querySelector('table').outerHTML}</body></html>`);w.document.close();
-}
-function therapistStatsCSV(){
-  const from=document.getElementById('ts_from')?.value||'';const to=document.getElementById('ts_to')?.value||'';
-  const selName=document.getElementById('ts_name')?.value||'';const selPlace=document.getElementById('ts_place')?.value||'';
-  let list=DataService.getAll(KEYS.freelancer);
-  if(from)list=list.filter(r=>r.date>=from);if(to)list=list.filter(r=>r.date<=to);
-  if(selName)list=list.filter(r=>r.name===selName);if(selPlace)list=list.filter(r=>r.place===selPlace);
-  if(!list.length){showToast('다운로드할 데이터가 없습니다','error');return;}
-  const header=['날짜','요일','영업장','프리샘명','수익금','관리비','이익금','고객유형','비고'];
-  const toLine=arr=>arr.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',');
-  const rows=list.map(r=>[r.date||'',r.wday||'',r.place||'',r.name||'',num(r.revenue),num(r.mgmt),num(r.profit),r.custtype||'',r.note||'']);
-  const csv=[toLine(['프리샘 현황']),toLine([`기간: ${fmtDate(from)||'전체'} ~ ${fmtDate(to)||'전체'}`]),'',toLine(header),...rows.map(toLine)].join('\r\n');
-  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});const url=URL.createObjectURL(blob);const link=document.createElement('a');
-  link.setAttribute('href',url);link.setAttribute('download',`프리샘현황_${today()}.csv`);document.body.appendChild(link);link.click();document.body.removeChild(link);URL.revokeObjectURL(url);showToast('📊 엑셀 다운로드 완료!');
-}
+function searchTherapistStats(){const from=document.getElementById('ts_from')?.value||'';const to=document.getElementById('ts_to')?.value||'';const selName=document.getElementById('ts_name')?.value||'';const selPlace=document.getElementById('ts_place')?.value||'';let list=DataService.getAll(KEYS.freelancer);if(from)list=list.filter(r=>r.date>=from);if(to)list=list.filter(r=>r.date<=to);if(selName)list=list.filter(r=>r.name===selName);if(selPlace)list=list.filter(r=>r.place===selPlace);list.sort((a,b)=>a.date.localeCompare(b.date));const totRev=list.reduce((a,r)=>a+num(r.revenue),0);const totMgmt=list.reduce((a,r)=>a+num(r.mgmt),0);const totProfit=list.reduce((a,r)=>a+num(r.profit),0);const kpiEl=document.getElementById('ts_kpi');if(kpiEl)kpiEl.innerHTML=`<div class="kpi-card info"><div class="kpi-label">📋 총 건수</div><div class="kpi-value">${list.length}건</div></div><div class="kpi-card"><div class="kpi-label">💰 총 수익금</div><div class="kpi-value">${fmtNum(totRev)}원</div></div><div class="kpi-card warning"><div class="kpi-label">🔧 총 관리비</div><div class="kpi-value">${fmtNum(totMgmt)}원</div></div><div class="kpi-card success"><div class="kpi-label">📈 총 이익금</div><div class="kpi-value">${fmtNum(totProfit)}원</div></div>`;const periodLbl=document.getElementById('ts_period_label');if(periodLbl)periodLbl.textContent=`${fmtDate(from)||'전체'} ~ ${fmtDate(to)||'전체'}`;renderTsSummary(list);renderTsMonthly(list,selName);renderTsDetail(list,selName);}
+function renderTsSummary(list){const map={};list.forEach(r=>{if(!map[r.name])map[r.name]={name:r.name,cnt:0,rev:0,mgmt:0,profit:0};map[r.name].cnt++;map[r.name].rev+=num(r.revenue);map[r.name].mgmt+=num(r.mgmt);map[r.name].profit+=num(r.profit);});const rows=Object.values(map).sort((a,b)=>b.profit-a.profit);const el=document.getElementById('ts_summary_tbl');if(!el)return;if(!rows.length){el.innerHTML=`<div class="empty-state"><div class="empty-icon">📊</div><p>데이터가 없습니다</p></div>`;return;}el.innerHTML=`<table><thead><tr><th>프리샘명</th><th style="text-align:right">건수</th><th style="text-align:right">수익금</th><th style="text-align:right">관리비</th><th style="text-align:right">이익금</th></tr></thead><tbody>${rows.map(r=>`<tr><td><strong>${r.name}</strong></td><td style="text-align:right">${r.cnt}건</td><td style="text-align:right">${fmtNum(r.rev)}원</td><td style="text-align:right;color:var(--danger)">${fmtNum(r.mgmt)}원</td><td style="text-align:right;color:var(--success);font-weight:600">${fmtNum(r.profit)}원</td></tr>`).join('')}</tbody></table>`;}
+function renderTsMonthly(list,selName){const map={};list.forEach(r=>{const m=r.date?r.date.slice(0,7):'';if(!m)return;const k=selName?m:`${r.name}_${m}`;if(!map[k])map[k]={month:m,name:r.name,cnt:0,rev:0,profit:0};map[k].cnt++;map[k].rev+=num(r.revenue);map[k].profit+=num(r.profit);});const rows=Object.values(map).sort((a,b)=>a.month.localeCompare(b.month));const el=document.getElementById('ts_monthly_tbl');if(!el)return;if(!rows.length){el.innerHTML=`<div class="empty-state"><div class="empty-icon">📅</div><p>데이터가 없습니다</p></div>`;return;}el.innerHTML=`<table><thead><tr><th>년월</th>${!selName?'<th>프리샘</th>':''}<th style="text-align:right">건수</th><th style="text-align:right">수익금</th><th style="text-align:right">이익금</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r.month}</td>${!selName?`<td>${r.name}</td>`:''}<td style="text-align:right">${r.cnt}건</td><td style="text-align:right">${fmtNum(r.rev)}원</td><td style="text-align:right;color:var(--success)">${fmtNum(r.profit)}원</td></tr>`).join('')}</tbody></table>`;}
+function renderTsDetail(list,selName){const card=document.getElementById('ts_detail_card');if(!card)return;if(!selName){card.style.display='none';return;}card.style.display='block';const titleEl=document.getElementById('ts_detail_title');const cntEl=document.getElementById('ts_detail_cnt');if(titleEl)titleEl.textContent=`📋 ${selName} 상세 내역`;if(cntEl)cntEl.textContent=`총 ${list.length}건`;const el=document.getElementById('ts_detail_tbl');if(!el)return;if(!list.length){el.innerHTML=`<div class="empty-state"><div class="empty-icon">📋</div><p>데이터가 없습니다</p></div>`;return;}el.innerHTML=`<table><thead><tr><th>날짜</th><th>요일</th><th>영업장</th><th style="text-align:right">수익금</th><th style="text-align:right">관리비</th><th style="text-align:right">이익금</th><th>고객유형</th><th>비고</th></tr></thead><tbody>${list.map(r=>`<tr><td>${fmtDate(r.date)}</td><td>${r.wday||''}</td><td><span class="badge ${r.place==='소노벨'?'badge-primary':'badge-success'}">${r.place||''}</span></td><td style="text-align:right">${fmtNum(num(r.revenue))}원</td><td style="text-align:right;color:var(--danger)">${fmtNum(num(r.mgmt))}원</td><td style="text-align:right;color:var(--success);font-weight:600">${fmtNum(num(r.profit))}원</td><td>${r.custtype||''}</td><td>${r.note||'-'}</td></tr>`).join('')}</tbody></table>`;}
+function therapistStatsPDF(){const wrap=document.getElementById('ts_summary_tbl');if(!wrap?.querySelector('table')){showToast('출력할 데이터가 없습니다','error');return;}const from=document.getElementById('ts_from')?.value||'';const to=document.getElementById('ts_to')?.value||'';const w=window.open('','_blank','width=1000,height=700');w.document.write(`<html><head><title>프리샘 현황</title><style>body{font-family:'Malgun Gothic',sans-serif;font-size:12px;padding:20px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:6px 8px}thead{background:#f0f0f0;font-weight:bold}@media print{button{display:none}}</style></head><body><h2>📊 프리샘 개인별 마사지 현황</h2><p>기간: ${fmtDate(from)} ~ ${fmtDate(to)} | 출력일: ${fmtDate(today())}</p><button onclick="window.print()" style="margin-bottom:10px;padding:6px 14px;cursor:pointer">🖨️ 인쇄</button>${wrap.querySelector('table').outerHTML}</body></html>`);w.document.close();}
+function therapistStatsCSV(){const from=document.getElementById('ts_from')?.value||'';const to=document.getElementById('ts_to')?.value||'';const selName=document.getElementById('ts_name')?.value||'';const selPlace=document.getElementById('ts_place')?.value||'';let list=DataService.getAll(KEYS.freelancer);if(from)list=list.filter(r=>r.date>=from);if(to)list=list.filter(r=>r.date<=to);if(selName)list=list.filter(r=>r.name===selName);if(selPlace)list=list.filter(r=>r.place===selPlace);if(!list.length){showToast('다운로드할 데이터가 없습니다','error');return;}const header=['날짜','요일','영업장','프리샘명','수익금','관리비','이익금','고객유형','비고'];const toLine=arr=>arr.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',');const rows=list.map(r=>[r.date||'',r.wday||'',r.place||'',r.name||'',num(r.revenue),num(r.mgmt),num(r.profit),r.custtype||'',r.note||'']);const csv=[toLine(['프리샘 현황']),toLine([`기간: ${fmtDate(from)||'전체'} ~ ${fmtDate(to)||'전체'}`]),'',toLine(header),...rows.map(toLine)].join('\r\n');const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});const url=URL.createObjectURL(blob);const link=document.createElement('a');link.setAttribute('href',url);link.setAttribute('download',`프리샘현황_${today()}.csv`);document.body.appendChild(link);link.click();document.body.removeChild(link);URL.revokeObjectURL(url);showToast('📊 엑셀 다운로드 완료!');}
 
-/* ===== 소노벨/스파 일일관리 (공통) ===== */
+/* ===== 소노벨/스파 일일관리 공통 엔진 ===== */
 function renderSonobel(el){renderDailyLedger(el,{key:KEYS.sonobel,prefix:'snb',title:'소노벨 일일관리',icon:'🏠'});}
 function renderSpa(el){renderDailyLedger(el,{key:KEYS.spa,prefix:'spa2',title:'스파 일일관리',icon:'💆'});}
 function renderDailyLedger(el,cfg){
@@ -1235,91 +704,18 @@ function renderDailyLedger(el,cfg){
       </div>
     </div>
   </div>`;
-  setTimeout(()=>{
-    const dateEl=document.getElementById(`${prefix}_date`);
-    if(dateEl){dateEl.addEventListener('change',()=>{const wEl=document.getElementById(`${prefix}_wday`);if(wEl)wEl.value=getWeekDay(dateEl.value);});const wEl=document.getElementById(`${prefix}_wday`);if(wEl)wEl.value=getWeekDay(dateEl.value);}
-    searchLedger(key,prefix);
-  },50);
+  setTimeout(()=>{const dateEl=document.getElementById(`${prefix}_date`);if(dateEl){dateEl.addEventListener('change',()=>{const wEl=document.getElementById(`${prefix}_wday`);if(wEl)wEl.value=getWeekDay(dateEl.value);});const wEl=document.getElementById(`${prefix}_wday`);if(wEl)wEl.value=getWeekDay(dateEl.value);}searchLedger(key,prefix);},50);
 }
+function searchLedger(key,prefix){const from=document.getElementById(`${prefix}_from`)?.value||'';const to=document.getElementById(`${prefix}_to`)?.value||'';let list=DataService.getAll(key);if(from)list=list.filter(r=>r.date>=from);if(to)list=list.filter(r=>r.date<=to);list.sort((a,b)=>b.date.localeCompare(a.date));const sumRev=list.reduce((a,r)=>a+num(r.revenue),0);const sumMgmt=list.reduce((a,r)=>a+num(r.mgmt),0);const sumProfit=list.reduce((a,r)=>a+num(r.profit),0);const sumSettle=list.reduce((a,r)=>a+num(r.settle),0);const kpiEl=document.getElementById(`${prefix}_kpi`);if(kpiEl)kpiEl.innerHTML=`<div class="kpi-card"><div class="kpi-label">📋 건수</div><div class="kpi-value">${list.length}건</div></div><div class="kpi-card info"><div class="kpi-label">💰 수익금</div><div class="kpi-value">${fmtNum(sumRev)}원</div></div><div class="kpi-card warning"><div class="kpi-label">🔧 관리비</div><div class="kpi-value">${fmtNum(sumMgmt)}원</div></div><div class="kpi-card success"><div class="kpi-label">📈 이익금</div><div class="kpi-value">${fmtNum(sumProfit)}원</div></div><div class="kpi-card primary"><div class="kpi-label">🧾 결산합</div><div class="kpi-value">${fmtNum(sumSettle)}원</div></div>`;const cntEl=document.getElementById(`${prefix}_cnt`);if(cntEl)cntEl.textContent=`총 ${list.length}건`;const tbl=document.getElementById(`${prefix}_tbl`);if(!tbl)return;if(!list.length){tbl.innerHTML=`<div class="empty-state"><div class="empty-icon">📋</div><p>등록된 내역이 없습니다</p></div>`;return;}tbl.innerHTML=`<table id="${prefix}_table_el"><thead><tr><th>날짜</th><th>요일</th><th style="text-align:right">수익금</th><th style="text-align:right">관리비</th><th style="text-align:right">이익금</th><th style="text-align:right">현금</th><th style="text-align:right">이체</th><th style="text-align:right">카드</th><th style="text-align:right">상품권</th><th style="text-align:right">결산합</th><th>메모</th><th>관리</th></tr></thead><tbody>${list.map(r=>`<tr><td>${fmtDate(r.date)}</td><td>${r.wday||''}</td><td style="text-align:right">${fmtNum(num(r.revenue))}원</td><td style="text-align:right;color:var(--danger)">${fmtNum(num(r.mgmt))}원</td><td style="text-align:right;color:var(--success);font-weight:600">${fmtNum(num(r.profit))}원</td><td style="text-align:right">${fmtNum(num(r.cash))}원</td><td style="text-align:right">${fmtNum(num(r.transfer))}원</td><td style="text-align:right">${fmtNum(num(r.card))}원</td><td style="text-align:right">${fmtNum(num(r.voucher||0))}원</td><td style="text-align:right;color:var(--primary);font-weight:600">${fmtNum(num(r.settle))}원</td><td>${r.note||'-'}</td><td><button class="btn btn-sm btn-outline" onclick="editLedger('${key}','${prefix}','${r.id}')">✏️</button><button class="btn btn-sm btn-danger" onclick="delLedger('${key}','${prefix}','${r.id}')">🗑️</button></td></tr>`).join('')}</tbody><tfoot><tr><td colspan="2"><strong>합계</strong></td><td style="text-align:right"><strong>${fmtNum(sumRev)}원</strong></td><td style="text-align:right;color:var(--danger)"><strong>${fmtNum(sumMgmt)}원</strong></td><td style="text-align:right;color:var(--success)"><strong>${fmtNum(sumProfit)}원</strong></td><td colspan="4"></td><td style="text-align:right;color:var(--primary)"><strong>${fmtNum(sumSettle)}원</strong></td><td colspan="2"></td></tr></tfoot></table>`;}
+function openLedger(prefix,title){document.getElementById(`${prefix}_mtitle`).textContent=`➕ ${title} 추가`;document.getElementById(`${prefix}_eid`).value='';const t=today();document.getElementById(`${prefix}_date`).value=t;const wEl=document.getElementById(`${prefix}_wday`);if(wEl)wEl.value=getWeekDay(t);['revenue','mgmt','profit','cash','transfer','card','voucher','settle','note'].forEach(f=>{const el=document.getElementById(`${prefix}_${f}`);if(el)el.value='';});document.getElementById(`${prefix}_modal`).classList.remove('hidden');}
+function closeLedger(prefix){document.getElementById(`${prefix}_modal`).classList.add('hidden');}
+function editLedger(key,prefix,id){const rec=DataService.getAll(key).find(r=>r.id===id);if(!rec)return;document.getElementById(`${prefix}_mtitle`).textContent='✏️ 수정';document.getElementById(`${prefix}_eid`).value=id;document.getElementById(`${prefix}_date`).value=rec.date||'';const wEl=document.getElementById(`${prefix}_wday`);if(wEl)wEl.value=rec.wday||'';['revenue','mgmt','profit','cash','transfer','card','voucher','settle','note'].forEach(f=>{const el=document.getElementById(`${prefix}_${f}`);if(el)el.value=rec[f]||'';});document.getElementById(`${prefix}_modal`).classList.remove('hidden');}
+function delLedger(key,prefix,id){if(!confirm('삭제하시겠습니까?'))return;DataService.remove(key,id);showToast('삭제되었습니다');searchLedger(key,prefix);}
+function saveLedger(key,prefix){const id=document.getElementById(`${prefix}_eid`).value;const date=document.getElementById(`${prefix}_date`).value;const revenue=num(document.getElementById(`${prefix}_revenue`).value);const mgmt=num(document.getElementById(`${prefix}_mgmt`).value);const cash=num(document.getElementById(`${prefix}_cash`).value);const transfer=num(document.getElementById(`${prefix}_transfer`).value);const card=num(document.getElementById(`${prefix}_card`).value);const voucher=num(document.getElementById(`${prefix}_voucher`).value);const note=document.getElementById(`${prefix}_note`).value;if(!date){showToast('날짜를 입력해 주세요','error');return;}if(!revenue){showToast('수익금을 입력해 주세요','error');return;}const wday=getWeekDay(date);const profit=revenue-mgmt;const settle=cash+transfer+card+voucher;const rec={date,wday,revenue,mgmt,profit,cash,transfer,card,voucher,settle,note};if(id)DataService.update(key,id,rec);else DataService.add(key,rec);closeLedger(prefix);showToast(id?'수정되었습니다 ✅':'추가되었습니다 ✅');searchLedger(key,prefix);}
 function calcLedger(prefix){const r=num(document.getElementById(`${prefix}_revenue`)?.value);const m=num(document.getElementById(`${prefix}_mgmt`)?.value);const el=document.getElementById(`${prefix}_profit`);if(el)el.value=r-m;}
 function calcSettle(prefix){const c=num(document.getElementById(`${prefix}_cash`)?.value);const t=num(document.getElementById(`${prefix}_transfer`)?.value);const k=num(document.getElementById(`${prefix}_card`)?.value);const v=num(document.getElementById(`${prefix}_voucher`)?.value);const el=document.getElementById(`${prefix}_settle`);if(el)el.value=c+t+k+v;}
-function openLedger(prefix,title){
-  document.getElementById(`${prefix}_mtitle`).textContent=`➕ ${title} 추가`;document.getElementById(`${prefix}_eid`).value='';
-  const t=today();document.getElementById(`${prefix}_date`).value=t;const wEl=document.getElementById(`${prefix}_wday`);if(wEl)wEl.value=getWeekDay(t);
-  ['revenue','mgmt','profit','cash','transfer','card','voucher','settle','note'].forEach(f=>{const el=document.getElementById(`${prefix}_${f}`);if(el)el.value='';});
-  document.getElementById(`${prefix}_modal`).classList.remove('hidden');
-}
-function closeLedger(prefix){document.getElementById(`${prefix}_modal`).classList.add('hidden');}
-function saveLedger(key,prefix){
-  const id=document.getElementById(`${prefix}_eid`).value;const date=document.getElementById(`${prefix}_date`).value;
-  const revenue=num(document.getElementById(`${prefix}_revenue`).value);const mgmt=num(document.getElementById(`${prefix}_mgmt`).value);
-  const cash=num(document.getElementById(`${prefix}_cash`).value);const transfer=num(document.getElementById(`${prefix}_transfer`).value);
-  const card=num(document.getElementById(`${prefix}_card`).value);const voucher=num(document.getElementById(`${prefix}_voucher`).value);
-  const note=document.getElementById(`${prefix}_note`).value;
-  if(!date){showToast('날짜를 입력해 주세요','error');return;}if(!revenue){showToast('수익금을 입력해 주세요','error');return;}
-  const wday=getWeekDay(date);const profit=revenue-mgmt;const settle=cash+transfer+card+voucher;
-  const rec={date,wday,revenue,mgmt,profit,cash,transfer,card,voucher,settle,note};
-  if(id)DataService.update(key,id,rec);else DataService.add(key,rec);
-  closeLedger(prefix);showToast(id?'수정되었습니다 ✅':'추가되었습니다 ✅');searchLedger(key,prefix);
-}
-function searchLedger(key,prefix){
-  const from=document.getElementById(`${prefix}_from`)?.value||'';const to=document.getElementById(`${prefix}_to`)?.value||'';
-  let list=DataService.getAll(key);
-  if(from)list=list.filter(r=>r.date>=from);if(to)list=list.filter(r=>r.date<=to);
-  list.sort((a,b)=>b.date.localeCompare(a.date));
-  const sumRev=list.reduce((a,r)=>a+num(r.revenue),0);const sumMgmt=list.reduce((a,r)=>a+num(r.mgmt),0);const sumProfit=list.reduce((a,r)=>a+num(r.profit),0);const sumSettle=list.reduce((a,r)=>a+num(r.settle),0);
-  const kpiEl=document.getElementById(`${prefix}_kpi`);
-  if(kpiEl)kpiEl.innerHTML=`<div class="kpi-card"><div class="kpi-label">📋 건수</div><div class="kpi-value">${list.length}건</div></div>
-    <div class="kpi-card info"><div class="kpi-label">💰 수익금</div><div class="kpi-value">${fmtNum(sumRev)}원</div></div>
-    <div class="kpi-card warning"><div class="kpi-label">🔧 관리비</div><div class="kpi-value">${fmtNum(sumMgmt)}원</div></div>
-    <div class="kpi-card success"><div class="kpi-label">📈 이익금</div><div class="kpi-value">${fmtNum(sumProfit)}원</div></div>
-    <div class="kpi-card primary"><div class="kpi-label">🧾 결산합</div><div class="kpi-value">${fmtNum(sumSettle)}원</div></div>`;
-  const cntEl=document.getElementById(`${prefix}_cnt`);if(cntEl)cntEl.textContent=`총 ${list.length}건`;
-  const tbl=document.getElementById(`${prefix}_tbl`);if(!tbl)return;
-  if(!list.length){tbl.innerHTML=`<div class="empty-state"><div class="empty-icon">📋</div><p>등록된 내역이 없습니다</p></div>`;return;}
-  tbl.innerHTML=`<table id="${prefix}_table_el"><thead><tr><th>날짜</th><th>요일</th><th style="text-align:right">수익금</th><th style="text-align:right">관리비</th><th style="text-align:right">이익금</th><th style="text-align:right">현금</th><th style="text-align:right">이체</th><th style="text-align:right">카드</th><th style="text-align:right">상품권</th><th style="text-align:right">결산합</th><th>메모</th><th>관리</th></tr></thead>
-  <tbody>${list.map(r=>`<tr><td>${fmtDate(r.date)}</td><td>${r.wday||''}</td>
-    <td style="text-align:right">${fmtNum(num(r.revenue))}원</td><td style="text-align:right;color:var(--danger)">${fmtNum(num(r.mgmt))}원</td>
-    <td style="text-align:right;color:var(--success);font-weight:600">${fmtNum(num(r.profit))}원</td>
-    <td style="text-align:right">${fmtNum(num(r.cash))}원</td><td style="text-align:right">${fmtNum(num(r.transfer))}원</td>
-    <td style="text-align:right">${fmtNum(num(r.card))}원</td><td style="text-align:right">${fmtNum(num(r.voucher||0))}원</td>
-    <td style="text-align:right;color:var(--primary);font-weight:600">${fmtNum(num(r.settle))}원</td>
-    <td>${r.note||'-'}</td>
-    <td><button class="btn btn-sm btn-outline" onclick="editLedger('${key}','${prefix}','${r.id}')">✏️</button>
-        <button class="btn btn-sm btn-danger" onclick="delLedger('${key}','${prefix}','${r.id}')">🗑️</button></td>
-  </tr>`).join('')}</tbody>
-  <tfoot><tr><td colspan="2"><strong>합계</strong></td>
-    <td style="text-align:right"><strong>${fmtNum(sumRev)}원</strong></td><td style="text-align:right;color:var(--danger)"><strong>${fmtNum(sumMgmt)}원</strong></td>
-    <td style="text-align:right;color:var(--success)"><strong>${fmtNum(sumProfit)}원</strong></td>
-    <td colspan="4"></td><td style="text-align:right;color:var(--primary)"><strong>${fmtNum(sumSettle)}원</strong></td>
-    <td colspan="2"></td></tr></tfoot></table>`;
-}
-function editLedger(key,prefix,id){
-  const rec=DataService.getAll(key).find(r=>r.id===id);if(!rec)return;
-  document.getElementById(`${prefix}_mtitle`).textContent='✏️ 수정';document.getElementById(`${prefix}_eid`).value=id;
-  document.getElementById(`${prefix}_date`).value=rec.date||'';const wEl=document.getElementById(`${prefix}_wday`);if(wEl)wEl.value=rec.wday||'';
-  ['revenue','mgmt','profit','cash','transfer','card','voucher','settle','note'].forEach(f=>{const el=document.getElementById(`${prefix}_${f}`);if(el)el.value=rec[f]||'';});
-  document.getElementById(`${prefix}_modal`).classList.remove('hidden');
-}
-function delLedger(key,prefix,id){if(!confirm('삭제하시겠습니까?'))return;DataService.remove(key,id);showToast('삭제되었습니다');searchLedger(key,prefix);}
-function ledgerPrint(prefix,title){
-  const tbl=document.getElementById(`${prefix}_table_el`);if(!tbl){showToast('출력할 데이터가 없습니다','error');return;}
-  const from=document.getElementById(`${prefix}_from`)?.value||'';const to=document.getElementById(`${prefix}_to`)?.value||'';
-  const w=window.open('','_blank','width=1100,height=700');
-  w.document.write(`<html><head><title>${title} 출력</title><style>body{font-family:'Malgun Gothic',sans-serif;font-size:11px;padding:20px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:5px 7px}thead{background:#f0f0f0;font-weight:bold}tfoot{background:#e8e8e8;font-weight:bold}@media print{button{display:none}}</style></head><body><h2>${title}</h2><p>기간: ${fmtDate(from)} ~ ${fmtDate(to)} | 출력일: ${fmtDate(today())}</p><button onclick="window.print()" style="margin-bottom:10px;padding:6px 14px;cursor:pointer">🖨️ 인쇄</button>${tbl.outerHTML}</body></html>`);w.document.close();
-}
-function exportLedgerCSV(key,prefix,title){
-  const from=document.getElementById(`${prefix}_from`)?.value||'';const to=document.getElementById(`${prefix}_to`)?.value||'';
-  let list=DataService.getAll(key);
-  if(from)list=list.filter(r=>r.date>=from);if(to)list=list.filter(r=>r.date<=to);
-  if(!list.length){showToast('다운로드할 데이터가 없습니다','error');return;}
-  const header=['날짜','요일','수익금','관리비','이익금','현금','이체','카드','상품권','결산합','메모'];
-  const toLine=arr=>arr.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',');
-  const rows=list.map(r=>[r.date||'',r.wday||'',num(r.revenue),num(r.mgmt),num(r.profit),num(r.cash),num(r.transfer),num(r.card),num(r.voucher||0),num(r.settle),r.note||'']);
-  const csv=[toLine([title]),toLine([`기간: ${fmtDate(from)||'전체'} ~ ${fmtDate(to)||'전체'}`]),'',toLine(header),...rows.map(toLine)].join('\r\n');
-  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});const url=URL.createObjectURL(blob);const link=document.createElement('a');
-  link.setAttribute('href',url);link.setAttribute('download',`${title}_${today()}.csv`);document.body.appendChild(link);link.click();document.body.removeChild(link);URL.revokeObjectURL(url);showToast('📊 엑셀 다운로드 완료!');
-}
+function ledgerPrint(prefix,title){const tbl=document.getElementById(`${prefix}_table_el`);if(!tbl){showToast('출력할 데이터가 없습니다','error');return;}const from=document.getElementById(`${prefix}_from`)?.value||'';const to=document.getElementById(`${prefix}_to`)?.value||'';const w=window.open('','_blank','width=1100,height=700');w.document.write(`<html><head><title>${title} 출력</title><style>body{font-family:'Malgun Gothic',sans-serif;font-size:11px;padding:20px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:5px 7px}thead{background:#f0f0f0;font-weight:bold}tfoot{background:#e8e8e8;font-weight:bold}@media print{button{display:none}}</style></head><body><h2>${title}</h2><p>기간: ${fmtDate(from)} ~ ${fmtDate(to)} | 출력일: ${fmtDate(today())}</p><button onclick="window.print()" style="margin-bottom:10px;padding:6px 14px;cursor:pointer">🖨️ 인쇄</button>${tbl.outerHTML}</body></html>`);w.document.close();}
+function exportLedgerCSV(key,prefix,title){const from=document.getElementById(`${prefix}_from`)?.value||'';const to=document.getElementById(`${prefix}_to`)?.value||'';let list=DataService.getAll(key);if(from)list=list.filter(r=>r.date>=from);if(to)list=list.filter(r=>r.date<=to);if(!list.length){showToast('다운로드할 데이터가 없습니다','error');return;}const header=['날짜','요일','수익금','관리비','이익금','현금','이체','카드','상품권','결산합','메모'];const toLine=arr=>arr.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',');const rows=list.map(r=>[r.date||'',r.wday||'',num(r.revenue),num(r.mgmt),num(r.profit),num(r.cash),num(r.transfer),num(r.card),num(r.voucher||0),num(r.settle),r.note||'']);const csv=[toLine([title]),toLine([`기간: ${fmtDate(from)||'전체'} ~ ${fmtDate(to)||'전체'}`]),'',toLine(header),...rows.map(toLine)].join('\r\n');const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});const url=URL.createObjectURL(blob);const link=document.createElement('a');link.setAttribute('href',url);link.setAttribute('download',`${title}_${today()}.csv`);document.body.appendChild(link);link.click();document.body.removeChild(link);URL.revokeObjectURL(url);showToast('📊 엑셀 다운로드 완료!');}
 
 /* ===== 결산내역 ===== */
 function renderSettlement(el){
@@ -1344,74 +740,9 @@ function renderSettlement(el){
   </div>`;
   setTimeout(()=>searchSettlement(),50);
 }
-function searchSettlement(){
-  const from=document.getElementById('set_from')?.value||'';const to=document.getElementById('set_to')?.value||'';
-  let snbList=DataService.getAll(KEYS.sonobel);let spaList=DataService.getAll(KEYS.spa);let expList=DataService.getAll(KEYS.expense);
-  if(from){snbList=snbList.filter(r=>r.date>=from);spaList=spaList.filter(r=>r.date>=from);expList=expList.filter(r=>r.date>=from);}
-  if(to){snbList=snbList.filter(r=>r.date<=to);spaList=spaList.filter(r=>r.date<=to);expList=expList.filter(r=>r.date<=to);}
-  const dateMap={};const ensure=(d)=>{if(!dateMap[d])dateMap[d]={date:d,snbRev:0,snbMgmt:0,snbProfit:0,spaRev:0,spaMgmt:0,spaProfit:0,expAmt:0};};
-  snbList.forEach(r=>{ensure(r.date);dateMap[r.date].snbRev+=num(r.revenue);dateMap[r.date].snbMgmt+=num(r.mgmt);dateMap[r.date].snbProfit+=num(r.profit);});
-  spaList.forEach(r=>{ensure(r.date);dateMap[r.date].spaRev+=num(r.revenue);dateMap[r.date].spaMgmt+=num(r.mgmt);dateMap[r.date].spaProfit+=num(r.profit);});
-  expList.forEach(r=>{ensure(r.date);dateMap[r.date].expAmt+=num(r.amount);});
-  const list=Object.values(dateMap).sort((a,b)=>a.date.localeCompare(b.date));
-  const totSnbRev=list.reduce((a,r)=>a+r.snbRev,0);const totSpaRev=list.reduce((a,r)=>a+r.spaRev,0);
-  const totSnbProfit=list.reduce((a,r)=>a+r.snbProfit,0);const totSpaProfit=list.reduce((a,r)=>a+r.spaProfit,0);
-  const totSnbMgmt=list.reduce((a,r)=>a+r.snbMgmt,0);const totSpaMgmt=list.reduce((a,r)=>a+r.spaMgmt,0);
-  const totRevAll=totSnbRev+totSpaRev;const totExpAmt=list.reduce((a,r)=>a+r.expAmt,0);const totNet=(totSnbProfit+totSpaProfit)-totExpAmt;
-  const kpiEl=document.getElementById('set_kpi');
-  if(kpiEl)kpiEl.innerHTML=`<div class="kpi-card info"><div class="kpi-label">🏠 소노벨 수익금</div><div class="kpi-value">${fmtNum(totSnbRev)}원</div></div>
-    <div class="kpi-card info"><div class="kpi-label">💆 스파 수익금</div><div class="kpi-value">${fmtNum(totSpaRev)}원</div></div>
-    <div class="kpi-card success"><div class="kpi-label">💰 총 수익금 합계</div><div class="kpi-value">${fmtNum(totRevAll)}원</div></div>
-    <div class="kpi-card warning"><div class="kpi-label">💸 총 지출비용</div><div class="kpi-value">${fmtNum(totExpAmt)}원</div></div>
-    <div class="kpi-card ${totNet>=0?'success':'danger'}"><div class="kpi-label">📈 순이익</div><div class="kpi-value">${fmtNum(totNet)}원</div></div>`;
-  const cntEl=document.getElementById('set_cnt');if(cntEl)cntEl.textContent=`총 ${list.length}일`;
-  const tbl=document.getElementById('set_tbl');if(!tbl)return;
-  if(!list.length){tbl.innerHTML=`<div class="empty-state"><div class="empty-icon">📋</div><p>결산 데이터가 없습니다</p></div>`;return;}
-  tbl.innerHTML=`<table id="set_table_el"><thead><tr><th>날짜</th><th>요일</th><th style="text-align:right">소노벨 수익금</th><th style="text-align:right">소노벨 관리비</th><th style="text-align:right">소노벨 이익금</th><th style="text-align:right">스파 수익금</th><th style="text-align:right">스파 관리비</th><th style="text-align:right">스파 이익금</th><th style="text-align:right">일일 지출</th><th style="text-align:right">수익금 합계</th><th style="text-align:right">순이익</th></tr></thead>
-  <tbody>${list.map(r=>{const revAll=r.snbRev+r.spaRev;const net=(r.snbProfit+r.spaProfit)-r.expAmt;
-    return `<tr><td>${fmtDate(r.date)}</td><td>${getWeekDay(r.date)}</td>
-      <td style="text-align:right">${fmtNum(r.snbRev)}원</td><td style="text-align:right">${fmtNum(r.snbMgmt)}원</td>
-      <td style="text-align:right;color:var(--success);font-weight:600">${fmtNum(r.snbProfit)}원</td>
-      <td style="text-align:right">${fmtNum(r.spaRev)}원</td><td style="text-align:right">${fmtNum(r.spaMgmt)}원</td>
-      <td style="text-align:right;color:var(--success);font-weight:600">${fmtNum(r.spaProfit)}원</td>
-      <td style="text-align:right;color:var(--danger)">${fmtNum(r.expAmt)}원</td>
-      <td style="text-align:right;color:var(--primary);font-weight:700">${fmtNum(revAll)}원</td>
-      <td style="text-align:right;font-weight:700;color:${net>=0?'var(--success)':'var(--danger)'}">${fmtNum(net)}원</td>
-    </tr>`;}).join('')}</tbody>
-  <tfoot><tr><td colspan="2"><strong>합계</strong></td>
-    <td style="text-align:right"><strong>${fmtNum(totSnbRev)}원</strong></td><td style="text-align:right"><strong>${fmtNum(totSnbMgmt)}원</strong></td>
-    <td style="text-align:right;color:var(--success)"><strong>${fmtNum(totSnbProfit)}원</strong></td>
-    <td style="text-align:right"><strong>${fmtNum(totSpaRev)}원</strong></td><td style="text-align:right"><strong>${fmtNum(totSpaMgmt)}원</strong></td>
-    <td style="text-align:right;color:var(--success)"><strong>${fmtNum(totSpaProfit)}원</strong></td>
-    <td style="text-align:right;color:var(--danger)"><strong>${fmtNum(totExpAmt)}원</strong></td>
-    <td style="text-align:right;color:var(--primary)"><strong>${fmtNum(totRevAll)}원</strong></td>
-    <td style="text-align:right;color:${totNet>=0?'var(--success)':'var(--danger)'}"><strong>${fmtNum(totNet)}원</strong></td>
-  </tr></tfoot></table>`;
-}
-function settlementPrint(){
-  const tbl=document.getElementById('set_table_el');if(!tbl){showToast('출력할 데이터가 없습니다','error');return;}
-  const from=document.getElementById('set_from')?.value||'';const to=document.getElementById('set_to')?.value||'';
-  const w=window.open('','_blank','width=1200,height=700');
-  w.document.write(`<html><head><title>결산내역 출력</title><style>body{font-family:'Malgun Gothic',sans-serif;font-size:11px;padding:20px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:5px 7px}thead{background:#f0f0f0;font-weight:bold}tfoot{background:#e8e8e8;font-weight:bold}@media print{button{display:none}}</style></head><body><h2>📋 결산내역</h2><p>기간: ${fmtDate(from)} ~ ${fmtDate(to)} | 출력일: ${fmtDate(today())}</p><button onclick="window.print()" style="margin-bottom:10px;padding:6px 14px;cursor:pointer">🖨️ 인쇄</button>${tbl.outerHTML}</body></html>`);w.document.close();
-}
-function settlementCSV(){
-  const from=document.getElementById('set_from')?.value||'';const to=document.getElementById('set_to')?.value||'';
-  let snbList=DataService.getAll(KEYS.sonobel);let spaList=DataService.getAll(KEYS.spa);let expList=DataService.getAll(KEYS.expense);
-  if(from){snbList=snbList.filter(r=>r.date>=from);spaList=spaList.filter(r=>r.date>=from);expList=expList.filter(r=>r.date>=from);}
-  if(to){snbList=snbList.filter(r=>r.date<=to);spaList=spaList.filter(r=>r.date<=to);expList=expList.filter(r=>r.date<=to);}
-  const dateMap={};const ensure=(d)=>{if(!dateMap[d])dateMap[d]={date:d,snbRev:0,snbMgmt:0,snbProfit:0,spaRev:0,spaMgmt:0,spaProfit:0,expAmt:0};};
-  snbList.forEach(r=>{ensure(r.date);dateMap[r.date].snbRev+=num(r.revenue);dateMap[r.date].snbMgmt+=num(r.mgmt);dateMap[r.date].snbProfit+=num(r.profit);});
-  spaList.forEach(r=>{ensure(r.date);dateMap[r.date].spaRev+=num(r.revenue);dateMap[r.date].spaMgmt+=num(r.mgmt);dateMap[r.date].spaProfit+=num(r.profit);});
-  expList.forEach(r=>{ensure(r.date);dateMap[r.date].expAmt+=num(r.amount);});
-  const list=Object.values(dateMap).sort((a,b)=>a.date.localeCompare(b.date));
-  if(!list.length){showToast('다운로드할 데이터가 없습니다','error');return;}
-  const header=['날짜','요일','소노벨 수익금','소노벨 관리비','소노벨 이익금','스파 수익금','스파 관리비','스파 이익금','일일 지출','수익금 합계','순이익'];
-  const toLine=arr=>arr.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',');
-  const rows=list.map(r=>[r.date,getWeekDay(r.date),r.snbRev,r.snbMgmt,r.snbProfit,r.spaRev,r.spaMgmt,r.spaProfit,r.expAmt,r.snbRev+r.spaRev,(r.snbProfit+r.spaProfit)-r.expAmt]);
-  const csv=[toLine(['결산내역']),toLine([`기간: ${fmtDate(from)||'전체'} ~ ${fmtDate(to)||'전체'}`]),'',toLine(header),...rows.map(toLine)].join('\r\n');
-  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});const url=URL.createObjectURL(blob);const link=document.createElement('a');
-  link.setAttribute('href',url);link.setAttribute('download',`결산내역_${today()}.csv`);document.body.appendChild(link);link.click();document.body.removeChild(link);URL.revokeObjectURL(url);showToast('📊 결산내역 엑셀 다운로드 완료!');
-}
+function searchSettlement(){const from=document.getElementById('set_from')?.value||'';const to=document.getElementById('set_to')?.value||'';let snbList=DataService.getAll(KEYS.sonobel);let spaList=DataService.getAll(KEYS.spa);let expList=DataService.getAll(KEYS.expense);if(from){snbList=snbList.filter(r=>r.date>=from);spaList=spaList.filter(r=>r.date>=from);expList=expList.filter(r=>r.date>=from);}if(to){snbList=snbList.filter(r=>r.date<=to);spaList=spaList.filter(r=>r.date<=to);expList=expList.filter(r=>r.date<=to);}const dateMap={};const ensure=(d)=>{if(!dateMap[d])dateMap[d]={date:d,snbRev:0,snbMgmt:0,snbProfit:0,spaRev:0,spaMgmt:0,spaProfit:0,expAmt:0};};snbList.forEach(r=>{ensure(r.date);dateMap[r.date].snbRev+=num(r.revenue);dateMap[r.date].snbMgmt+=num(r.mgmt);dateMap[r.date].snbProfit+=num(r.profit);});spaList.forEach(r=>{ensure(r.date);dateMap[r.date].spaRev+=num(r.revenue);dateMap[r.date].spaMgmt+=num(r.mgmt);dateMap[r.date].spaProfit+=num(r.profit);});expList.forEach(r=>{ensure(r.date);dateMap[r.date].expAmt+=num(r.amount);});const list=Object.values(dateMap).sort((a,b)=>a.date.localeCompare(b.date));const totSnbRev=list.reduce((a,r)=>a+r.snbRev,0);const totSpaRev=list.reduce((a,r)=>a+r.spaRev,0);const totSnbProfit=list.reduce((a,r)=>a+r.snbProfit,0);const totSpaProfit=list.reduce((a,r)=>a+r.spaProfit,0);const totSnbMgmt=list.reduce((a,r)=>a+r.snbMgmt,0);const totSpaMgmt=list.reduce((a,r)=>a+r.spaMgmt,0);const totRevAll=totSnbRev+totSpaRev;const totExpAmt=list.reduce((a,r)=>a+r.expAmt,0);const totNet=(totSnbProfit+totSpaProfit)-totExpAmt;const kpiEl=document.getElementById('set_kpi');if(kpiEl)kpiEl.innerHTML=`<div class="kpi-card info"><div class="kpi-label">🏠 소노벨 수익금</div><div class="kpi-value">${fmtNum(totSnbRev)}원</div></div><div class="kpi-card info"><div class="kpi-label">💆 스파 수익금</div><div class="kpi-value">${fmtNum(totSpaRev)}원</div></div><div class="kpi-card success"><div class="kpi-label">💰 총 수익금 합계</div><div class="kpi-value">${fmtNum(totRevAll)}원</div></div><div class="kpi-card warning"><div class="kpi-label">💸 총 지출비용</div><div class="kpi-value">${fmtNum(totExpAmt)}원</div></div><div class="kpi-card ${totNet>=0?'success':'danger'}"><div class="kpi-label">📈 순이익</div><div class="kpi-value">${fmtNum(totNet)}원</div></div>`;const cntEl=document.getElementById('set_cnt');if(cntEl)cntEl.textContent=`총 ${list.length}일`;const tbl=document.getElementById('set_tbl');if(!tbl)return;if(!list.length){tbl.innerHTML=`<div class="empty-state"><div class="empty-icon">📋</div><p>결산 데이터가 없습니다</p></div>`;return;}tbl.innerHTML=`<table id="set_table_el"><thead><tr><th>날짜</th><th>요일</th><th style="text-align:right">소노벨 수익금</th><th style="text-align:right">소노벨 관리비</th><th style="text-align:right">소노벨 이익금</th><th style="text-align:right">스파 수익금</th><th style="text-align:right">스파 관리비</th><th style="text-align:right">스파 이익금</th><th style="text-align:right">일일 지출</th><th style="text-align:right">수익금 합계</th><th style="text-align:right">순이익</th></tr></thead><tbody>${list.map(r=>{const revAll=r.snbRev+r.spaRev;const net=(r.snbProfit+r.spaProfit)-r.expAmt;return `<tr><td>${fmtDate(r.date)}</td><td>${getWeekDay(r.date)}</td><td style="text-align:right">${fmtNum(r.snbRev)}원</td><td style="text-align:right">${fmtNum(r.snbMgmt)}원</td><td style="text-align:right;color:var(--success);font-weight:600">${fmtNum(r.snbProfit)}원</td><td style="text-align:right">${fmtNum(r.spaRev)}원</td><td style="text-align:right">${fmtNum(r.spaMgmt)}원</td><td style="text-align:right;color:var(--success);font-weight:600">${fmtNum(r.spaProfit)}원</td><td style="text-align:right;color:var(--danger)">${fmtNum(r.expAmt)}원</td><td style="text-align:right;color:var(--primary);font-weight:700">${fmtNum(revAll)}원</td><td style="text-align:right;font-weight:700;color:${net>=0?'var(--success)':'var(--danger)'}">${fmtNum(net)}원</td></tr>`;}).join('')}</tbody><tfoot><tr><td colspan="2"><strong>합계</strong></td><td style="text-align:right"><strong>${fmtNum(totSnbRev)}원</strong></td><td style="text-align:right"><strong>${fmtNum(totSnbMgmt)}원</strong></td><td style="text-align:right;color:var(--success)"><strong>${fmtNum(totSnbProfit)}원</strong></td><td style="text-align:right"><strong>${fmtNum(totSpaRev)}원</strong></td><td style="text-align:right"><strong>${fmtNum(totSpaMgmt)}원</strong></td><td style="text-align:right;color:var(--success)"><strong>${fmtNum(totSpaProfit)}원</strong></td><td style="text-align:right;color:var(--danger)"><strong>${fmtNum(totExpAmt)}원</strong></td><td style="text-align:right;color:var(--primary)"><strong>${fmtNum(totRevAll)}원</strong></td><td style="text-align:right;color:${totNet>=0?'var(--success)':'var(--danger)'}"><strong>${fmtNum(totNet)}원</strong></td></tr></tfoot></table>`;}
+function settlementPrint(){const tbl=document.getElementById('set_table_el');if(!tbl){showToast('출력할 데이터가 없습니다','error');return;}const from=document.getElementById('set_from')?.value||'';const to=document.getElementById('set_to')?.value||'';const w=window.open('','_blank','width=1200,height=700');w.document.write(`<html><head><title>결산내역 출력</title><style>body{font-family:'Malgun Gothic',sans-serif;font-size:11px;padding:20px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:5px 7px}thead{background:#f0f0f0;font-weight:bold}tfoot{background:#e8e8e8;font-weight:bold}@media print{button{display:none}}</style></head><body><h2>📋 결산내역</h2><p>기간: ${fmtDate(from)} ~ ${fmtDate(to)} | 출력일: ${fmtDate(today())}</p><button onclick="window.print()" style="margin-bottom:10px;padding:6px 14px;cursor:pointer">🖨️ 인쇄</button>${tbl.outerHTML}</body></html>`);w.document.close();}
+function settlementCSV(){const from=document.getElementById('set_from')?.value||'';const to=document.getElementById('set_to')?.value||'';let snbList=DataService.getAll(KEYS.sonobel);let spaList=DataService.getAll(KEYS.spa);let expList=DataService.getAll(KEYS.expense);if(from){snbList=snbList.filter(r=>r.date>=from);spaList=spaList.filter(r=>r.date>=from);expList=expList.filter(r=>r.date>=from);}if(to){snbList=snbList.filter(r=>r.date<=to);spaList=spaList.filter(r=>r.date<=to);expList=expList.filter(r=>r.date<=to);}const dateMap={};const ensure=(d)=>{if(!dateMap[d])dateMap[d]={date:d,snbRev:0,snbMgmt:0,snbProfit:0,spaRev:0,spaMgmt:0,spaProfit:0,expAmt:0};};snbList.forEach(r=>{ensure(r.date);dateMap[r.date].snbRev+=num(r.revenue);dateMap[r.date].snbMgmt+=num(r.mgmt);dateMap[r.date].snbProfit+=num(r.profit);});spaList.forEach(r=>{ensure(r.date);dateMap[r.date].spaRev+=num(r.revenue);dateMap[r.date].spaMgmt+=num(r.mgmt);dateMap[r.date].spaProfit+=num(r.profit);});expList.forEach(r=>{ensure(r.date);dateMap[r.date].expAmt+=num(r.amount);});const list=Object.values(dateMap).sort((a,b)=>a.date.localeCompare(b.date));if(!list.length){showToast('다운로드할 데이터가 없습니다','error');return;}const header=['날짜','요일','소노벨 수익금','소노벨 관리비','소노벨 이익금','스파 수익금','스파 관리비','스파 이익금','일일 지출','수익금 합계','순이익'];const toLine=arr=>arr.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',');const rows=list.map(r=>[r.date,getWeekDay(r.date),r.snbRev,r.snbMgmt,r.snbProfit,r.spaRev,r.spaMgmt,r.spaProfit,r.expAmt,r.snbRev+r.spaRev,(r.snbProfit+r.spaProfit)-r.expAmt]);const csv=[toLine(['결산내역']),toLine([`기간: ${fmtDate(from)||'전체'} ~ ${fmtDate(to)||'전체'}`]),'',toLine(header),...rows.map(toLine)].join('\r\n');const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});const url=URL.createObjectURL(blob);const link=document.createElement('a');link.setAttribute('href',url);link.setAttribute('download',`결산내역_${today()}.csv`);document.body.appendChild(link);link.click();document.body.removeChild(link);URL.revokeObjectURL(url);showToast('📊 결산내역 엑셀 다운로드 완료!');}
 
 /* ===== 분석/통계 ===== */
 let _anaMode='day';
@@ -1453,102 +784,9 @@ function renderAnalysis(el){
   </div>`;
   setTimeout(()=>searchAnalysis(),50);
 }
-function searchAnalysis(){
-  const from=document.getElementById('ana_from')?.value||'';const to=document.getElementById('ana_to')?.value||'';const mode=_anaMode||'day';
-  let snbList=DataService.getAll(KEYS.sonobel);let spaList=DataService.getAll(KEYS.spa);let expList=DataService.getAll(KEYS.expense);
-  if(from){snbList=snbList.filter(r=>r.date>=from);spaList=spaList.filter(r=>r.date>=from);expList=expList.filter(r=>r.date>=from);}
-  if(to){snbList=snbList.filter(r=>r.date<=to);spaList=spaList.filter(r=>r.date<=to);expList=expList.filter(r=>r.date<=to);}
-  const totSnbRev=snbList.reduce((a,r)=>a+num(r.revenue),0);const totSpaRev=spaList.reduce((a,r)=>a+num(r.revenue),0);
-  const totRevAll=totSnbRev+totSpaRev;const totSnbProfit=snbList.reduce((a,r)=>a+num(r.profit),0);const totSpaProfit=spaList.reduce((a,r)=>a+num(r.profit),0);
-  const totProfit=totSnbProfit+totSpaProfit;const totExpAmt=expList.reduce((a,r)=>a+num(r.amount),0);const totNet=totProfit-totExpAmt;
-  const kpiEl=document.getElementById('ana_kpi');
-  if(kpiEl)kpiEl.innerHTML=`<div class="kpi-card info"><div class="kpi-label">🏠 소노벨 수익금</div><div class="kpi-value">${fmtNum(totSnbRev)}원</div></div>
-    <div class="kpi-card info"><div class="kpi-label">💆 스파 수익금</div><div class="kpi-value">${fmtNum(totSpaRev)}원</div></div>
-    <div class="kpi-card success"><div class="kpi-label">💰 총 수익금 합계</div><div class="kpi-value">${fmtNum(totRevAll)}원</div></div>
-    <div class="kpi-card warning"><div class="kpi-label">💸 총 지출비용</div><div class="kpi-value">${fmtNum(totExpAmt)}원</div></div>
-    <div class="kpi-card success"><div class="kpi-label">📈 총 이익금</div><div class="kpi-value">${fmtNum(totProfit)}원</div></div>
-    <div class="kpi-card ${totNet>=0?'success':'danger'}"><div class="kpi-label">🏆 순이익</div><div class="kpi-value">${fmtNum(totNet)}원</div></div>`;
-  const getKey=d=>{if(!d)return '';if(mode==='day')return d;if(mode==='month')return d.slice(0,7);return d.slice(0,4);};
-  const dataMap={};const ensure=k=>{if(!dataMap[k])dataMap[k]={key:k,snbRev:0,spaRev:0,snbProfit:0,spaProfit:0,snbMgmt:0,spaMgmt:0,expAmt:0};};
-  snbList.forEach(r=>{const k=getKey(r.date);if(!k)return;ensure(k);dataMap[k].snbRev+=num(r.revenue);dataMap[k].snbProfit+=num(r.profit);dataMap[k].snbMgmt+=num(r.mgmt);});
-  spaList.forEach(r=>{const k=getKey(r.date);if(!k)return;ensure(k);dataMap[k].spaRev+=num(r.revenue);dataMap[k].spaProfit+=num(r.profit);dataMap[k].spaMgmt+=num(r.mgmt);});
-  expList.forEach(r=>{const k=getKey(r.date);if(!k)return;ensure(k);dataMap[k].expAmt+=num(r.amount);});
-  const rows=Object.values(dataMap).sort((a,b)=>a.key.localeCompare(b.key));
-  const fmtKey=k=>{if(mode==='day')return fmtDate(k);if(mode==='month'){const[y,m]=k.split('-');return `${y}.${m}`;}return `${k}년`;};
-  const labels=rows.map(r=>fmtKey(r.key));const modeLabel=mode==='day'?'일별':mode==='month'?'월별':'연간';
-  const barTitleEl=document.getElementById('ana_bar_title');const lineTitleEl=document.getElementById('ana_line_title');const tblTitleEl=document.getElementById('ana_tbl_title');
-  if(barTitleEl)barTitleEl.textContent=`📊 ${modeLabel} 소노벨 vs 스파 수익 비교`;
-  if(lineTitleEl)lineTitleEl.textContent=`📈 ${modeLabel} 수익·지출 추이`;
-  if(tblTitleEl)tblTitleEl.textContent=`📋 ${modeLabel} 상세 현황`;
-  const drawChart=(id,type,data,opts={})=>{const ctx=document.getElementById(id);if(!ctx)return;if(ctx._ci)ctx._ci.destroy();ctx._ci=new Chart(ctx,{type,data,options:{responsive:true,maintainAspectRatio:false,...opts}});};
-  drawChart('ana_bar_chart','bar',{labels,datasets:[
-    {label:'소노벨 수익금',data:rows.map(r=>r.snbRev),backgroundColor:'rgba(79,70,229,0.75)',borderRadius:5},
-    {label:'스파 수익금',data:rows.map(r=>r.spaRev),backgroundColor:'rgba(16,185,129,0.75)',borderRadius:5},
-    {label:'지출비용',data:rows.map(r=>r.expAmt),backgroundColor:'rgba(239,68,68,0.6)',borderRadius:5}
-  ]},{plugins:{legend:{position:'top'}},scales:{y:{beginAtZero:true,ticks:{callback:v=>fmtNum(v)+'원'}}}});
-  drawChart('ana_pie_chart','doughnut',{labels:['소노벨 수익금','스파 수익금'],datasets:[{data:[totSnbRev,totSpaRev],backgroundColor:['#4f46e5','#10b981'],borderWidth:3}]},
-    {plugins:{legend:{position:'bottom'},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${fmtNum(ctx.parsed)}원 (${totRevAll?Math.round(ctx.parsed/totRevAll*100):0}%)`}}}});
-  drawChart('ana_line_chart','line',{labels,datasets:[
-    {label:'소노벨 수익금',data:rows.map(r=>r.snbRev),borderColor:'#4f46e5',backgroundColor:'rgba(79,70,229,0.08)',tension:0.35,fill:true,pointRadius:4},
-    {label:'스파 수익금',data:rows.map(r=>r.spaRev),borderColor:'#10b981',backgroundColor:'rgba(16,185,129,0.08)',tension:0.35,fill:true,pointRadius:4},
-    {label:'순이익',data:rows.map(r=>(r.snbProfit+r.spaProfit)-r.expAmt),borderColor:'#f59e0b',tension:0.35,fill:false,pointRadius:4,borderDash:[6,3]},
-    {label:'지출비용',data:rows.map(r=>r.expAmt),borderColor:'#ef4444',tension:0.35,fill:false,pointRadius:4,borderDash:[4,4]}
-  ]},{plugins:{legend:{position:'top'}},scales:{y:{beginAtZero:true,ticks:{callback:v=>fmtNum(v)+'원'}}}});
-  const cntEl=document.getElementById('ana_cnt');if(cntEl)cntEl.textContent=`총 ${rows.length}${mode==='year'?'년':mode==='month'?'개월':'일'}`;
-  const tbl=document.getElementById('ana_tbl');if(!tbl)return;
-  if(!rows.length){tbl.innerHTML=`<div class="empty-state"><div class="empty-icon">📈</div><p>분석할 데이터가 없습니다</p></div>`;return;}
-  tbl.innerHTML=`<table id="ana_table_el"><thead><tr>
-    <th>${mode==='year'?'연도':mode==='month'?'년월':'날짜'}</th>
-    <th style="text-align:right">소노벨 수익금</th><th style="text-align:right">소노벨 관리비</th><th style="text-align:right">소노벨 이익금</th>
-    <th style="text-align:right">스파 수익금</th><th style="text-align:right">스파 관리비</th><th style="text-align:right">스파 이익금</th>
-    <th style="text-align:right">수익금 합계</th><th style="text-align:right">지출비용</th><th style="text-align:right">순이익</th>
-  </tr></thead><tbody>${rows.map(r=>{const revAll=r.snbRev+r.spaRev;const profit=r.snbProfit+r.spaProfit;const net=profit-r.expAmt;
-    return `<tr><td><strong>${fmtKey(r.key)}</strong></td>
-      <td style="text-align:right">${fmtNum(r.snbRev)}원</td><td style="text-align:right;color:var(--danger)">${fmtNum(r.snbMgmt)}원</td>
-      <td style="text-align:right;color:var(--success)">${fmtNum(r.snbProfit)}원</td>
-      <td style="text-align:right">${fmtNum(r.spaRev)}원</td><td style="text-align:right;color:var(--danger)">${fmtNum(r.spaMgmt)}원</td>
-      <td style="text-align:right;color:var(--success)">${fmtNum(r.spaProfit)}원</td>
-      <td style="text-align:right;font-weight:700;color:var(--primary)">${fmtNum(revAll)}원</td>
-      <td style="text-align:right;color:var(--danger)">${fmtNum(r.expAmt)}원</td>
-      <td style="text-align:right;font-weight:700;color:${net>=0?'var(--success)':'var(--danger)'}">${fmtNum(net)}원</td>
-    </tr>`;}).join('')}</tbody>
-  <tfoot><tr><td><strong>합계</strong></td>
-    <td style="text-align:right"><strong>${fmtNum(totSnbRev)}원</strong></td>
-    <td style="text-align:right;color:var(--danger)"><strong>${fmtNum(snbList.reduce((a,r)=>a+num(r.mgmt),0))}원</strong></td>
-    <td style="text-align:right;color:var(--success)"><strong>${fmtNum(totSnbProfit)}원</strong></td>
-    <td style="text-align:right"><strong>${fmtNum(totSpaRev)}원</strong></td>
-    <td style="text-align:right;color:var(--danger)"><strong>${fmtNum(spaList.reduce((a,r)=>a+num(r.mgmt),0))}원</strong></td>
-    <td style="text-align:right;color:var(--success)"><strong>${fmtNum(totSpaProfit)}원</strong></td>
-    <td style="text-align:right;color:var(--primary)"><strong>${fmtNum(totRevAll)}원</strong></td>
-    <td style="text-align:right;color:var(--danger)"><strong>${fmtNum(totExpAmt)}원</strong></td>
-    <td style="text-align:right;color:${totNet>=0?'var(--success)':'var(--danger)'}"><strong>${fmtNum(totNet)}원</strong></td>
-  </tr></tfoot></table>`;
-}
-function analysisPrint(){
-  const tbl=document.getElementById('ana_table_el');if(!tbl){showToast('출력할 데이터가 없습니다','error');return;}
-  const from=document.getElementById('ana_from')?.value||'';const to=document.getElementById('ana_to')?.value||'';
-  const w=window.open('','_blank','width=1200,height=700');
-  w.document.write(`<html><head><title>분석/통계</title><style>body{font-family:'Malgun Gothic',sans-serif;font-size:11px;padding:20px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:5px 7px}thead{background:#f0f0f0;font-weight:bold}tfoot{background:#e8e8e8;font-weight:bold}@media print{button{display:none}}</style></head><body><h2>📈 분석/통계</h2><p>기간: ${fmtDate(from)} ~ ${fmtDate(to)} | 출력일: ${fmtDate(today())}</p><button onclick="window.print()" style="margin-bottom:10px;padding:6px 14px;cursor:pointer">🖨️ 인쇄</button>${tbl.outerHTML}</body></html>`);w.document.close();
-}
-function analysisCSV(){
-  const from=document.getElementById('ana_from')?.value||'';const to=document.getElementById('ana_to')?.value||'';const mode=_anaMode||'day';
-  let snbList=DataService.getAll(KEYS.sonobel);let spaList=DataService.getAll(KEYS.spa);let expList=DataService.getAll(KEYS.expense);
-  if(from){snbList=snbList.filter(r=>r.date>=from);spaList=spaList.filter(r=>r.date>=from);expList=expList.filter(r=>r.date>=from);}
-  if(to){snbList=snbList.filter(r=>r.date<=to);spaList=spaList.filter(r=>r.date<=to);expList=expList.filter(r=>r.date<=to);}
-  const getKey=d=>{if(!d)return '';if(mode==='day')return d;if(mode==='month')return d.slice(0,7);return d.slice(0,4);};
-  const dataMap={};const ensure=k=>{if(!dataMap[k])dataMap[k]={key:k,snbRev:0,spaRev:0,snbProfit:0,spaProfit:0,snbMgmt:0,spaMgmt:0,expAmt:0};};
-  snbList.forEach(r=>{const k=getKey(r.date);if(!k)return;ensure(k);dataMap[k].snbRev+=num(r.revenue);dataMap[k].snbProfit+=num(r.profit);dataMap[k].snbMgmt+=num(r.mgmt);});
-  spaList.forEach(r=>{const k=getKey(r.date);if(!k)return;ensure(k);dataMap[k].spaRev+=num(r.revenue);dataMap[k].spaProfit+=num(r.profit);dataMap[k].spaMgmt+=num(r.mgmt);});
-  expList.forEach(r=>{const k=getKey(r.date);if(!k)return;ensure(k);dataMap[k].expAmt+=num(r.amount);});
-  const rows=Object.values(dataMap).sort((a,b)=>a.key.localeCompare(b.key));
-  if(!rows.length){showToast('다운로드할 데이터가 없습니다','error');return;}
-  const header=['기간','소노벨 수익금','소노벨 관리비','소노벨 이익금','스파 수익금','스파 관리비','스파 이익금','수익금 합계','지출비용','순이익'];
-  const toLine=arr=>arr.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',');
-  const csvRows=rows.map(r=>[r.key,r.snbRev,r.snbMgmt,r.snbProfit,r.spaRev,r.spaMgmt,r.spaProfit,r.snbRev+r.spaRev,r.expAmt,(r.snbProfit+r.spaProfit)-r.expAmt]);
-  const csv=[toLine(['분석/통계']),toLine([`기간: ${fmtDate(from)||'전체'} ~ ${fmtDate(to)||'전체'}`]),'',toLine(header),...csvRows.map(toLine)].join('\r\n');
-  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});const url=URL.createObjectURL(blob);const link=document.createElement('a');
-  link.setAttribute('href',url);link.setAttribute('download',`분석통계_${today()}.csv`);document.body.appendChild(link);link.click();document.body.removeChild(link);URL.revokeObjectURL(url);showToast('📊 엑셀 다운로드 완료!');
-}
+function searchAnalysis(){const from=document.getElementById('ana_from')?.value||'';const to=document.getElementById('ana_to')?.value||'';const mode=_anaMode||'day';let snbList=DataService.getAll(KEYS.sonobel);let spaList=DataService.getAll(KEYS.spa);let expList=DataService.getAll(KEYS.expense);if(from){snbList=snbList.filter(r=>r.date>=from);spaList=spaList.filter(r=>r.date>=from);expList=expList.filter(r=>r.date>=from);}if(to){snbList=snbList.filter(r=>r.date<=to);spaList=spaList.filter(r=>r.date<=to);expList=expList.filter(r=>r.date<=to);}const totSnbRev=snbList.reduce((a,r)=>a+num(r.revenue),0);const totSpaRev=spaList.reduce((a,r)=>a+num(r.revenue),0);const totRevAll=totSnbRev+totSpaRev;const totSnbProfit=snbList.reduce((a,r)=>a+num(r.profit),0);const totSpaProfit=spaList.reduce((a,r)=>a+num(r.profit),0);const totProfit=totSnbProfit+totSpaProfit;const totExpAmt=expList.reduce((a,r)=>a+num(r.amount),0);const totNet=totProfit-totExpAmt;const kpiEl=document.getElementById('ana_kpi');if(kpiEl)kpiEl.innerHTML=`<div class="kpi-card info"><div class="kpi-label">🏠 소노벨 수익금</div><div class="kpi-value">${fmtNum(totSnbRev)}원</div></div><div class="kpi-card info"><div class="kpi-label">💆 스파 수익금</div><div class="kpi-value">${fmtNum(totSpaRev)}원</div></div><div class="kpi-card success"><div class="kpi-label">💰 총 수익금 합계</div><div class="kpi-value">${fmtNum(totRevAll)}원</div></div><div class="kpi-card warning"><div class="kpi-label">💸 총 지출비용</div><div class="kpi-value">${fmtNum(totExpAmt)}원</div></div><div class="kpi-card success"><div class="kpi-label">📈 총 이익금</div><div class="kpi-value">${fmtNum(totProfit)}원</div></div><div class="kpi-card ${totNet>=0?'success':'danger'}"><div class="kpi-label">🏆 순이익</div><div class="kpi-value">${fmtNum(totNet)}원</div></div>`;const getKey=d=>{if(!d)return '';if(mode==='day')return d;if(mode==='month')return d.slice(0,7);return d.slice(0,4);};const dataMap={};const ensure=k=>{if(!dataMap[k])dataMap[k]={key:k,snbRev:0,spaRev:0,snbProfit:0,spaProfit:0,snbMgmt:0,spaMgmt:0,expAmt:0};};snbList.forEach(r=>{const k=getKey(r.date);if(!k)return;ensure(k);dataMap[k].snbRev+=num(r.revenue);dataMap[k].snbProfit+=num(r.profit);dataMap[k].snbMgmt+=num(r.mgmt);});spaList.forEach(r=>{const k=getKey(r.date);if(!k)return;ensure(k);dataMap[k].spaRev+=num(r.revenue);dataMap[k].spaProfit+=num(r.profit);dataMap[k].spaMgmt+=num(r.mgmt);});expList.forEach(r=>{const k=getKey(r.date);if(!k)return;ensure(k);dataMap[k].expAmt+=num(r.amount);});const rows=Object.values(dataMap).sort((a,b)=>a.key.localeCompare(b.key));const fmtKey=k=>{if(mode==='day')return fmtDate(k);if(mode==='month'){const[y,m]=k.split('-');return `${y}.${m}`;}return `${k}년`;};const labels=rows.map(r=>fmtKey(r.key));const modeLabel=mode==='day'?'일별':mode==='month'?'월별':'연간';const barTitleEl=document.getElementById('ana_bar_title');const lineTitleEl=document.getElementById('ana_line_title');const tblTitleEl=document.getElementById('ana_tbl_title');if(barTitleEl)barTitleEl.textContent=`📊 ${modeLabel} 소노벨 vs 스파 수익 비교`;if(lineTitleEl)lineTitleEl.textContent=`📈 ${modeLabel} 수익·지출 추이`;if(tblTitleEl)tblTitleEl.textContent=`📋 ${modeLabel} 상세 현황`;const drawChart=(id,type,data,opts={})=>{const ctx=document.getElementById(id);if(!ctx)return;if(ctx._ci)ctx._ci.destroy();ctx._ci=new Chart(ctx,{type,data,options:{responsive:true,maintainAspectRatio:false,...opts}});};drawChart('ana_bar_chart','bar',{labels,datasets:[{label:'소노벨 수익금',data:rows.map(r=>r.snbRev),backgroundColor:'rgba(79,70,229,0.75)',borderRadius:5},{label:'스파 수익금',data:rows.map(r=>r.spaRev),backgroundColor:'rgba(16,185,129,0.75)',borderRadius:5},{label:'지출비용',data:rows.map(r=>r.expAmt),backgroundColor:'rgba(239,68,68,0.6)',borderRadius:5}]},{plugins:{legend:{position:'top'}},scales:{y:{beginAtZero:true,ticks:{callback:v=>fmtNum(v)+'원'}}}});drawChart('ana_pie_chart','doughnut',{labels:['소노벨 수익금','스파 수익금'],datasets:[{data:[totSnbRev,totSpaRev],backgroundColor:['#4f46e5','#10b981'],borderWidth:3}]},{plugins:{legend:{position:'bottom'},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${fmtNum(ctx.parsed)}원 (${totRevAll?Math.round(ctx.parsed/totRevAll*100):0}%)`}}}});drawChart('ana_line_chart','line',{labels,datasets:[{label:'소노벨 수익금',data:rows.map(r=>r.snbRev),borderColor:'#4f46e5',backgroundColor:'rgba(79,70,229,0.08)',tension:0.35,fill:true,pointRadius:4},{label:'스파 수익금',data:rows.map(r=>r.spaRev),borderColor:'#10b981',backgroundColor:'rgba(16,185,129,0.08)',tension:0.35,fill:true,pointRadius:4},{label:'순이익',data:rows.map(r=>(r.snbProfit+r.spaProfit)-r.expAmt),borderColor:'#f59e0b',tension:0.35,fill:false,pointRadius:4,borderDash:[6,3]},{label:'지출비용',data:rows.map(r=>r.expAmt),borderColor:'#ef4444',tension:0.35,fill:false,pointRadius:4,borderDash:[4,4]}]},{plugins:{legend:{position:'top'}},scales:{y:{beginAtZero:true,ticks:{callback:v=>fmtNum(v)+'원'}}}});const cntEl=document.getElementById('ana_cnt');if(cntEl)cntEl.textContent=`총 ${rows.length}${mode==='year'?'년':mode==='month'?'개월':'일'}`;const tbl=document.getElementById('ana_tbl');if(!tbl)return;if(!rows.length){tbl.innerHTML=`<div class="empty-state"><div class="empty-icon">📈</div><p>분석할 데이터가 없습니다</p></div>`;return;}tbl.innerHTML=`<table id="ana_table_el"><thead><tr><th>${mode==='year'?'연도':mode==='month'?'년월':'날짜'}</th><th style="text-align:right">소노벨 수익금</th><th style="text-align:right">소노벨 관리비</th><th style="text-align:right">소노벨 이익금</th><th style="text-align:right">스파 수익금</th><th style="text-align:right">스파 관리비</th><th style="text-align:right">스파 이익금</th><th style="text-align:right">수익금 합계</th><th style="text-align:right">지출비용</th><th style="text-align:right">순이익</th></tr></thead><tbody>${rows.map(r=>{const revAll=r.snbRev+r.spaRev;const profit=r.snbProfit+r.spaProfit;const net=profit-r.expAmt;return `<tr><td><strong>${fmtKey(r.key)}</strong></td><td style="text-align:right">${fmtNum(r.snbRev)}원</td><td style="text-align:right;color:var(--danger)">${fmtNum(r.snbMgmt)}원</td><td style="text-align:right;color:var(--success)">${fmtNum(r.snbProfit)}원</td><td style="text-align:right">${fmtNum(r.spaRev)}원</td><td style="text-align:right;color:var(--danger)">${fmtNum(r.spaMgmt)}원</td><td style="text-align:right;color:var(--success)">${fmtNum(r.spaProfit)}원</td><td style="text-align:right;font-weight:700;color:var(--primary)">${fmtNum(revAll)}원</td><td style="text-align:right;color:var(--danger)">${fmtNum(r.expAmt)}원</td><td style="text-align:right;font-weight:700;color:${net>=0?'var(--success)':'var(--danger)'}">${fmtNum(net)}원</td></tr>`;}).join('')}</tbody><tfoot><tr><td><strong>합계</strong></td><td style="text-align:right"><strong>${fmtNum(totSnbRev)}원</strong></td><td style="text-align:right;color:var(--danger)"><strong>${fmtNum(snbList.reduce((a,r)=>a+num(r.mgmt),0))}원</strong></td><td style="text-align:right;color:var(--success)"><strong>${fmtNum(totSnbProfit)}원</strong></td><td style="text-align:right"><strong>${fmtNum(totSpaRev)}원</strong></td><td style="text-align:right;color:var(--danger)"><strong>${fmtNum(spaList.reduce((a,r)=>a+num(r.mgmt),0))}원</strong></td><td style="text-align:right;color:var(--success)"><strong>${fmtNum(totSpaProfit)}원</strong></td><td style="text-align:right;color:var(--primary)"><strong>${fmtNum(totRevAll)}원</strong></td><td style="text-align:right;color:var(--danger)"><strong>${fmtNum(totExpAmt)}원</strong></td><td style="text-align:right;color:${totNet>=0?'var(--success)':'var(--danger)'}"><strong>${fmtNum(totNet)}원</strong></td></tr></tfoot></table>`;}
+function analysisPrint(){const tbl=document.getElementById('ana_table_el');if(!tbl){showToast('출력할 데이터가 없습니다','error');return;}const from=document.getElementById('ana_from')?.value||'';const to=document.getElementById('ana_to')?.value||'';const w=window.open('','_blank','width=1200,height=700');w.document.write(`<html><head><title>분석/통계</title><style>body{font-family:'Malgun Gothic',sans-serif;font-size:11px;padding:20px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:5px 7px}thead{background:#f0f0f0;font-weight:bold}tfoot{background:#e8e8e8;font-weight:bold}@media print{button{display:none}}</style></head><body><h2>📈 분석/통계</h2><p>기간: ${fmtDate(from)} ~ ${fmtDate(to)} | 출력일: ${fmtDate(today())}</p><button onclick="window.print()" style="margin-bottom:10px;padding:6px 14px;cursor:pointer">🖨️ 인쇄</button>${tbl.outerHTML}</body></html>`);w.document.close();}
+function analysisCSV(){const from=document.getElementById('ana_from')?.value||'';const to=document.getElementById('ana_to')?.value||'';const mode=_anaMode||'day';let snbList=DataService.getAll(KEYS.sonobel);let spaList=DataService.getAll(KEYS.spa);let expList=DataService.getAll(KEYS.expense);if(from){snbList=snbList.filter(r=>r.date>=from);spaList=spaList.filter(r=>r.date>=from);expList=expList.filter(r=>r.date>=from);}if(to){snbList=snbList.filter(r=>r.date<=to);spaList=spaList.filter(r=>r.date<=to);expList=expList.filter(r=>r.date<=to);}const getKey=d=>{if(!d)return '';if(mode==='day')return d;if(mode==='month')return d.slice(0,7);return d.slice(0,4);};const dataMap={};const ensure=k=>{if(!dataMap[k])dataMap[k]={key:k,snbRev:0,spaRev:0,snbProfit:0,spaProfit:0,snbMgmt:0,spaMgmt:0,expAmt:0};};snbList.forEach(r=>{const k=getKey(r.date);if(!k)return;ensure(k);dataMap[k].snbRev+=num(r.revenue);dataMap[k].snbProfit+=num(r.profit);dataMap[k].snbMgmt+=num(r.mgmt);});spaList.forEach(r=>{const k=getKey(r.date);if(!k)return;ensure(k);dataMap[k].spaRev+=num(r.revenue);dataMap[k].spaProfit+=num(r.profit);dataMap[k].spaMgmt+=num(r.mgmt);});expList.forEach(r=>{const k=getKey(r.date);if(!k)return;ensure(k);dataMap[k].expAmt+=num(r.amount);});const rows=Object.values(dataMap).sort((a,b)=>a.key.localeCompare(b.key));if(!rows.length){showToast('다운로드할 데이터가 없습니다','error');return;}const header=['기간','소노벨 수익금','소노벨 관리비','소노벨 이익금','스파 수익금','스파 관리비','스파 이익금','수익금 합계','지출비용','순이익'];const toLine=arr=>arr.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',');const csvRows=rows.map(r=>[r.key,r.snbRev,r.snbMgmt,r.snbProfit,r.spaRev,r.spaMgmt,r.spaProfit,r.snbRev+r.spaRev,r.expAmt,(r.snbProfit+r.spaProfit)-r.expAmt]);const csv=[toLine(['분석/통계']),toLine([`기간: ${fmtDate(from)||'전체'} ~ ${fmtDate(to)||'전체'}`]),'',toLine(header),...csvRows.map(toLine)].join('\r\n');const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});const url=URL.createObjectURL(blob);const link=document.createElement('a');link.setAttribute('href',url);link.setAttribute('download',`분석통계_${today()}.csv`);document.body.appendChild(link);link.click();document.body.removeChild(link);URL.revokeObjectURL(url);showToast('📊 엑셀 다운로드 완료!');}
 
 /* ===== 설정 ===== */
 function renderSettings(el){
@@ -1587,50 +825,25 @@ function renderSettings(el){
   </div>`;
   renderCatList();
 }
-function savePin(){
-  const uid=document.getElementById('cfg_pin_user').value;const newPin=document.getElementById('cfg_pin_new').value;const confirmPin=document.getElementById('cfg_pin_confirm').value;
-  if(newPin.length!==4||!/^\d{4}$/.test(newPin)){showToast('PIN은 숫자 4자리로 입력해 주세요','error');return;}
-  if(newPin!==confirmPin){showToast('PIN이 일치하지 않습니다','error');return;}
-  const cfg=SettingsService.get();const users=cfg.users||{};users[uid]={...(users[uid]||{}),pin:newPin};
-  SettingsService.save({...cfg,users});document.getElementById('cfg_pin_new').value='';document.getElementById('cfg_pin_confirm').value='';showToast('PIN이 변경되었습니다 ✅');
-}
-function saveBizInfo(){
-  const cfg=SettingsService.get();cfg.bizName=document.getElementById('cfg_biz_name').value;cfg.bizAddr=document.getElementById('cfg_biz_addr').value;cfg.bizTel=document.getElementById('cfg_biz_tel').value;
-  SettingsService.save(cfg);showToast('사업장 정보가 저장되었습니다 ✅');
-}
-function renderCatList(){
-  const cfg=SettingsService.get();const cats=Array.isArray(cfg.expCats)?cfg.expCats:[...EXP_CATS];
-  const el=document.getElementById('cfg_cat_list');if(!el)return;
-  el.innerHTML=`<div style="display:flex;flex-wrap:wrap;gap:8px">${cats.map((c,i)=>`<div style="display:flex;align-items:center;gap:4px;background:#f1f5f9;border-radius:20px;padding:4px 12px"><span style="font-size:13px">${c}</span><button onclick="delExpCat(${i})" style="background:none;border:none;cursor:pointer;color:var(--danger);font-size:14px">✕</button></div>`).join('')}</div>`;
-}
-function addExpCat(){
-  const input=document.getElementById('cfg_cat_input');const val=input?.value.trim();if(!val){showToast('카테고리 이름을 입력해 주세요','error');return;}
-  const cfg=SettingsService.get();const cats=Array.isArray(cfg.expCats)?cfg.expCats:[...EXP_CATS];
-  if(cats.includes(val)){showToast('이미 존재하는 카테고리입니다','error');return;}
-  cats.push(val);cfg.expCats=cats;SettingsService.save(cfg);if(input)input.value='';renderCatList();showToast('카테고리가 추가되었습니다 ✅');
-}
-function delExpCat(idx){
-  const cfg=SettingsService.get();const cats=Array.isArray(cfg.expCats)?cfg.expCats:[...EXP_CATS];
-  cats.splice(idx,1);cfg.expCats=cats;SettingsService.save(cfg);renderCatList();showToast('삭제되었습니다');
-}
-function resetAllData(){
-  if(!confirm('⚠️ 전체 데이터를 초기화하시겠습니까?\n이 작업은 되돌릴 수 없습니다!'))return;
-  if(!confirm('⚠️ 정말로 모든 데이터를 삭제합니까?'))return;
-  [KEYS.sonobel,KEYS.spa,KEYS.freelancer,KEYS.reservation,KEYS.expense].forEach(k=>DB.set(k,[]));
-  showToast('전체 데이터가 초기화되었습니다');renderPage('settings');
-}
+function savePin(){const uid=document.getElementById('cfg_pin_user').value;const newPin=document.getElementById('cfg_pin_new').value;const confirmPin=document.getElementById('cfg_pin_confirm').value;if(newPin.length!==4||!/^\d{4}$/.test(newPin)){showToast('PIN은 숫자 4자리로 입력해 주세요','error');return;}if(newPin!==confirmPin){showToast('PIN이 일치하지 않습니다','error');return;}const cfg=SettingsService.get();const users=cfg.users||{};users[uid]={...(users[uid]||{}),pin:newPin};SettingsService.save({...cfg,users});document.getElementById('cfg_pin_new').value='';document.getElementById('cfg_pin_confirm').value='';showToast('PIN이 변경되었습니다 ✅');}
+function saveBizInfo(){const cfg=SettingsService.get();cfg.bizName=document.getElementById('cfg_biz_name').value;cfg.bizAddr=document.getElementById('cfg_biz_addr').value;cfg.bizTel=document.getElementById('cfg_biz_tel').value;SettingsService.save(cfg);showToast('사업장 정보가 저장되었습니다 ✅');}
+function renderCatList(){const cfg=SettingsService.get();const cats=Array.isArray(cfg.expCats)?cfg.expCats:[...EXP_CATS];const el=document.getElementById('cfg_cat_list');if(!el)return;el.innerHTML=`<div style="display:flex;flex-wrap:wrap;gap:8px">${cats.map((c,i)=>`<div style="display:flex;align-items:center;gap:4px;background:#f1f5f9;border-radius:20px;padding:4px 12px"><span style="font-size:13px">${c}</span><button onclick="delExpCat(${i})" style="background:none;border:none;cursor:pointer;color:var(--danger);font-size:14px">✕</button></div>`).join('')}</div>`;}
+function addExpCat(){const input=document.getElementById('cfg_cat_input');const val=input?.value.trim();if(!val){showToast('카테고리 이름을 입력해 주세요','error');return;}const cfg=SettingsService.get();const cats=Array.isArray(cfg.expCats)?cfg.expCats:[...EXP_CATS];if(cats.includes(val)){showToast('이미 존재하는 카테고리입니다','error');return;}cats.push(val);cfg.expCats=cats;SettingsService.save(cfg);if(input)input.value='';renderCatList();showToast('카테고리가 추가되었습니다 ✅');}
+function delExpCat(idx){const cfg=SettingsService.get();const cats=Array.isArray(cfg.expCats)?cfg.expCats:[...EXP_CATS];cats.splice(idx,1);cfg.expCats=cats;SettingsService.save(cfg);renderCatList();showToast('삭제되었습니다');}
+function resetAllData(){if(!confirm('⚠️ 전체 데이터를 초기화하시겠습니까?\n이 작업은 되돌릴 수 없습니다!'))return;if(!confirm('⚠️ 정말로 모든 데이터를 삭제합니까?'))return;[KEYS.sonobel,KEYS.spa,KEYS.freelancer,KEYS.reservation,KEYS.expense].forEach(k=>DB.set(k,[]));showToast('전체 데이터가 초기화되었습니다');renderPage('settings');}
 
-/* ===== 백업/복원 ===== */
+/* ===== 백업/복원 + 5단계 Google Sheets 마이그레이션 ===== */
 function renderBackup(el){
+  const counts=[['🏠 소노벨',KEYS.sonobel],['💆 스파',KEYS.spa],['🧖 프리샘',KEYS.freelancer],['📅 예약',KEYS.reservation],['💸 지출',KEYS.expense]];
   el.innerHTML=`
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
     <div class="card">
       <div class="card-header"><span class="card-title">📥 데이터 백업</span></div>
       <p style="font-size:13px;color:var(--text-muted);margin-bottom:20px;line-height:1.6">현재 저장된 모든 데이터를 JSON 파일로 내보냅니다.<br>PC에 저장하여 안전하게 보관하세요.</p>
       <div class="kpi-grid" style="grid-template-columns:1fr 1fr;margin-bottom:20px">
-        ${[['🏠 소노벨',KEYS.sonobel],['💆 스파',KEYS.spa],['🧖 프리샘',KEYS.freelancer],['📅 예약',KEYS.reservation],['💸 지출',KEYS.expense]].map(([label,key])=>`<div class="kpi-card"><div class="kpi-label">${label}</div><div class="kpi-value" style="font-size:18px">${DataService.getAll(key).length}건</div></div>`).join('')}
+        ${counts.map(([label,key])=>`<div class="kpi-card"><div class="kpi-label">${label}</div><div class="kpi-value" style="font-size:18px">${DataService.getAll(key).length}건</div></div>`).join('')}
       </div>
-      <button class="btn btn-success" onclick="exportBackup()" style="width:100%;padding:12px">📥 JSON 백업 파일 다운로드</button>
+      <button class="btn btn-success" onclick="exportBackup()" style="width:100%;padding:12px;margin-bottom:10px">📥 JSON 백업 파일 다운로드</button>
     </div>
     <div class="card">
       <div class="card-header"><span class="card-title">📤 데이터 복원</span></div>
@@ -1638,25 +851,60 @@ function renderBackup(el){
       <div class="form-group"><label>백업 파일 선택 (.json)</label><input type="file" id="backup_file" accept=".json" style="padding:8px;border:1.5px dashed var(--border);border-radius:8px;width:100%;font-size:13px"></div>
       <button class="btn btn-warning" onclick="importBackup()" style="width:100%;padding:12px;margin-top:8px">📤 선택한 파일로 복원</button>
     </div>
+  </div>
+  <div class="card" style="margin-top:20px;border:2px solid var(--primary)">
+    <div class="card-header" style="background:#eef2ff;border-radius:8px 8px 0 0;margin:-20px -20px 16px -20px;padding:16px 20px;">
+      <span class="card-title" style="color:var(--primary)">☁️ Google Sheets 데이터 업로드 (5단계)</span>
+      <span id="migrate_status" style="font-size:12px;color:var(--text-muted)">대기 중</span>
+    </div>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;line-height:1.8">
+      📌 이 기기에 저장된 <strong>모든 데이터를 Google Sheets로 한 번에 업로드</strong>합니다.<br>
+      ✅ 업로드 후 PC·모바일 어디서든 동일한 데이터를 볼 수 있습니다.<br>
+      ⚠️ 이미 Sheets에 같은 데이터가 있으면 덮어씌워집니다.
+    </p>
+    <div class="kpi-grid" style="grid-template-columns:repeat(5,1fr);margin-bottom:16px">
+      ${counts.map(([label,key])=>`<div class="kpi-card"><div class="kpi-label">${label}</div><div class="kpi-value" style="font-size:16px">${DataService.getAll(key).length}건</div></div>`).join('')}
+    </div>
+    <div style="margin-bottom:16px;display:none" id="migrate_progress_wrap">
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text-muted);margin-bottom:6px">
+        <span id="migrate_progress_label">업로드 중...</span><span id="migrate_progress_pct">0%</span>
+      </div>
+      <div style="background:#e2e8f0;border-radius:20px;height:12px;overflow:hidden">
+        <div id="migrate_progress_bar" style="height:100%;background:var(--primary);border-radius:20px;width:0%;transition:width 0.3s"></div>
+      </div>
+    </div>
+    <div id="migrate_log" style="display:none;background:#f8fafc;border-radius:8px;padding:12px;font-size:12px;color:var(--text-muted);max-height:180px;overflow-y:auto;margin-bottom:16px;line-height:2;font-family:monospace"></div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-primary" onclick="migrateToSheets()" id="migrate_btn" style="flex:1;padding:14px;font-size:15px;font-weight:700">☁️ Google Sheets로 전체 업로드 시작</button>
+      <button class="btn btn-outline" onclick="verifySheets()" id="verify_btn" style="padding:14px 20px;font-size:14px">🔍 업로드 결과 확인</button>
+    </div>
   </div>`;
 }
-function exportBackup(){
-  const data={exportDate:today(),version:'v2026',sonobel:DataService.getAll(KEYS.sonobel),spa:DataService.getAll(KEYS.spa),freelancer:DataService.getAll(KEYS.freelancer),reservation:DataService.getAll(KEYS.reservation),expense:DataService.getAll(KEYS.expense),settings:SettingsService.get(),therapistDetail:loadTherapistDetail()};
-  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');
-  a.href=url;a.download=`sonobell_spa_backup_${today()}.json`;a.click();URL.revokeObjectURL(url);showToast('백업 파일이 다운로드되었습니다 ✅');
+function exportBackup(){const data={exportDate:today(),version:'v2026',sonobel:DataService.getAll(KEYS.sonobel),spa:DataService.getAll(KEYS.spa),freelancer:DataService.getAll(KEYS.freelancer),reservation:DataService.getAll(KEYS.reservation),expense:DataService.getAll(KEYS.expense),settings:SettingsService.get(),therapistDetail:loadTherapistDetail()};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`sonobell_spa_backup_${today()}.json`;a.click();URL.revokeObjectURL(url);showToast('백업 파일이 다운로드되었습니다 ✅');}
+function importBackup(){const fileEl=document.getElementById('backup_file');if(!fileEl?.files?.length){showToast('복원할 파일을 선택해 주세요','error');return;}if(!confirm('⚠️ 현재 데이터가 백업 데이터로 덮어씌워집니다.\n계속하시겠습니까?'))return;const reader=new FileReader();reader.onload=e=>{try{const data=JSON.parse(e.target.result);if(data.sonobel)DB.set(KEYS.sonobel,data.sonobel);if(data.spa)DB.set(KEYS.spa,data.spa);if(data.freelancer)DB.set(KEYS.freelancer,data.freelancer);if(data.reservation)DB.set(KEYS.reservation,data.reservation);if(data.expense)DB.set(KEYS.expense,data.expense);if(data.settings)DB.set(KEYS.settings,data.settings);if(data.therapistDetail)localStorage.setItem(THERAPIST_KEY,JSON.stringify(data.therapistDetail));showToast('데이터가 복원되었습니다 ✅');renderPage('backup');}catch(err){showToast('파일 형식이 올바르지 않습니다','error');}};reader.readAsText(fileEl.files[0]);}
+
+/* ===== 5단계: Google Sheets 마이그레이션 ===== */
+async function migrateToSheets(){
+  if(!navigator.onLine){showToast('인터넷 연결을 확인해 주세요','error');return;}
+  const btn=document.getElementById('migrate_btn');const statusEl=document.getElementById('migrate_status');const progressWrap=document.getElementById('migrate_progress_wrap');const progressBar=document.getElementById('migrate_progress_bar');const progressLabel=document.getElementById('migrate_progress_label');const progressPct=document.getElementById('migrate_progress_pct');const logEl=document.getElementById('migrate_log');
+  const targets=[{label:'🏠 소노벨',key:KEYS.sonobel,sheet:'spa_sonobel'},{label:'💆 스파',key:KEYS.spa,sheet:'spa_spa'},{label:'🧖 프리샘',key:KEYS.freelancer,sheet:'spa_freelancer'},{label:'📅 예약',key:KEYS.reservation,sheet:'spa_reservation'},{label:'💸 지출',key:KEYS.expense,sheet:'spa_expense'}];
+  let totalRecs=0;targets.forEach(t=>{totalRecs+=DataService.getAll(t.key).length;});
+  if(totalRecs===0){showToast('업로드할 데이터가 없습니다','error');return;}
+  btn.disabled=true;btn.textContent='⏳ 업로드 중... 잠시만 기다려 주세요';statusEl.textContent='업로드 중...';statusEl.style.color='var(--warning)';progressWrap.style.display='block';logEl.style.display='block';logEl.innerHTML='';
+  let doneRecs=0;let successCnt=0;let failCnt=0;
+  function addLog(msg){logEl.innerHTML+=msg+'<br>';logEl.scrollTop=logEl.scrollHeight;}
+  function updateProgress(label){const pct=totalRecs>0?Math.round((doneRecs/totalRecs)*100):0;progressBar.style.width=pct+'%';progressPct.textContent=pct+'%';progressLabel.textContent=label;}
+  addLog('📋 총 '+totalRecs+'건 업로드 시작 — '+new Date().toLocaleTimeString());
+  for(const t of targets){const list=DataService.getAll(t.key);if(!list.length){addLog('⏭️ '+t.label+': 데이터 없음 (건너뜀)');continue;}addLog('📤 '+t.label+' '+list.length+'건 업로드 중...');let catOk=0;let catFail=0;for(const rec of list){try{const res=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'syncRecord',sheet:t.sheet,record:rec})});const json=await res.json();if(json.status==='ok'){catOk++;successCnt++;}else{catFail++;failCnt++;addLog('  ⚠️ '+t.label+' ID:'+rec.id+' 실패');}}catch(e){catFail++;failCnt++;addLog('  ❌ '+t.label+' 오류');}doneRecs++;updateProgress(t.label+' 업로드 중... ('+doneRecs+'/'+totalRecs+')');await new Promise(r=>setTimeout(r,80));}addLog('  ✅ '+t.label+' 완료 — 성공 '+catOk+'건 / 실패 '+catFail+'건');}
+  progressBar.style.width='100%';progressPct.textContent='100%';
+  if(failCnt===0){statusEl.textContent='✅ 완료 — '+successCnt+'건 모두 성공!';statusEl.style.color='var(--success)';progressLabel.textContent='🎉 업로드 완료!';progressBar.style.background='var(--success)';addLog('');addLog('🎉 마이그레이션 완료! 총 '+successCnt+'건 성공 — '+new Date().toLocaleTimeString());showToast('🎉 '+successCnt+'건 Google Sheets 업로드 완료!','success');}else{statusEl.textContent='⚠️ 완료 — 성공 '+successCnt+'건 / 실패 '+failCnt+'건';statusEl.style.color='var(--warning)';progressLabel.textContent='일부 실패 — 아래 로그 확인';progressBar.style.background='var(--warning)';addLog('');addLog('⚠️ 완료 — 성공 '+successCnt+'건 / 실패 '+failCnt+'건');showToast('업로드 완료 (실패 '+failCnt+'건)','error');}
+  btn.disabled=false;btn.textContent='☁️ Google Sheets로 전체 업로드 시작';
 }
-function importBackup(){
-  const fileEl=document.getElementById('backup_file');if(!fileEl?.files?.length){showToast('복원할 파일을 선택해 주세요','error');return;}
-  if(!confirm('⚠️ 현재 데이터가 백업 데이터로 덮어씌워집니다.\n계속하시겠습니까?'))return;
-  const reader=new FileReader();
-  reader.onload=e=>{try{const data=JSON.parse(e.target.result);
-    if(data.sonobel)DB.set(KEYS.sonobel,data.sonobel);if(data.spa)DB.set(KEYS.spa,data.spa);
-    if(data.freelancer)DB.set(KEYS.freelancer,data.freelancer);if(data.reservation)DB.set(KEYS.reservation,data.reservation);
-    if(data.expense)DB.set(KEYS.expense,data.expense);if(data.settings)DB.set(KEYS.settings,data.settings);
-    if(data.therapistDetail)localStorage.setItem(THERAPIST_KEY,JSON.stringify(data.therapistDetail));
-    showToast('데이터가 복원되었습니다 ✅');renderPage('backup');
-  }catch(err){showToast('파일 형식이 올바르지 않습니다','error');}};
-  reader.readAsText(fileEl.files[0]);
+async function verifySheets(){
+  if(!navigator.onLine){showToast('인터넷 연결을 확인해 주세요','error');return;}
+  const btn=document.getElementById('verify_btn');const logEl=document.getElementById('migrate_log');btn.disabled=true;btn.textContent='🔍 확인 중...';logEl.style.display='block';logEl.innerHTML='🔍 Google Sheets 데이터 확인 중...<br>';
+  try{const res=await fetch(GAS_URL+'?action=getAllData');const json=await res.json();if(json.status==='ok'&&json.data){const d=json.data;logEl.innerHTML=['📊 Google Sheets 현재 저장된 데이터 현황','─────────────────────────','🏠 소노벨: '+(d.sonobel||[]).length+'건','💆 스파: '+(d.spa||[]).length+'건','🧖 프리샘: '+(d.freelancer||[]).length+'건','📅 예약: '+(d.reservation||[]).length+'건','💸 지출: '+(d.expense||[]).length+'건','─────────────────────────','✅ 확인 완료! — '+new Date().toLocaleTimeString()].join('<br>');showToast('✅ Sheets 데이터 확인 완료!');}else{logEl.innerHTML='❌ Sheets 응답 오류 — 잠시 후 다시 시도해 주세요';showToast('Sheets 응답 오류','error');}}catch(e){logEl.innerHTML='❌ 네트워크 오류 — 인터넷 연결을 확인해 주세요';showToast('네트워크 오류','error');}
+  btn.disabled=false;btn.textContent='🔍 업로드 결과 확인';
 }
 
 /* ===== 초기화 ===== */
@@ -1665,8 +913,8 @@ document.addEventListener('DOMContentLoaded',()=>{
   setInterval(updateHeaderDate,60000);
   buildNav();
   selectUser('user1');
-  updateOnlineStatus(); // ★ 4단계: 초기 온라인 상태 확인
-  updateQueueBadge();   // ★ 4단계: 큐 뱃지 초기화
+  updateOnlineStatus();
+  updateQueueBadge();
 });
 </script>
 </body>
