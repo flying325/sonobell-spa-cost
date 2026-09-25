@@ -16,8 +16,6 @@
   }
   *{margin:0;padding:0;box-sizing:border-box;}
   body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:var(--bg);color:var(--text);}
-
-  /* 로그인 */
   #loginScreen{position:fixed;inset:0;background:linear-gradient(135deg,#1e1b4b 0%,#312e81 50%,#4338ca 100%);display:flex;align-items:center;justify-content:center;z-index:9999;}
   #loginScreen.hidden{display:none;}
   .login-box{background:#fff;border-radius:24px;padding:40px 36px;width:360px;box-shadow:0 25px 50px rgba(0,0,0,0.4);text-align:center;}
@@ -43,8 +41,6 @@
   .pin-key.confirm-key{background:var(--primary);color:#fff;border-color:var(--primary);font-size:14px;}
   .pin-key.confirm-key:hover{background:var(--primary-dark);}
   .login-error{color:var(--danger);font-size:13px;margin-top:14px;min-height:20px;}
-
-  /* 앱 레이아웃 */
   #app{display:flex;height:100vh;}
   #app.hidden{display:none;}
   #sidebar{width:240px;background:var(--sidebar-bg);display:flex;flex-direction:column;transition:width 0.3s;overflow:hidden;flex-shrink:0;}
@@ -66,6 +62,11 @@
   .sidebar-footer{padding:12px 16px;border-top:1px solid rgba(255,255,255,0.1);}
   .logout-btn{display:flex;align-items:center;gap:8px;color:rgba(199,210,254,0.7);font-size:12px;cursor:pointer;padding:8px;border-radius:8px;transition:all 0.2s;}
   .logout-btn:hover{background:rgba(255,255,255,0.08);color:#fff;}
+  .sync-bar{padding:6px 16px;display:flex;align-items:center;gap:6px;font-size:11px;color:rgba(199,210,254,0.7);border-top:1px solid rgba(255,255,255,0.06);}
+  .sync-dot{width:7px;height:7px;border-radius:50%;background:var(--success);flex-shrink:0;}
+  .sync-dot.syncing{background:var(--warning);animation:blink 1s infinite;}
+  .sync-dot.error{background:var(--danger);}
+  @keyframes blink{0%,100%{opacity:1;}50%{opacity:0.2;}}
   #mainArea{flex:1;display:flex;flex-direction:column;overflow:hidden;}
   #header{background:#fff;padding:14px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow);}
   .header-left{display:flex;align-items:center;gap:12px;}
@@ -74,8 +75,6 @@
   .header-right{display:flex;align-items:center;gap:12px;}
   .header-date{font-size:13px;color:var(--text-muted);}
   #content{flex:1;overflow-y:auto;padding:24px;}
-
-  /* 공통 컴포넌트 */
   .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:20px;}
   .kpi-card{background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);border-left:4px solid var(--primary);transition:transform 0.2s;}
   .kpi-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);}
@@ -116,8 +115,6 @@
   tbody tr:hover{background:#f8fafc;}
   tfoot tr{background:#f1f5f9;font-weight:700;}
   tfoot td{border-top:2px solid var(--border);}
-
-  /* 모달 */
   .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:1000;}
   .modal-overlay.hidden{display:none;}
   .modal{background:#fff;border-radius:var(--radius);padding:28px;width:90%;max-width:500px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);}
@@ -125,8 +122,8 @@
   .modal-title{font-size:17px;font-weight:800;margin-bottom:20px;color:var(--text);}
   .modal-close{background:none;border:none;font-size:20px;cursor:pointer;color:var(--text-muted);padding:4px 8px;border-radius:6px;}
   .modal-close:hover{background:var(--bg);}
-  .modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;}
   .modal-body{margin-bottom:4px;}
+  .modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;}
   .form-group{margin-bottom:14px;}
   .form-group label{display:block;font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:6px;}
   .form-group input,.form-group select,.form-group textarea{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:13px;color:var(--text);transition:border-color 0.2s;}
@@ -134,53 +131,31 @@
   .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
   .form-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
   .form-row4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;}
-
-  /* 배지 */
+  .chip-btn{padding:6px 14px;border:2px solid var(--border);border-radius:20px;background:#fff;color:var(--text-muted);font-size:13px;cursor:pointer;transition:all 0.2s;font-weight:500;}
+  .chip-btn:hover{border-color:var(--primary);color:var(--primary);}
+  .chip-btn.active{background:var(--primary);border-color:var(--primary);color:#fff;font-weight:700;}
   .badge{display:inline-block;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:700;}
   .badge-primary{background:#eef2ff;color:var(--primary);}
   .badge-success{background:#ecfdf5;color:var(--success);}
   .badge-warning{background:#fffbeb;color:var(--warning);}
   .badge-danger{background:#fef2f2;color:var(--danger);}
   .badge-info{background:#eff6ff;color:var(--info);}
-
-  /* 칩 버튼 */
-  .chip-btn{padding:6px 14px;border:2px solid var(--border);border-radius:20px;background:#fff;color:var(--text-muted);font-size:13px;cursor:pointer;transition:all 0.2s;font-weight:500;}
-  .chip-btn:hover{border-color:var(--primary);color:var(--primary);}
-  .chip-btn.active{background:var(--primary);border-color:var(--primary);color:#fff;font-weight:700;}
-
-  /* 토스트 */
+  .empty-state{text-align:center;padding:40px 20px;color:var(--text-muted);}
+  .empty-icon{font-size:40px;margin-bottom:12px;}
+  .chart-container{position:relative;height:280px;padding:10px;}
+  .chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;}
+  .ana-mode-btn{padding:7px 14px;border:none;background:#fff;color:var(--text-muted);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s;}
+  .ana-mode-btn.active{background:var(--primary);color:#fff;}
   #toast{position:fixed;bottom:24px;right:24px;padding:12px 20px;background:#1e293b;color:#fff;border-radius:10px;font-size:13px;font-weight:600;z-index:9999;opacity:0;transform:translateY(20px);transition:all 0.3s;pointer-events:none;}
   #toast.show{opacity:1;transform:translateY(0);}
   #toast.error{background:var(--danger);}
   #toast.success{background:var(--success);}
-
-  /* 차트 */
-  .chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;}
-  .chart-container{position:relative;height:280px;padding:10px;}
-
-  /* 빈 상태 */
-  .empty-state{text-align:center;padding:40px 20px;color:var(--text-muted);}
-  .empty-icon{font-size:48px;margin-bottom:12px;}
-
-  /* 분석 모드 버튼 */
-  .ana-mode-btn{padding:7px 14px;border:none;background:#fff;color:var(--text-muted);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s;}
-  .ana-mode-btn.active{background:var(--primary);color:#fff;}
-
-  /* 인쇄 */
-  @media print{
-    #sidebar,#header,.search-bar,.modal-overlay,#toast{display:none !important;}
-    #content{padding:0;overflow:visible;}
-    .card{box-shadow:none;border:1px solid #ddd;page-break-inside:avoid;}
-    .btn{display:none;}
-  }
-
-  /* 반응형 */
   @media(max-width:768px){
-    #sidebar{width:64px;}
+    .form-row,.form-row3,.form-row4{grid-template-columns:1fr;}
     .chart-grid{grid-template-columns:1fr;}
-    .form-row{grid-template-columns:1fr;}
-    .form-row3{grid-template-columns:1fr 1fr;}
-    .form-row4{grid-template-columns:1fr 1fr;}
+    #sidebar{width:64px;}
+    #sidebar.collapsed{width:0;}
+    .sidebar-logo .logo-text,.sidebar-user .user-info,.nav-item span:last-child,.nav-group-label,.logout-btn span,.sync-bar span{display:none;}
   }
 </style>
 </head>
@@ -246,6 +221,10 @@
     </div>
     <nav class="sidebar-nav" id="sidebarNav"></nav>
     <div class="sidebar-footer">
+      <div class="sync-bar">
+        <div class="sync-dot" id="syncDot"></div>
+        <span id="syncText">동기화됨</span>
+      </div>
       <div class="logout-btn" onclick="doLogout()">🚪 <span>로그아웃</span></div>
     </div>
   </div>
@@ -263,13 +242,19 @@
     <div id="content"></div>
   </div>
 </div>
+
 <div id="toast"></div>
+
 <script>
+/* ===== Google Sheets API 설정 ===== */
+const GAS_URL='https://script.google.com/macros/s/AKfycbzq7MvPlhqjMT8CUE2YzADeiHjyCML-skMlEmoCmOkKGVD9r9h8YhYhtCDD8pyDnE85/exec';
+
 /* ===== 상수 ===== */
 const USERS={
   user1:{name:'쭌대디',role:'관리자',emoji:'👨',pin:'1234'},
   user2:{name:'쭌마미',role:'스태프',emoji:'👩',pin:'5678'}
 };
+
 const MENU_ITEMS=[
   {id:'reservation',label:'예약관리',icon:'📅',group:'운영관리'},
   {id:'expense',label:'지출비용',icon:'💸',group:'운영관리'},
@@ -283,38 +268,115 @@ const MENU_ITEMS=[
   {id:'settings',label:'설정',icon:'⚙️',group:'시스템'},
   {id:'backup',label:'백업/복원',icon:'💾',group:'시스템'}
 ];
-const KEYS={sonobel:'spa_sonobel',spa:'spa_spa',freelancer:'spa_freelancer',reservation:'spa_reservation',expense:'spa_expense',settings:'spa_settings'};
+
+const KEYS={
+  sonobel:'spa_sonobel',
+  spa:'spa_spa',
+  freelancer:'spa_freelancer',
+  reservation:'spa_reservation',
+  expense:'spa_expense',
+  settings:'spa_settings'
+};
+
 const EXP_CATS=['월임대료','재료비','인건비','공과금','마케팅','기타'];
-const RSV_SERVICES=['전신아로마케어 120분','아로마케어 90분','아로마케어 60분','스파 70분','발관리 40분','페이셜케어 40분','커플케어 90분','상품권'];
-const TIMES=(()=>{const t=[];for(let h=10;h<=23;h++){t.push(`${String(h).padStart(2,'0')}:00`);t.push(`${String(h).padStart(2,'0')}:30`);}t.push('24:00');return t;})();
+
+const RSV_SERVICES=[
+  '전신아로마케어 120분','아로마케어 90분','아로마케어 60분',
+  '스파 70분','발관리 40분','페이셜케어 40분','커플케어 90분','상품권'
+];
+
+const TIMES=(()=>{
+  const t=[];
+  for(let h=10;h<=23;h++){t.push(`${String(h).padStart(2,'0')}:00`);t.push(`${String(h).padStart(2,'0')}:30`);}
+  t.push('24:00');return t;
+})();
+
+const THERAPIST_KEY='spa_therapist_detail';
 
 /* ===== DB ===== */
 const DB={
   get:(key,def=[])=>{try{return JSON.parse(localStorage.getItem(key))??def;}catch{return def;}},
   set:(key,val)=>localStorage.setItem(key,JSON.stringify(val))
 };
-const DataService={
-  getAll:(key)=>DB.get(key,[]),
-  add:(key,rec)=>{const list=DB.get(key,[]);rec.id=genId();list.push(rec);DB.set(key,list);return rec;},
-  update:(key,id,rec)=>{const list=DB.get(key,[]).map(r=>r.id===id?{...r,...rec,id}:r);DB.set(key,list);},
-  remove:(key,id)=>{DB.set(key,DB.get(key,[]).filter(r=>r.id!==id));}
-};
+
+/* ===== SettingsService ===== */
 const SettingsService={
   get:()=>DB.get(KEYS.settings,{}),
   save:(obj)=>DB.set(KEYS.settings,obj)
 };
 
-/* ===== 유틸 ===== */
+/* ===== 동기화 상태 표시 ===== */
+function setSyncStatus(state){
+  const dot=document.getElementById('syncDot');
+  const txt=document.getElementById('syncText');
+  if(!dot||!txt)return;
+  if(state==='syncing'){dot.className='sync-dot syncing';txt.textContent='동기화 중...';}
+  else if(state==='error'){dot.className='sync-dot error';txt.textContent='연결 오류';}
+  else{dot.className='sync-dot';txt.textContent='동기화됨';}
+}
+
+/* ===== Sheets → LocalStorage 동기화 ===== */
+async function syncFromSheets(){
+  if(!navigator.onLine){setSyncStatus('error');return;}
+  setSyncStatus('syncing');
+  try{
+    const res=await fetch(GAS_URL+'?action=getAllData');
+    const json=await res.json();
+    if(json.status==='ok'&&json.data){
+      const d=json.data;
+      if(Array.isArray(d.sonobel)&&d.sonobel.length)DB.set(KEYS.sonobel,d.sonobel);
+      if(Array.isArray(d.spa)&&d.spa.length)DB.set(KEYS.spa,d.spa);
+      if(Array.isArray(d.freelancer)&&d.freelancer.length)DB.set(KEYS.freelancer,d.freelancer);
+      if(Array.isArray(d.reservation)&&d.reservation.length)DB.set(KEYS.reservation,d.reservation);
+      if(Array.isArray(d.expense)&&d.expense.length)DB.set(KEYS.expense,d.expense);
+    }
+    setSyncStatus('ok');
+  }catch(e){setSyncStatus('error');}
+}
+
+/* ===== LocalStorage → Sheets 동기화 ===== */
+async function pushToSheets(sheetName,rec){
+  if(!navigator.onLine)return;
+  try{
+    await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'syncRecord',sheet:sheetName,record:rec})});
+  }catch(e){}
+}
+
+async function deleteFromSheets(sheetName,id){
+  if(!navigator.onLine)return;
+  try{
+    await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'deleteRecord',sheet:sheetName,id:id})});
+  }catch(e){}
+}
+
+/* ===== DataService ===== */
+const DataService={
+  getAll:(key)=>DB.get(key,[]),
+  add:(key,rec)=>{
+    const list=DB.get(key,[]);
+    rec.id=genId();list.push(rec);DB.set(key,list);
+    pushToSheets(key,rec);
+    return rec;
+  },
+  update:(key,id,rec)=>{
+    const list=DB.get(key,[]).map(r=>r.id===id?{...r,...rec,id}:r);
+    DB.set(key,list);pushToSheets(key,{...rec,id});
+  },
+  remove:(key,id)=>{
+    DB.set(key,DB.get(key,[]).filter(r=>r.id!==id));
+    deleteFromSheets(key,id);
+  }
+};
+
+/* ===== 유틸리티 함수 ===== */
 function genId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
-function num(v){const n=parseFloat(String(v).replace(/,/g,''));return isNaN(n)?0:n;}
-function fmtNum(n){return Number(n).toLocaleString('ko-KR');}
-function fmtDate(d){if(!d)return '';return d.replace(/-/g,'.');}
 function today(){return new Date().toISOString().slice(0,10);}
 function monthStart(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-01`;}
 function monthEnd(){const d=new Date();const last=new Date(d.getFullYear(),d.getMonth()+1,0).getDate();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(last).padStart(2,'0')}`;}
 function getWeekDay(dateStr){if(!dateStr)return '';const days=['일','월','화','수','목','금','토'];return days[new Date(dateStr).getDay()]+'요일';}
-let _toastTimer;
-function showToast(msg,type='success'){const el=document.getElementById('toast');el.textContent=msg;el.className='show '+type;clearTimeout(_toastTimer);_toastTimer=setTimeout(()=>{el.className='';},3000);}
+function num(v){const n=parseFloat(String(v).replace(/,/g,''));return isNaN(n)?0:n;}
+function fmtNum(n){return Number(n).toLocaleString('ko-KR');}
+function fmtDate(d){if(!d)return '';return d.replace(/-/g,'.');}
 function setRange(prefix,mode){
   const d=new Date();let from=today(),to=today();
   if(mode==='today'){from=to=today();}
@@ -325,30 +387,57 @@ function setRange(prefix,mode){
   if(fEl)fEl.value=from;if(tEl)tEl.value=to;
 }
 
+let _toastTimer;
+function showToast(msg,type='success'){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.className='show '+type;
+  clearTimeout(_toastTimer);_toastTimer=setTimeout(()=>{el.className='';},3000);
+}
+
+function loadTherapistDetail(){try{return JSON.parse(localStorage.getItem(THERAPIST_KEY)||'[]');}catch(e){return [];}}
+function saveTherapistDetail(arr){localStorage.setItem(THERAPIST_KEY,JSON.stringify(arr));}
+
+function loadFreesamNames(){
+  const detail=loadTherapistDetail();
+  if(detail.length)return detail.filter(t=>t.active!==false).map(t=>t.name);
+  const cfg=SettingsService.get();
+  return Array.isArray(cfg.freesamNames)?cfg.freesamNames:[];
+}
+
 /* ===== 로그인 ===== */
-let _pinBuf='',_selUser='user1';
+let _selUser='user1',_pinBuf='';
+
 function selectUser(uid){
   _selUser=uid;_pinBuf='';updateDots();
   document.getElementById('loginError').textContent='';
   document.querySelectorAll('.user-tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('tab'+uid.charAt(0).toUpperCase()+uid.slice(1)).classList.add('active');
 }
-function updateDots(){for(let i=0;i<4;i++){document.getElementById('dot'+i).classList.toggle('filled',i<_pinBuf.length);}}
+
+function updateDots(){for(let i=0;i<4;i++)document.getElementById('dot'+i).classList.toggle('filled',i<_pinBuf.length);}
+
 function pinInput(v){if(_pinBuf.length<4){_pinBuf+=v;updateDots();if(_pinBuf.length===4)pinConfirm();}}
+
 function pinDelete(){if(_pinBuf.length>0){_pinBuf=_pinBuf.slice(0,-1);updateDots();}}
+
 function pinConfirm(){
+  const defaultPin=USERS[_selUser]?.pin||'';
   const cfg=SettingsService.get();
   const users=cfg.users||{};
-  const storedPin=users[_selUser]?.pin||USERS[_selUser].pin;
+  const storedPin=users[_selUser]?.pin||defaultPin;
+  if(!storedPin){document.getElementById('loginError').textContent='PIN 설정 오류. 관리자에게 문의하세요.';return;}
   if(_pinBuf===storedPin){doLogin(_selUser);}
   else{document.getElementById('loginError').textContent='PIN이 올바르지 않습니다';_pinBuf='';updateDots();}
 }
+
 function doLogin(uid){
   document.getElementById('loginScreen').classList.add('hidden');
   document.getElementById('app').classList.remove('hidden');
   updateHeader(uid);buildNav();
+  syncFromSheets();
   navigateTo(MENU_ITEMS[0].id);
 }
+
 function doLogout(){
   _pinBuf='';updateDots();
   document.getElementById('app').classList.add('hidden');
@@ -356,6 +445,8 @@ function doLogout(){
   document.getElementById('loginError').textContent='';
   selectUser('user1');
 }
+
+/* ===== 네비게이션 ===== */
 function updateHeader(uid){
   const u=USERS[uid];
   document.getElementById('sideUserEmoji').textContent=u.emoji;
@@ -363,77 +454,706 @@ function updateHeader(uid){
   document.getElementById('sideUserRole').textContent=u.role;
   document.getElementById('headerUser').textContent=u.name;
 }
-function updateHeaderDate(){
-  const now=new Date();
-  const days=['일','월','화','수','목','금','토'];
-  document.getElementById('headerDate').textContent=
-    `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} (${days[now.getDay()]})`;
-}
-function toggleSidebar(){document.getElementById('sidebar').classList.toggle('collapsed');}
 
-/* ===== 네비게이션 ===== */
+function updateHeaderDate(){
+  const now=new Date();const days=['일','월','화','수','목','금','토'];
+  document.getElementById('headerDate').textContent=`${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} (${days[now.getDay()]})`;
+}
+
 function buildNav(){
-  const nav=document.getElementById('sidebarNav');
-  let html='',lastGroup='';
+  const nav=document.getElementById('sidebarNav');let html='',lastGroup='';
   MENU_ITEMS.forEach(item=>{
     if(item.group!==lastGroup){html+=`<div class="nav-group-label">${item.group}</div>`;lastGroup=item.group;}
     html+=`<div class="nav-item" id="nav_${item.id}" onclick="navigateTo('${item.id}')"><span class="nav-icon">${item.icon}</span><span>${item.label}</span></div>`;
   });
   nav.innerHTML=html;
 }
+
 function navigateTo(page){
   document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
-  const navEl=document.getElementById('nav_'+page);
-  if(navEl)navEl.classList.add('active');
+  const navEl=document.getElementById('nav_'+page);if(navEl)navEl.classList.add('active');
   const item=MENU_ITEMS.find(m=>m.id===page);
   document.getElementById('pageTitle').textContent=item?item.label:'';
+  syncFromSheets();
   renderPage(page);
 }
+
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('collapsed');}
+
 function renderPage(page){
-  const content=document.getElementById('content');
-  content.innerHTML='';
-  const map={
-    sonobel:renderSonobel,spa:renderSpa,settlement:renderSettlement,
-    freesam:renderFreesam,therapist:renderTherapist,
-    therapistStats:renderTherapistStats,
-    reservation:renderReservation,expense:renderExpense,
-    analysis:renderAnalysis,settings:renderSettings,backup:renderBackup
-  };
-  if(map[page])map[page](content);
+  const el=document.getElementById('content');el.innerHTML='';
+  if(page==='reservation')renderReservation(el);
+  else if(page==='expense')renderExpense(el);
+  else if(page==='freesam')renderFreesam(el);
+  else if(page==='therapist')renderTherapist(el);
+  else if(page==='therapistStats')renderTherapistStats(el);
+  else if(page==='sonobel')renderSonobel(el);
+  else if(page==='spa')renderSpa(el);
+  else if(page==='settlement')renderSettlement(el);
+  else if(page==='analysis')renderAnalysis(el);
+  else if(page==='settings')renderSettings(el);
+  else if(page==='backup')renderBackup(el);
 }
 
-/* ===== 공통 일일장부 ===== */
-function searchBarHTML(prefix,searchFn,openFn,addLabel){
-  return `<div class="search-bar">
-    <label>📅 기간</label>
-    <input type="date" id="${prefix}_from" value="${monthStart()}">
-    <span class="date-separator">~</span>
-    <input type="date" id="${prefix}_to" value="${monthEnd()}">
+/* ===== 예약관리 ===== */
+function renderReservation(el){
+  const freeNames=loadFreesamNames();
+  el.innerHTML=`
+  <div class="search-bar">
+    <label>📅 기간</label><input type="date" id="rsv_from" value="${monthStart()}">
+    <span class="date-separator">~</span><input type="date" id="rsv_to" value="${monthEnd()}">
+    <div class="search-shortcut-btns">
+      <button class="btn-shortcut" onclick="setRange('rsv','today')">오늘</button>
+      <button class="btn-shortcut" onclick="setRange('rsv','week')">이번주</button>
+      <button class="btn-shortcut" onclick="setRange('rsv','month')">이번달</button>
+      <button class="btn-shortcut" onclick="setRange('rsv','last')">지난달</button>
+    </div>
+    <button class="btn btn-primary" onclick="searchReservation()">🔍 조회</button>
+    <button class="btn btn-success" onclick="openRsvNew()">➕ 예약 추가</button>
+    <button class="btn btn-outline" onclick="rsvPrint()">🖨️ 인쇄</button>
+  </div>
+  <div id="rsv_kpi" class="kpi-grid"></div>
+  <div class="card">
+    <div class="card-header"><span class="card-title">📅 예약관리</span><span id="rsv_cnt" style="font-size:12px;color:var(--text-muted)"></span></div>
+    <div class="table-wrap" id="rsv_tbl"></div>
+  </div>
+  <div class="modal-overlay hidden" id="rsv_modal">
+    <div class="modal" style="max-width:560px">
+      <div class="modal-title" id="rsv_mtitle">📅 예약 추가</div>
+      <input type="hidden" id="rsv_eid">
+      <div class="form-row">
+        <div class="form-group"><label>예약일 *</label><input type="date" id="rsv_date" value="${today()}"></div>
+        <div class="form-group"><label>시간 *</label><select id="rsv_time">${TIMES.map(t=>`<option value="${t}">${t}</option>`).join('')}</select></div>
+      </div>
+      <div class="form-group"><label>영업장 *</label>
+        <div style="display:flex;gap:8px;margin-top:6px">
+          <button type="button" class="chip-btn active" id="rsv_place_sono" onclick="selectRsvPlace('소노벨')">소노벨</button>
+          <button type="button" class="chip-btn" id="rsv_place_spa" onclick="selectRsvPlace('스파')">스파</button>
+        </div>
+        <input type="hidden" id="rsv_place" value="소노벨">
+      </div>
+      <div class="form-group"><label>서비스</label>
+        <div id="rsv_svc_chips" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px">
+          ${RSV_SERVICES.map(s=>`<button type="button" class="chip-btn" id="rsv_svc_${s.replace(/\s+/g,'_')}" onclick="selectRsvSvc('${s}')">${s}</button>`).join('')}
+        </div>
+        <input type="hidden" id="rsv_svc">
+      </div>
+      <div class="form-group"><label>담당 프리샘</label>
+        <div id="rsv_fs_chips" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px">
+          <button type="button" class="chip-btn active" id="rsv_fs_none" onclick="selectRsvFs('')">미지정</button>
+          ${freeNames.map(n=>`<button type="button" class="chip-btn" id="rsv_fs_${n.replace(/\s+/g,'_')}" onclick="selectRsvFs('${n}')">${n}</button>`).join('')}
+        </div>
+        <input type="hidden" id="rsv_fs">
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>고객명 *</label><input type="text" id="rsv_cust" placeholder="고객명"></div>
+        <div class="form-group"><label>연락처</label><input type="tel" id="rsv_phone" placeholder="010-0000-0000"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>예약금</label><input type="number" id="rsv_deposit" placeholder="0" min="0"></div>
+        <div class="form-group"><label>상태</label><select id="rsv_status"><option value="확정">확정</option><option value="대기">대기</option><option value="취소">취소</option><option value="완료">완료</option></select></div>
+      </div>
+      <div class="form-group"><label>메모</label><input type="text" id="rsv_memo" placeholder="메모 (선택)"></div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeRsvModal()">취소</button>
+        <button class="btn btn-primary" onclick="saveReservation()">💾 저장</button>
+      </div>
+    </div>
+  </div>`;
+  setTimeout(()=>searchReservation(),50);
+}
+
+function selectRsvPlace(place){
+  document.getElementById('rsv_place').value=place;
+  document.getElementById('rsv_place_sono').classList.toggle('active',place==='소노벨');
+  document.getElementById('rsv_place_spa').classList.toggle('active',place==='스파');
+}
+function selectRsvSvc(svc){
+  document.getElementById('rsv_svc').value=svc;
+  document.querySelectorAll('#rsv_svc_chips .chip-btn').forEach(b=>b.classList.remove('active'));
+  const el=document.getElementById('rsv_svc_'+svc.replace(/\s+/g,'_'));if(el)el.classList.add('active');
+}
+function selectRsvFs(fs){
+  document.getElementById('rsv_fs').value=fs;
+  document.querySelectorAll('#rsv_fs_chips .chip-btn').forEach(b=>b.classList.remove('active'));
+  const el=fs?document.getElementById('rsv_fs_'+fs.replace(/\s+/g,'_')):document.getElementById('rsv_fs_none');
+  if(el)el.classList.add('active');
+}
+function openRsvNew(){
+  document.getElementById('rsv_mtitle').textContent='📅 예약 추가';
+  document.getElementById('rsv_eid').value='';document.getElementById('rsv_date').value=today();document.getElementById('rsv_time').value='10:00';
+  selectRsvPlace('소노벨');document.getElementById('rsv_svc').value='';document.querySelectorAll('#rsv_svc_chips .chip-btn').forEach(b=>b.classList.remove('active'));
+  selectRsvFs('');document.getElementById('rsv_cust').value='';document.getElementById('rsv_phone').value='';
+  document.getElementById('rsv_deposit').value='';document.getElementById('rsv_status').value='확정';document.getElementById('rsv_memo').value='';
+  document.getElementById('rsv_modal').classList.remove('hidden');
+}
+function openRsvEdit(id){
+  const rec=DataService.getAll(KEYS.reservation).find(r=>r.id===id);if(!rec)return;
+  document.getElementById('rsv_mtitle').textContent='📅 예약 수정';document.getElementById('rsv_eid').value=id;
+  document.getElementById('rsv_date').value=rec.date||'';document.getElementById('rsv_time').value=rec.time||'10:00';
+  selectRsvPlace(rec.place||'소노벨');document.getElementById('rsv_svc').value=rec.svc||'';
+  document.querySelectorAll('#rsv_svc_chips .chip-btn').forEach(b=>b.classList.remove('active'));
+  if(rec.svc){const el=document.getElementById('rsv_svc_'+rec.svc.replace(/\s+/g,'_'));if(el)el.classList.add('active');}
+  selectRsvFs(rec.fs||'');document.getElementById('rsv_cust').value=rec.cust||'';document.getElementById('rsv_phone').value=rec.phone||'';
+  document.getElementById('rsv_deposit').value=rec.deposit||'';document.getElementById('rsv_status').value=rec.status||'확정';document.getElementById('rsv_memo').value=rec.memo||'';
+  document.getElementById('rsv_modal').classList.remove('hidden');
+}
+function closeRsvModal(){document.getElementById('rsv_modal').classList.add('hidden');}
+function saveReservation(){
+  const id=document.getElementById('rsv_eid').value;
+  const date=document.getElementById('rsv_date').value;const time=document.getElementById('rsv_time').value;
+  const place=document.getElementById('rsv_place').value;const svc=document.getElementById('rsv_svc').value;
+  const fs=document.getElementById('rsv_fs').value;const cust=document.getElementById('rsv_cust').value.trim();
+  const phone=document.getElementById('rsv_phone').value;const deposit=num(document.getElementById('rsv_deposit').value);
+  const status=document.getElementById('rsv_status').value;const memo=document.getElementById('rsv_memo').value;
+  if(!date){showToast('날짜를 입력해 주세요','error');return;}if(!cust){showToast('고객명을 입력해 주세요','error');return;}
+  const rec={date,time,place,svc,fs,cust,phone,deposit,status,memo};
+  if(id)DataService.update(KEYS.reservation,id,rec);else DataService.add(KEYS.reservation,rec);
+  closeRsvModal();showToast(id?'수정되었습니다 ✅':'예약이 추가되었습니다 ✅');searchReservation();
+}
+function delReservation(id){if(!confirm('삭제하시겠습니까?'))return;DataService.remove(KEYS.reservation,id);showToast('삭제되었습니다');searchReservation();}
+function searchReservation(){
+  const from=document.getElementById('rsv_from')?.value||'';const to=document.getElementById('rsv_to')?.value||'';
+  let list=DataService.getAll(KEYS.reservation);
+  if(from)list=list.filter(r=>r.date>=from);if(to)list=list.filter(r=>r.date<=to);
+  list.sort((a,b)=>a.date===b.date?a.time.localeCompare(b.time):b.date.localeCompare(a.date));
+  const totDep=list.reduce((a,r)=>a+num(r.deposit),0);const statusMap={};list.forEach(r=>{statusMap[r.status]=(statusMap[r.status]||0)+1;});
+  const statusColor={확정:'badge-success',대기:'badge-warning',취소:'badge-danger',완료:'badge-primary'};
+  const kpiEl=document.getElementById('rsv_kpi');
+  if(kpiEl)kpiEl.innerHTML=`<div class="kpi-card"><div class="kpi-label">📅 총 예약</div><div class="kpi-value">${list.length}건</div></div>
+    <div class="kpi-card info"><div class="kpi-label">💰 예약금 합계</div><div class="kpi-value">${fmtNum(totDep)}원</div></div>
+    ${Object.entries(statusMap).map(([k,v])=>`<div class="kpi-card"><div class="kpi-label">${k}</div><div class="kpi-value" style="font-size:18px">${v}건</div></div>`).join('')}`;
+  const cntEl=document.getElementById('rsv_cnt');if(cntEl)cntEl.textContent=`총 ${list.length}건`;
+  const tbl=document.getElementById('rsv_tbl');if(!tbl)return;
+  if(!list.length){tbl.innerHTML=`<div class="empty-state"><div class="empty-icon">📅</div><p>예약 내역이 없습니다</p></div>`;return;}
+  tbl.innerHTML=`<table id="rsv_table_el"><thead><tr><th>예약일</th><th>시간</th><th>영업장</th><th>서비스</th><th>담당 프리샘</th><th>고객명</th><th>연락처</th><th style="text-align:right">예약금</th><th>상태</th><th>메모</th><th>관리</th></tr></thead>
+  <tbody>${list.map(r=>`<tr><td>${fmtDate(r.date)}</td><td><strong>${r.time||''}</strong></td>
+    <td><span class="badge ${r.place==='소노벨'?'badge-primary':'badge-success'}">${r.place||''}</span></td>
+    <td>${r.svc||''}</td><td>${r.fs||'-'}</td><td><strong>${r.cust||''}</strong></td><td>${r.phone||'-'}</td>
+    <td style="text-align:right">${fmtNum(num(r.deposit))}원</td>
+    <td><span class="badge ${statusColor[r.status]||'badge-info'}">${r.status||''}</span></td>
+    <td>${r.memo||'-'}</td>
+    <td><button class="btn btn-sm btn-outline" onclick="openRsvEdit('${r.id}')">✏️</button>
+        <button class="btn btn-sm btn-danger" onclick="delReservation('${r.id}')">🗑️</button></td>
+  </tr>`).join('')}</tbody></table>`;
+}
+function rsvPrint(){
+  const tbl=document.getElementById('rsv_table_el');if(!tbl){showToast('출력할 데이터가 없습니다','error');return;}
+  const from=document.getElementById('rsv_from')?.value||'';const to=document.getElementById('rsv_to')?.value||'';
+  const w=window.open('','_blank','width=1100,height=700');
+  w.document.write(`<html><head><title>예약관리 출력</title><style>body{font-family:'Malgun Gothic',sans-serif;font-size:11px;padding:20px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:5px 7px}thead{background:#f0f0f0;font-weight:bold}@media print{button{display:none}}</style></head><body><h2>📅 예약관리</h2><p>기간: ${fmtDate(from)} ~ ${fmtDate(to)} | 출력일: ${fmtDate(today())}</p><button onclick="window.print()" style="margin-bottom:10px;padding:6px 14px;cursor:pointer">🖨️ 인쇄</button>${tbl.outerHTML}</body></html>`);w.document.close();
+}
+
+/* ===== 지출비용 ===== */
+function renderExpense(el){
+  const cfg=SettingsService.get();const cats=Array.isArray(cfg.expCats)?cfg.expCats:[...EXP_CATS];
+  el.innerHTML=`
+  <div class="search-bar">
+    <label>📅 기간</label><input type="date" id="exp_from" value="${monthStart()}">
+    <span class="date-separator">~</span><input type="date" id="exp_to" value="${monthEnd()}">
+    <div class="search-shortcut-btns">
+      <button class="btn-shortcut" onclick="setRange('exp','today')">오늘</button>
+      <button class="btn-shortcut" onclick="setRange('exp','week')">이번주</button>
+      <button class="btn-shortcut" onclick="setRange('exp','month')">이번달</button>
+      <button class="btn-shortcut" onclick="setRange('exp','last')">지난달</button>
+    </div>
+    <select id="exp_cat_filter" style="padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px">
+      <option value="">전체 카테고리</option>${cats.map(c=>`<option value="${c}">${c}</option>`).join('')}
+    </select>
+    <button class="btn btn-primary" onclick="searchExpense()">🔍 조회</button>
+    <button class="btn btn-success" onclick="openExpenseNew()">➕ 추가</button>
+    <button class="btn btn-outline" onclick="expensePrint()">🖨️ 인쇄</button>
+  </div>
+  <div id="exp_kpi" class="kpi-grid"></div>
+  <div class="card">
+    <div class="card-header"><span class="card-title">💸 지출비용</span><span id="exp_cnt" style="font-size:12px;color:var(--text-muted)"></span></div>
+    <div class="table-wrap" id="exp_tbl"></div>
+  </div>
+  <div class="modal-overlay hidden" id="exp_modal">
+    <div class="modal">
+      <div class="modal-title" id="exp_mtitle">💸 지출 추가</div>
+      <input type="hidden" id="exp_eid">
+      <div class="form-row">
+        <div class="form-group"><label>날짜 *</label><input type="date" id="exp_date" value="${today()}"></div>
+        <div class="form-group"><label>카테고리 *</label><select id="exp_cat">${cats.map(c=>`<option value="${c}">${c}</option>`).join('')}</select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>금액 *</label><input type="number" id="exp_amount" placeholder="0" min="0"></div>
+        <div class="form-group"><label>결제방법</label><select id="exp_paytype"><option value="현금">현금</option><option value="카드">카드</option><option value="이체">이체</option><option value="기타">기타</option></select></div>
+      </div>
+      <div class="form-group"><label>내용 *</label><input type="text" id="exp_desc" placeholder="지출 내용"></div>
+      <div class="form-group"><label>메모</label><input type="text" id="exp_note" placeholder="메모 (선택)"></div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeExpModal()">취소</button>
+        <button class="btn btn-primary" onclick="saveExpense()">💾 저장</button>
+      </div>
+    </div>
+  </div>`;
+  setTimeout(()=>searchExpense(),50);
+}
+function openExpenseNew(){
+  document.getElementById('exp_mtitle').textContent='💸 지출 추가';
+  document.getElementById('exp_eid').value='';document.getElementById('exp_date').value=today();
+  ['exp_amount','exp_desc','exp_note'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('exp_modal').classList.remove('hidden');
+}
+function openExpenseEdit(id){
+  const rec=DataService.getAll(KEYS.expense).find(r=>r.id===id);if(!rec)return;
+  document.getElementById('exp_mtitle').textContent='💸 지출 수정';
+  document.getElementById('exp_eid').value=id;document.getElementById('exp_date').value=rec.date||'';
+  document.getElementById('exp_cat').value=rec.cat||'';document.getElementById('exp_amount').value=rec.amount||'';
+  document.getElementById('exp_paytype').value=rec.paytype||'현금';document.getElementById('exp_desc').value=rec.desc||'';document.getElementById('exp_note').value=rec.note||'';
+  document.getElementById('exp_modal').classList.remove('hidden');
+}
+function closeExpModal(){document.getElementById('exp_modal').classList.add('hidden');}
+function saveExpense(){
+  const id=document.getElementById('exp_eid').value;const date=document.getElementById('exp_date').value;
+  const cat=document.getElementById('exp_cat').value;const amount=num(document.getElementById('exp_amount').value);
+  const paytype=document.getElementById('exp_paytype').value;const desc=document.getElementById('exp_desc').value.trim();const note=document.getElementById('exp_note').value;
+  if(!date){showToast('날짜를 입력해 주세요','error');return;}if(!amount){showToast('금액을 입력해 주세요','error');return;}if(!desc){showToast('내용을 입력해 주세요','error');return;}
+  const rec={date,cat,amount,paytype,desc,note};
+  if(id)DataService.update(KEYS.expense,id,rec);else DataService.add(KEYS.expense,rec);
+  closeExpModal();showToast(id?'수정되었습니다 ✅':'추가되었습니다 ✅');searchExpense();
+}
+function delExpense(id){if(!confirm('삭제하시겠습니까?'))return;DataService.remove(KEYS.expense,id);showToast('삭제되었습니다');searchExpense();}
+function searchExpense(){
+  const from=document.getElementById('exp_from')?.value||'';const to=document.getElementById('exp_to')?.value||'';
+  const catF=document.getElementById('exp_cat_filter')?.value||'';
+  let list=DataService.getAll(KEYS.expense);
+  if(from)list=list.filter(r=>r.date>=from);if(to)list=list.filter(r=>r.date<=to);if(catF)list=list.filter(r=>r.cat===catF);
+  list.sort((a,b)=>b.date.localeCompare(a.date));
+  const totAmt=list.reduce((a,r)=>a+num(r.amount),0);const catMap={};list.forEach(r=>{catMap[r.cat]=(catMap[r.cat]||0)+num(r.amount);});
+  const kpiEl=document.getElementById('exp_kpi');
+  if(kpiEl)kpiEl.innerHTML=`<div class="kpi-card danger"><div class="kpi-label">💸 총 지출</div><div class="kpi-value">${fmtNum(totAmt)}원</div></div>
+    ${Object.entries(catMap).map(([k,v])=>`<div class="kpi-card"><div class="kpi-label">${k}</div><div class="kpi-value" style="font-size:18px">${fmtNum(v)}원</div></div>`).join('')}`;
+  const cntEl=document.getElementById('exp_cnt');if(cntEl)cntEl.textContent=`총 ${list.length}건`;
+  const tbl=document.getElementById('exp_tbl');if(!tbl)return;
+  if(!list.length){tbl.innerHTML=`<div class="empty-state"><div class="empty-icon">💸</div><p>지출 내역이 없습니다</p></div>`;return;}
+  tbl.innerHTML=`<table id="exp_table_el"><thead><tr><th>날짜</th><th>카테고리</th><th style="text-align:right">금액</th><th>결제방법</th><th>내용</th><th>메모</th><th>관리</th></tr></thead>
+  <tbody>${list.map(r=>`<tr><td>${fmtDate(r.date)}</td><td><span class="badge badge-warning">${r.cat||''}</span></td>
+    <td style="text-align:right;font-weight:600;color:var(--danger)">${fmtNum(num(r.amount))}원</td>
+    <td>${r.paytype||''}</td><td>${r.desc||''}</td><td>${r.note||'-'}</td>
+    <td><button class="btn btn-sm btn-outline" onclick="openExpenseEdit('${r.id}')">✏️</button>
+        <button class="btn btn-sm btn-danger" onclick="delExpense('${r.id}')">🗑️</button></td>
+  </tr>`).join('')}</tbody>
+  <tfoot><tr><td colspan="2"><strong>합계</strong></td><td style="text-align:right;color:var(--danger)"><strong>${fmtNum(totAmt)}원</strong></td><td colspan="4"></td></tr></tfoot></table>`;
+}
+function expensePrint(){
+  const tbl=document.getElementById('exp_table_el');if(!tbl){showToast('출력할 데이터가 없습니다','error');return;}
+  const from=document.getElementById('exp_from')?.value||'';const to=document.getElementById('exp_to')?.value||'';
+  const w=window.open('','_blank','width=900,height=700');
+  w.document.write(`<html><head><title>지출비용 출력</title><style>body{font-family:'Malgun Gothic',sans-serif;font-size:12px;padding:20px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:6px 8px}thead{background:#f0f0f0;font-weight:bold}tfoot{background:#e8e8e8;font-weight:bold}@media print{button{display:none}}</style></head><body><h2>💸 지출비용</h2><p>기간: ${fmtDate(from)} ~ ${fmtDate(to)} | 출력일: ${fmtDate(today())}</p><button onclick="window.print()" style="margin-bottom:10px;padding:6px 14px;cursor:pointer">🖨️ 인쇄</button>${tbl.outerHTML}</body></html>`);w.document.close();
+}
+
+/* ===== 프리샘 일일관리 ===== */
+function renderFreesam(el){
+  const freeNames=loadFreesamNames();
+  el.innerHTML=`
+  <div class="search-bar">
+    <label>📅 기간</label><input type="date" id="fs_from" value="${monthStart()}">
+    <span class="date-separator">~</span><input type="date" id="fs_to" value="${monthEnd()}">
+    <div class="search-shortcut-btns">
+      <button class="btn-shortcut" onclick="setRange('fs','today')">오늘</button>
+      <button class="btn-shortcut" onclick="setRange('fs','week')">이번주</button>
+      <button class="btn-shortcut" onclick="setRange('fs','month')">이번달</button>
+      <button class="btn-shortcut" onclick="setRange('fs','last')">지난달</button>
+    </div>
+    <button class="btn btn-primary" onclick="searchFreesam()">🔍 조회</button>
+    <button class="btn btn-success" onclick="openFreesamNew()">➕ 추가</button>
+    <button class="btn btn-outline" onclick="freesamPrint()">🖨️ 인쇄</button>
+  </div>
+  <div id="fs_kpi" class="kpi-grid"></div>
+  <div class="card">
+    <div class="card-header"><span class="card-title">🧖 프리샘 일일관리</span><span id="fs_cnt" style="font-size:12px;color:var(--text-muted)"></span></div>
+    <div class="table-wrap" id="fs_tbl"></div>
+  </div>
+  <div class="modal-overlay hidden" id="fs_modal">
+    <div class="modal" style="max-width:600px">
+      <div class="modal-title" id="fs_mtitle">🧖 프리샘 내역 추가</div>
+      <input type="hidden" id="fs_eid">
+      <div class="form-row">
+        <div class="form-group"><label>날짜 *</label><input type="date" id="fs_date" value="${today()}"></div>
+        <div class="form-group"><label>요일</label><input type="text" id="fs_wday" readonly style="background:#f8fafc;color:var(--text-muted)"></div>
+      </div>
+      <div class="form-group"><label>영업장 *</label>
+        <div style="display:flex;gap:8px;margin-top:6px">
+          <button type="button" class="chip-btn active" id="fs_place_sono" onclick="selectFsPlace('소노벨')">소노벨</button>
+          <button type="button" class="chip-btn" id="fs_place_spa" onclick="selectFsPlace('스파')">스파</button>
+        </div>
+        <input type="hidden" id="fs_place" value="소노벨">
+      </div>
+      <div class="form-group"><label>프리샘명 *</label>
+        <div id="fs_name_chips" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px">
+          ${freeNames.length?freeNames.map(n=>`<button type="button" class="chip-btn" id="fs_chip_${n.replace(/\s+/g,'_')}" onclick="selectFsName('${n}')">${n}</button>`).join(''):`<span style="color:var(--text-muted);font-size:13px">⚠️ 프리샘 관리 메뉴에서 먼저 등록해 주세요</span>`}
+        </div>
+        <input type="hidden" id="fs_name">
+      </div>
+      <div class="form-row3">
+        <div class="form-group"><label>수익금 *</label><input type="number" id="fs_revenue" placeholder="0" min="0" oninput="calcFsProfit()"></div>
+        <div class="form-group"><label>관리비</label><input type="number" id="fs_mgmt" placeholder="0" min="0" oninput="calcFsProfit()"></div>
+        <div class="form-group"><label>이익금</label><input type="number" id="fs_profit" placeholder="자동계산" readonly style="background:#f0fdf4;font-weight:700;color:var(--success)"></div>
+      </div>
+      <div class="form-group"><label>결제방법</label>
+        <div class="form-row4" style="margin-top:6px">
+          <div class="form-group" style="margin:0"><label style="font-size:11px;color:var(--text-muted)">현금</label><input type="number" id="fs_cash" placeholder="0" min="0" oninput="calcFsSettle()"></div>
+          <div class="form-group" style="margin:0"><label style="font-size:11px;color:var(--text-muted)">이체</label><input type="number" id="fs_transfer" placeholder="0" min="0" oninput="calcFsSettle()"></div>
+          <div class="form-group" style="margin:0"><label style="font-size:11px;color:var(--text-muted)">카드</label><input type="number" id="fs_card" placeholder="0" min="0" oninput="calcFsSettle()"></div>
+          <div class="form-group" style="margin:0"><label style="font-size:11px;color:var(--text-muted)">상품권</label><input type="number" id="fs_voucher" placeholder="0" min="0" oninput="calcFsSettle()"></div>
+        </div>
+        <div style="margin-top:8px"><label style="font-size:11px;color:var(--text-muted)">결산합 (자동)</label>
+          <input type="number" id="fs_settle" placeholder="자동계산" readonly style="background:#eff6ff;font-weight:700;color:var(--primary)"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>고객유형</label>
+          <select id="fs_custtype"><option value="투숙객">투숙객</option><option value="관광객">관광객</option><option value="도민">도민</option><option value="지명손님">지명손님</option><option value="기타">기타</option></select>
+        </div>
+        <div class="form-group"><label>비고</label><input type="text" id="fs_note" placeholder="비고 (선택)"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeFsModal()">취소</button>
+        <button class="btn btn-primary" onclick="saveFreesam()">💾 저장</button>
+      </div>
+    </div>
+  </div>`;
+  setTimeout(()=>{
+    const dateEl=document.getElementById('fs_date');
+    if(dateEl){dateEl.addEventListener('change',()=>{document.getElementById('fs_wday').value=getWeekDay(dateEl.value);});document.getElementById('fs_wday').value=getWeekDay(dateEl.value);}
+    searchFreesam();
+  },50);
+}
+function selectFsPlace(place){
+  document.getElementById('fs_place').value=place;
+  document.getElementById('fs_place_sono').classList.toggle('active',place==='소노벨');
+  document.getElementById('fs_place_spa').classList.toggle('active',place==='스파');
+}
+function selectFsName(name){
+  document.getElementById('fs_name').value=name;
+  document.querySelectorAll('#fs_name_chips .chip-btn').forEach(b=>b.classList.remove('active'));
+  const chipEl=document.getElementById('fs_chip_'+name.replace(/\s+/g,'_'));if(chipEl)chipEl.classList.add('active');
+}
+function calcFsProfit(){const r=num(document.getElementById('fs_revenue')?.value);const m=num(document.getElementById('fs_mgmt')?.value);const el=document.getElementById('fs_profit');if(el)el.value=r-m;}
+function calcFsSettle(){const c=num(document.getElementById('fs_cash')?.value);const t=num(document.getElementById('fs_transfer')?.value);const k=num(document.getElementById('fs_card')?.value);const v=num(document.getElementById('fs_voucher')?.value);const el=document.getElementById('fs_settle');if(el)el.value=c+t+k+v;}
+function openFreesamNew(){
+  document.getElementById('fs_mtitle').textContent='🧖 프리샘 내역 추가';document.getElementById('fs_eid').value='';
+  const t=today();document.getElementById('fs_date').value=t;document.getElementById('fs_wday').value=getWeekDay(t);
+  selectFsPlace('소노벨');document.getElementById('fs_name').value='';
+  document.querySelectorAll('#fs_name_chips .chip-btn').forEach(b=>b.classList.remove('active'));
+  ['fs_revenue','fs_mgmt','fs_profit','fs_cash','fs_transfer','fs_card','fs_voucher','fs_settle','fs_note'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('fs_custtype').value='투숙객';
+  document.getElementById('fs_modal').classList.remove('hidden');
+}
+function openFreesamEdit(id){
+  const rec=DataService.getAll(KEYS.freelancer).find(r=>r.id===id);if(!rec)return;
+  document.getElementById('fs_mtitle').textContent='🧖 프리샘 내역 수정';document.getElementById('fs_eid').value=id;
+  document.getElementById('fs_date').value=rec.date||'';document.getElementById('fs_wday').value=rec.wday||'';
+  selectFsPlace(rec.place||'소노벨');document.getElementById('fs_name').value=rec.name||'';
+  document.querySelectorAll('#fs_name_chips .chip-btn').forEach(b=>b.classList.remove('active'));
+  if(rec.name){const chipEl=document.getElementById('fs_chip_'+rec.name.replace(/\s+/g,'_'));if(chipEl)chipEl.classList.add('active');}
+  ['revenue','mgmt','profit','cash','transfer','card','voucher','settle'].forEach(f=>{const el=document.getElementById('fs_'+f);if(el)el.value=rec[f]||'';});
+  document.getElementById('fs_custtype').value=rec.custtype||'투숙객';document.getElementById('fs_note').value=rec.note||'';
+  document.getElementById('fs_modal').classList.remove('hidden');
+}
+function closeFsModal(){document.getElementById('fs_modal').classList.add('hidden');}
+function saveFreesam(){
+  const id=document.getElementById('fs_eid').value;const date=document.getElementById('fs_date').value;const place=document.getElementById('fs_place').value;
+  const name=document.getElementById('fs_name').value.trim();const revenue=num(document.getElementById('fs_revenue').value);const mgmt=num(document.getElementById('fs_mgmt').value);
+  const cash=num(document.getElementById('fs_cash').value);const transfer=num(document.getElementById('fs_transfer').value);
+  const card=num(document.getElementById('fs_card').value);const voucher=num(document.getElementById('fs_voucher').value);
+  const custtype=document.getElementById('fs_custtype').value;const note=document.getElementById('fs_note').value;
+  if(!date){showToast('날짜를 입력해 주세요','error');return;}if(!name){showToast('프리샘명을 선택해 주세요','error');return;}if(!revenue){showToast('수익금을 입력해 주세요','error');return;}
+  const wday=getWeekDay(date);const profit=revenue-mgmt;const settle=cash+transfer+card+voucher;
+  const fsRec={date,wday,place,name,revenue,mgmt,profit,cash,transfer,card,voucher,settle,custtype,note,source:'freesam'};
+  let fsId=id;
+  if(id){DataService.update(KEYS.freelancer,id,fsRec);}else{const added=DataService.add(KEYS.freelancer,fsRec);fsId=added.id;}
+  [KEYS.sonobel,KEYS.spa].forEach(k=>{const linked=DataService.getAll(k).find(r=>r.fsId===fsId);if(linked)DataService.remove(k,linked.id);});
+  const targetKey=(place==='소노벨')?KEYS.sonobel:KEYS.spa;
+  DataService.add(targetKey,{date,wday,revenue,mgmt,profit,cash,transfer,card,voucher,settle,note:`[프리샘:${name}] ${note}`.trim(),source:'freesam',fsId});
+  closeFsModal();showToast((id?'수정':'추가')+'되었습니다 ✅ → '+place+' 자동전달 완료');searchFreesam();
+}
+function delFreesam(id){
+  if(!confirm('삭제하시겠습니까?\n연결된 소노벨/스파 데이터도 함께 삭제됩니다.'))return;
+  const rec=DataService.getAll(KEYS.freelancer).find(r=>r.id===id);
+  if(rec){[KEYS.sonobel,KEYS.spa].forEach(k=>{const linked=DataService.getAll(k).find(r=>r.fsId===id);if(linked)DataService.remove(k,linked.id);});}
+  DataService.remove(KEYS.freelancer,id);showToast('삭제되었습니다');searchFreesam();
+}
+function searchFreesam(){
+  const from=document.getElementById('fs_from')?.value||'';const to=document.getElementById('fs_to')?.value||'';
+  let list=DataService.getAll(KEYS.freelancer);
+  if(from)list=list.filter(r=>r.date>=from);if(to)list=list.filter(r=>r.date<=to);
+  list.sort((a,b)=>b.date.localeCompare(a.date));
+  const sumRev=list.reduce((a,r)=>a+num(r.revenue),0);const sumMgmt=list.reduce((a,r)=>a+num(r.mgmt),0);
+  const sumProfit=list.reduce((a,r)=>a+num(r.profit),0);const sumSettle=list.reduce((a,r)=>a+num(r.settle),0);
+  const kpiEl=document.getElementById('fs_kpi');
+  if(kpiEl)kpiEl.innerHTML=`<div class="kpi-card"><div class="kpi-label">👥 건수</div><div class="kpi-value">${list.length}건</div></div>
+    <div class="kpi-card info"><div class="kpi-label">💰 수익금 합계</div><div class="kpi-value">${fmtNum(sumRev)}원</div></div>
+    <div class="kpi-card warning"><div class="kpi-label">🔧 관리비 합계</div><div class="kpi-value">${fmtNum(sumMgmt)}원</div></div>
+    <div class="kpi-card success"><div class="kpi-label">📈 이익금 합계</div><div class="kpi-value">${fmtNum(sumProfit)}원</div></div>`;
+  const cntEl=document.getElementById('fs_cnt');if(cntEl)cntEl.textContent=`총 ${list.length}건`;
+  const tbl=document.getElementById('fs_tbl');if(!tbl)return;
+  if(!list.length){tbl.innerHTML=`<div class="empty-state"><div class="empty-icon">🧖</div><p>등록된 내역이 없습니다</p></div>`;return;}
+  tbl.innerHTML=`<table id="fs_table_el"><thead><tr><th>날짜</th><th>요일</th><th>영업장</th><th>프리샘명</th><th style="text-align:right">수익금</th><th style="text-align:right">관리비</th><th style="text-align:right">이익금</th><th style="text-align:right">현금</th><th style="text-align:right">이체</th><th style="text-align:right">카드</th><th style="text-align:right">상품권</th><th style="text-align:right">결산합</th><th>고객유형</th><th>비고</th><th>관리</th></tr></thead>
+  <tbody>${list.map(r=>`<tr><td>${fmtDate(r.date)}</td><td>${r.wday||''}</td>
+    <td><span class="badge ${r.place==='소노벨'?'badge-primary':'badge-success'}">${r.place||''}</span></td>
+    <td><strong>${r.name||''}</strong></td>
+    <td style="text-align:right">${fmtNum(num(r.revenue))}원</td><td style="text-align:right">${fmtNum(num(r.mgmt))}원</td>
+    <td style="text-align:right;color:var(--success);font-weight:600">${fmtNum(num(r.profit))}원</td>
+    <td style="text-align:right">${fmtNum(num(r.cash))}원</td><td style="text-align:right">${fmtNum(num(r.transfer))}원</td>
+    <td style="text-align:right">${fmtNum(num(r.card))}원</td><td style="text-align:right">${fmtNum(num(r.voucher||0))}원</td>
+    <td style="text-align:right;color:var(--primary);font-weight:600">${fmtNum(num(r.settle))}원</td>
+    <td>${r.custtype||''}</td><td>${r.note||'-'}</td>
+    <td><button class="btn btn-sm btn-outline" onclick="openFreesamEdit('${r.id}')">✏️</button>
+        <button class="btn btn-sm btn-danger" onclick="delFreesam('${r.id}')">🗑️</button></td>
+  </tr>`).join('')}</tbody>
+  <tfoot><tr><td colspan="4"><strong>합계</strong></td>
+    <td style="text-align:right"><strong>${fmtNum(sumRev)}원</strong></td><td style="text-align:right"><strong>${fmtNum(sumMgmt)}원</strong></td>
+    <td style="text-align:right;color:var(--success)"><strong>${fmtNum(sumProfit)}원</strong></td>
+    <td colspan="4"></td><td style="text-align:right;color:var(--primary)"><strong>${fmtNum(sumSettle)}원</strong></td>
+    <td colspan="3"></td></tr></tfoot></table>`;
+}
+function freesamPrint(){
+  const tbl=document.getElementById('fs_table_el');if(!tbl){showToast('출력할 데이터가 없습니다','error');return;}
+  const from=document.getElementById('fs_from')?.value||'';const to=document.getElementById('fs_to')?.value||'';
+  const w=window.open('','_blank','width=1100,height=700');
+  w.document.write(`<html><head><title>프리샘 일일관리 출력</title><style>body{font-family:'Malgun Gothic',sans-serif;font-size:11px;padding:20px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:5px 7px}thead{background:#f0f0f0;font-weight:bold}tfoot{background:#e8e8e8;font-weight:bold}@media print{button{display:none}}</style></head><body><h2>🧖 프리샘 일일관리</h2><p>기간: ${fmtDate(from)} ~ ${fmtDate(to)} | 출력일: ${fmtDate(today())}</p><button onclick="window.print()" style="margin-bottom:10px;padding:6px 14px;cursor:pointer">🖨️ 인쇄</button>${tbl.outerHTML}</body></html>`);w.document.close();
+}
+
+/* ===== 프리샘 관리 ===== */
+function renderTherapist(el){
+  const list=loadTherapistDetail();const total=list.length;const active=list.filter(t=>t.active!==false).length;
+  el.innerHTML=`
+  <div class="kpi-grid" style="margin-bottom:20px">
+    <div class="kpi-card info"><div class="kpi-label">👥 전체 프리샘</div><div class="kpi-value">${total}명</div></div>
+    <div class="kpi-card success"><div class="kpi-label">✅ 활성 프리샘</div><div class="kpi-value">${active}명</div></div>
+    <div class="kpi-card warning"><div class="kpi-label">⏸️ 비활성 프리샘</div><div class="kpi-value">${total-active}명</div></div>
+  </div>
+  <div class="card">
+    <div class="card-header"><span class="card-title">👥 프리샘 관리</span>
+      <div style="display:flex;gap:8px"><button class="btn btn-success" onclick="openTherapistModal()">➕ 신규 등록</button><button class="btn btn-outline" onclick="therapistPDF()">🖨️ PDF 인쇄</button></div>
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center">
+      <input type="text" id="th_search" placeholder="🔍 이름·전문분야 검색" style="flex:1;min-width:160px;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px" oninput="renderTherapistTable()">
+      <select id="th_filter_active" style="padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px" onchange="renderTherapistTable()">
+        <option value="">전체</option><option value="active">활성만</option><option value="inactive">비활성만</option>
+      </select>
+      <select id="th_filter_place" style="padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px" onchange="renderTherapistTable()">
+        <option value="">전체 영업장</option><option value="소노벨">소노벨</option><option value="스파">스파</option><option value="소노벨+스파">소노벨+스파</option>
+      </select>
+    </div>
+    <div class="table-wrap" id="th_table_wrap"></div>
+  </div>
+  <div id="th_modal" class="modal-overlay hidden">
+    <div class="modal" style="max-width:520px">
+      <div class="modal-header">
+        <span id="th_modal_title" class="modal-title" style="margin-bottom:0">👤 프리샘 등록</span>
+        <button class="modal-close" onclick="closeTherapistModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="th_eid">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="form-group"><label>이름 <span style="color:var(--danger)">*</span></label><input type="text" id="th_name" placeholder="프리샘 이름"></div>
+          <div class="form-group"><label>생년월일</label><input type="date" id="th_dob"></div>
+          <div class="form-group"><label>연락처</label><input type="tel" id="th_phone" placeholder="010-0000-0000"></div>
+          <div class="form-group"><label>전문 분야</label><input type="text" id="th_specialty" placeholder="예: 아로마, 스포츠마사지"></div>
+          <div class="form-group"><label>소속 영업장</label><select id="th_place"><option value="소노벨">소노벨</option><option value="스파">스파</option><option value="소노벨+스파">소노벨+스파</option></select></div>
+          <div class="form-group"><label>활성 상태</label><select id="th_active"><option value="true">✅ 활성</option><option value="false">⏸️ 비활성</option></select></div>
+        </div>
+        <div class="form-group" style="margin-top:4px"><label>메모</label><textarea id="th_memo" rows="2" placeholder="특이사항 등" style="width:100%;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;resize:vertical"></textarea></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeTherapistModal()">취소</button>
+        <button class="btn btn-primary" onclick="saveTherapist()">💾 저장</button>
+      </div>
+    </div>
+  </div>`;
+  renderTherapistTable();
+}
+function renderTherapistTable(){
+  const list=loadTherapistDetail();const q=(document.getElementById('th_search')?.value||'').toLowerCase();
+  const fa=document.getElementById('th_filter_active')?.value||'';const fp=document.getElementById('th_filter_place')?.value||'';
+  let filtered=list.filter(t=>{
+    if(q&&!t.name?.toLowerCase().includes(q)&&!t.specialty?.toLowerCase().includes(q))return false;
+    if(fa==='active'&&t.active===false)return false;if(fa==='inactive'&&t.active!==false)return false;
+    if(fp&&t.place!==fp)return false;return true;
+  });
+  const wrap=document.getElementById('th_table_wrap');if(!wrap)return;
+  if(!filtered.length){wrap.innerHTML=`<div class="empty-state"><div class="empty-icon">👥</div><p>등록된 프리샘이 없습니다</p></div>`;return;}
+  wrap.innerHTML=`<table><thead><tr><th>이름</th><th>생년월일</th><th>연락처</th><th>전문분야</th><th>소속</th><th>상태</th><th>메모</th><th>관리</th></tr></thead>
+  <tbody>${filtered.map(t=>`<tr><td><strong>${t.name||''}</strong></td><td>${t.dob||'-'}</td><td>${t.phone||'-'}</td><td>${t.specialty||'-'}</td>
+    <td><span class="badge badge-primary">${t.place||'-'}</span></td>
+    <td><span class="badge ${t.active!==false?'badge-success':'badge-warning'}">${t.active!==false?'✅ 활성':'⏸️ 비활성'}</span></td>
+    <td>${t.memo||'-'}</td>
+    <td><button class="btn btn-sm btn-outline" onclick="openTherapistEdit('${t.id}')">✏️</button>
+        <button class="btn btn-sm btn-danger" onclick="delTherapist('${t.id}')">🗑️</button></td>
+  </tr>`).join('')}</tbody></table>`;
+}
+function openTherapistModal(){
+  document.getElementById('th_modal_title').textContent='👤 프리샘 등록';document.getElementById('th_eid').value='';
+  ['th_name','th_dob','th_phone','th_specialty','th_memo'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('th_place').value='소노벨';document.getElementById('th_active').value='true';
+  document.getElementById('th_modal').classList.remove('hidden');
+}
+function openTherapistEdit(id){
+  const rec=loadTherapistDetail().find(t=>t.id===id);if(!rec)return;
+  document.getElementById('th_modal_title').textContent='👤 프리샘 수정';document.getElementById('th_eid').value=id;
+  document.getElementById('th_name').value=rec.name||'';document.getElementById('th_dob').value=rec.dob||'';
+  document.getElementById('th_phone').value=rec.phone||'';document.getElementById('th_specialty').value=rec.specialty||'';
+  document.getElementById('th_place').value=rec.place||'소노벨';document.getElementById('th_active').value=String(rec.active!==false);document.getElementById('th_memo').value=rec.memo||'';
+  document.getElementById('th_modal').classList.remove('hidden');
+}
+function closeTherapistModal(){document.getElementById('th_modal').classList.add('hidden');}
+function saveTherapist(){
+  const id=document.getElementById('th_eid').value;const name=document.getElementById('th_name').value.trim();
+  if(!name){showToast('이름을 입력해 주세요','error');return;}
+  const rec={id:id||genId(),name,dob:document.getElementById('th_dob').value,phone:document.getElementById('th_phone').value,specialty:document.getElementById('th_specialty').value,place:document.getElementById('th_place').value,active:document.getElementById('th_active').value==='true',memo:document.getElementById('th_memo').value};
+  const list=loadTherapistDetail();
+  if(id){const idx=list.findIndex(t=>t.id===id);if(idx>=0)list[idx]=rec;else list.push(rec);}else list.push(rec);
+  saveTherapistDetail(list);closeTherapistModal();showToast(id?'수정되었습니다 ✅':'등록되었습니다 ✅');renderTherapist(document.getElementById('content'));
+}
+function delTherapist(id){
+  if(!confirm('삭제하시겠습니까?'))return;
+  saveTherapistDetail(loadTherapistDetail().filter(t=>t.id!==id));showToast('삭제되었습니다');renderTherapist(document.getElementById('content'));
+}
+function therapistPDF(){
+  const wrap=document.getElementById('th_table_wrap');if(!wrap?.querySelector('table')){showToast('출력할 데이터가 없습니다','error');return;}
+  const w=window.open('','_blank','width=1000,height=700');
+  w.document.write(`<html><head><title>프리샘 관리</title><style>body{font-family:'Malgun Gothic',sans-serif;font-size:12px;padding:20px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:6px 8px}thead{background:#f0f0f0;font-weight:bold}@media print{button{display:none}}</style></head><body><h2>👥 프리샘 관리</h2><p>출력일: ${fmtDate(today())}</p><button onclick="window.print()" style="margin-bottom:10px;padding:6px 14px;cursor:pointer">🖨️ 인쇄</button>${wrap.querySelector('table').outerHTML}</body></html>`);w.document.close();
+}
+
+/* ===== 프리샘 개인별 통계 ===== */
+function renderTherapistStats(el){
+  const names=loadFreesamNames();
+  el.innerHTML=`
+  <div class="search-bar" style="flex-wrap:wrap;gap:10px">
+    <label>📅 기간</label><input type="date" id="ts_from" value="${monthStart()}">
+    <span class="date-separator">~</span><input type="date" id="ts_to" value="${monthEnd()}">
+    <div class="search-shortcut-btns">
+      <button class="btn-shortcut" onclick="setRange('ts','today')">오늘</button>
+      <button class="btn-shortcut" onclick="setRange('ts','week')">이번주</button>
+      <button class="btn-shortcut" onclick="setRange('ts','month')">이번달</button>
+      <button class="btn-shortcut" onclick="setRange('ts','last')">지난달</button>
+    </div>
+    <select id="ts_name" style="padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;min-width:130px">
+      <option value="">👥 전체 프리샘</option>${names.map(n=>`<option value="${n}">${n}</option>`).join('')}
+    </select>
+    <select id="ts_place" style="padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;min-width:110px">
+      <option value="">전체 영업장</option><option value="소노벨">소노벨</option><option value="스파">스파</option>
+    </select>
+    <button class="btn btn-primary" onclick="searchTherapistStats()">🔍 조회</button>
+    <button class="btn btn-outline" onclick="therapistStatsPDF()">🖨️ PDF</button>
+    <button class="btn btn-success" onclick="therapistStatsCSV()">📊 엑셀</button>
+  </div>
+  <div id="ts_kpi" class="kpi-grid" style="margin-bottom:20px"></div>
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-header"><span class="card-title">📊 프리샘별 실적 요약</span><span id="ts_period_label" style="font-size:12px;color:var(--text-muted)"></span></div>
+    <div class="table-wrap" id="ts_summary_tbl"></div>
+  </div>
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-header"><span class="card-title">📅 월별 추이</span></div>
+    <div class="table-wrap" id="ts_monthly_tbl"></div>
+  </div>
+  <div class="card" id="ts_detail_card" style="display:none">
+    <div class="card-header"><span class="card-title" id="ts_detail_title">📋 상세 내역</span><span id="ts_detail_cnt" style="font-size:12px;color:var(--text-muted)"></span></div>
+    <div class="table-wrap" id="ts_detail_tbl"></div>
+  </div>`;
+  setTimeout(()=>searchTherapistStats(),50);
+}
+function searchTherapistStats(){
+  const from=document.getElementById('ts_from')?.value||'';const to=document.getElementById('ts_to')?.value||'';
+  const selName=document.getElementById('ts_name')?.value||'';const selPlace=document.getElementById('ts_place')?.value||'';
+  let list=DataService.getAll(KEYS.freelancer);
+  if(from)list=list.filter(r=>r.date>=from);if(to)list=list.filter(r=>r.date<=to);
+  if(selName)list=list.filter(r=>r.name===selName);if(selPlace)list=list.filter(r=>r.place===selPlace);
+  list.sort((a,b)=>a.date.localeCompare(b.date));
+  const totRev=list.reduce((a,r)=>a+num(r.revenue),0);const totMgmt=list.reduce((a,r)=>a+num(r.mgmt),0);const totProfit=list.reduce((a,r)=>a+num(r.profit),0);
+  const kpiEl=document.getElementById('ts_kpi');
+  if(kpiEl)kpiEl.innerHTML=`<div class="kpi-card info"><div class="kpi-label">📋 총 건수</div><div class="kpi-value">${list.length}건</div></div>
+    <div class="kpi-card"><div class="kpi-label">💰 총 수익금</div><div class="kpi-value">${fmtNum(totRev)}원</div></div>
+    <div class="kpi-card warning"><div class="kpi-label">🔧 총 관리비</div><div class="kpi-value">${fmtNum(totMgmt)}원</div></div>
+    <div class="kpi-card success"><div class="kpi-label">📈 총 이익금</div><div class="kpi-value">${fmtNum(totProfit)}원</div></div>`;
+  const periodLbl=document.getElementById('ts_period_label');if(periodLbl)periodLbl.textContent=`${fmtDate(from)||'전체'} ~ ${fmtDate(to)||'전체'}`;
+  renderTsSummary(list);renderTsMonthly(list,selName);renderTsDetail(list,selName);
+}
+function renderTsSummary(list){
+  const nameMap={};list.forEach(r=>{if(!nameMap[r.name])nameMap[r.name]={name:r.name,cnt:0,rev:0,mgmt:0,profit:0,places:new Set()};const m=nameMap[r.name];m.cnt++;m.rev+=num(r.revenue);m.mgmt+=num(r.mgmt);m.profit+=num(r.profit);m.places.add(r.place);});
+  const rows=Object.values(nameMap).sort((a,b)=>b.profit-a.profit);
+  const tbl=document.getElementById('ts_summary_tbl');if(!tbl)return;
+  if(!rows.length){tbl.innerHTML=`<div class="empty-state"><div class="empty-icon">📊</div><p>데이터가 없습니다</p></div>`;return;}
+  tbl.innerHTML=`<table><thead><tr><th>프리샘명</th><th style="text-align:right">건수</th><th style="text-align:right">수익금</th><th style="text-align:right">관리비</th><th style="text-align:right">이익금</th><th>영업장</th></tr></thead>
+  <tbody>${rows.map(r=>`<tr><td><strong>${r.name}</strong></td><td style="text-align:right">${r.cnt}건</td>
+    <td style="text-align:right">${fmtNum(r.rev)}원</td><td style="text-align:right;color:var(--danger)">${fmtNum(r.mgmt)}원</td>
+    <td style="text-align:right;color:var(--success);font-weight:600">${fmtNum(r.profit)}원</td>
+    <td>${[...r.places].join(', ')}</td></tr>`).join('')}</tbody></table>`;
+}
+function renderTsMonthly(list,selName){
+  const mMap={};list.forEach(r=>{const m=r.date?r.date.slice(0,7):'';if(!m)return;if(!mMap[m])mMap[m]={month:m,cnt:0,rev:0,profit:0};mMap[m].cnt++;mMap[m].rev+=num(r.revenue);mMap[m].profit+=num(r.profit);});
+  const rows=Object.values(mMap).sort((a,b)=>a.month.localeCompare(b.month));
+  const tbl=document.getElementById('ts_monthly_tbl');if(!tbl)return;
+  if(!rows.length){tbl.innerHTML=`<div class="empty-state"><div class="empty-icon">📅</div><p>월별 데이터가 없습니다</p></div>`;return;}
+  tbl.innerHTML=`<table><thead><tr><th>년월</th><th style="text-align:right">건수</th><th style="text-align:right">수익금</th><th style="text-align:right">이익금</th></tr></thead>
+  <tbody>${rows.map(r=>`<tr><td>${r.month}</td><td style="text-align:right">${r.cnt}건</td><td style="text-align:right">${fmtNum(r.rev)}원</td><td style="text-align:right;color:var(--success)">${fmtNum(r.profit)}원</td></tr>`).join('')}</tbody></table>`;
+}
+function renderTsDetail(list,selName){
+  const card=document.getElementById('ts_detail_card');if(!card)return;
+  if(!selName){card.style.display='none';return;}
+  card.style.display='block';
+  const title=document.getElementById('ts_detail_title');if(title)title.textContent=`📋 ${selName} 상세 내역`;
+  const cnt=document.getElementById('ts_detail_cnt');if(cnt)cnt.textContent=`총 ${list.length}건`;
+  const tbl=document.getElementById('ts_detail_tbl');if(!tbl)return;
+  if(!list.length){tbl.innerHTML=`<div class="empty-state"><div class="empty-icon">📋</div><p>내역이 없습니다</p></div>`;return;}
+  tbl.innerHTML=`<table><thead><tr><th>날짜</th><th>요일</th><th>영업장</th><th style="text-align:right">수익금</th><th style="text-align:right">관리비</th><th style="text-align:right">이익금</th><th>고객유형</th><th>비고</th></tr></thead>
+  <tbody>${list.map(r=>`<tr><td>${fmtDate(r.date)}</td><td>${r.wday||''}</td>
+    <td><span class="badge ${r.place==='소노벨'?'badge-primary':'badge-success'}">${r.place||''}</span></td>
+    <td style="text-align:right">${fmtNum(num(r.revenue))}원</td><td style="text-align:right;color:var(--danger)">${fmtNum(num(r.mgmt))}원</td>
+    <td style="text-align:right;color:var(--success);font-weight:600">${fmtNum(num(r.profit))}원</td>
+    <td>${r.custtype||''}</td><td>${r.note||'-'}</td></tr>`).join('')}</tbody></table>`;
+}
+function therapistStatsPDF(){
+  const wrap=document.getElementById('ts_summary_tbl');if(!wrap?.querySelector('table')){showToast('출력할 데이터가 없습니다','error');return;}
+  const from=document.getElementById('ts_from')?.value||'';const to=document.getElementById('ts_to')?.value||'';
+  const w=window.open('','_blank','width=1000,height=700');
+  w.document.write(`<html><head><title>프리샘 현황</title><style>body{font-family:'Malgun Gothic',sans-serif;font-size:12px;padding:20px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:6px 8px}thead{background:#f0f0f0;font-weight:bold}@media print{button{display:none}}</style></head><body><h2>📊 프리샘 개인별 마사지 현황</h2><p>기간: ${fmtDate(from)} ~ ${fmtDate(to)} | 출력일: ${fmtDate(today())}</p><button onclick="window.print()" style="margin-bottom:10px;padding:6px 14px;cursor:pointer">🖨️ 인쇄</button>${wrap.querySelector('table').outerHTML}</body></html>`);w.document.close();
+}
+function therapistStatsCSV(){
+  const from=document.getElementById('ts_from')?.value||'';const to=document.getElementById('ts_to')?.value||'';
+  const selName=document.getElementById('ts_name')?.value||'';const selPlace=document.getElementById('ts_place')?.value||'';
+  let list=DataService.getAll(KEYS.freelancer);
+  if(from)list=list.filter(r=>r.date>=from);if(to)list=list.filter(r=>r.date<=to);
+  if(selName)list=list.filter(r=>r.name===selName);if(selPlace)list=list.filter(r=>r.place===selPlace);
+  if(!list.length){showToast('다운로드할 데이터가 없습니다','error');return;}
+  const header=['날짜','요일','영업장','프리샘명','수익금','관리비','이익금','고객유형','비고'];
+  const toLine=arr=>arr.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',');
+  const rows=list.map(r=>[r.date||'',r.wday||'',r.place||'',r.name||'',num(r.revenue),num(r.mgmt),num(r.profit),r.custtype||'',r.note||'']);
+  const csv=[toLine(['프리샘 현황']),toLine([`기간: ${fmtDate(from)||'전체'} ~ ${fmtDate(to)||'전체'}`]),'',toLine(header),...rows.map(toLine)].join('\r\n');
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});const url=URL.createObjectURL(blob);const link=document.createElement('a');
+  link.setAttribute('href',url);link.setAttribute('download',`프리샘현황_${today()}.csv`);document.body.appendChild(link);link.click();document.body.removeChild(link);URL.revokeObjectURL(url);showToast('📊 엑셀 다운로드 완료!');
+}
+
+/* ===== 소노벨/스파 일일관리 (공통) ===== */
+function renderSonobel(el){renderDailyLedger(el,{key:KEYS.sonobel,prefix:'snb',title:'소노벨 일일관리',icon:'🏠'});}
+function renderSpa(el){renderDailyLedger(el,{key:KEYS.spa,prefix:'spa2',title:'스파 일일관리',icon:'💆'});}
+
+function renderDailyLedger(el,cfg){
+  const{key,prefix,title,icon}=cfg;
+  el.innerHTML=`
+  <div class="search-bar">
+    <label>📅 기간</label><input type="date" id="${prefix}_from" value="${monthStart()}">
+    <span class="date-separator">~</span><input type="date" id="${prefix}_to" value="${monthEnd()}">
     <div class="search-shortcut-btns">
       <button class="btn-shortcut" onclick="setRange('${prefix}','today')">오늘</button>
       <button class="btn-shortcut" onclick="setRange('${prefix}','week')">이번주</button>
       <button class="btn-shortcut" onclick="setRange('${prefix}','month')">이번달</button>
       <button class="btn-shortcut" onclick="setRange('${prefix}','last')">지난달</button>
     </div>
-    <button class="btn btn-primary" onclick="${searchFn}()">🔍 조회</button>
-    <button class="btn btn-success" onclick="${openFn}()">➕ ${addLabel}</button>
-  </div>`;
-}
-
-function renderDailyLedger(el,cfg){
-  const{key,prefix,title,icon}=cfg;
-  el.innerHTML=`
-  ${searchBarHTML(prefix,`searchLedger_${prefix}`,`openLedger_${prefix}`,'일일 추가')}
+    <button class="btn btn-primary" onclick="searchLedger('${key}','${prefix}')">🔍 조회</button>
+    <button class="btn btn-success" onclick="openLedger('${prefix}','${title}')">➕ 추가</button>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-sm btn-outline" onclick="ledgerPrint('${prefix}','${title}')">🖨️ 인쇄</button>
+      <button class="btn btn-sm btn-success" onclick="exportLedgerCSV('${key}','${prefix}','${title}')">📊 엑셀</button>
+    </div>
+  </div>
   <div id="${prefix}_kpi" class="kpi-grid"></div>
   <div class="card">
-    <div class="card-header">
-      <span class="card-title">${icon} ${title}</span>
-      <div style="display:flex;gap:8px;align-items:center">
-        <span id="${prefix}_cnt" style="font-size:12px;color:var(--text-muted)"></span>
-        <button class="btn btn-sm btn-outline" onclick="ledgerPrint('${prefix}','${title}')">🖨️ 인쇄</button>
-        <button class="btn btn-sm btn-success" onclick="exportLedgerCSV('${key}','${prefix}','${title}')">📊 엑셀</button>
-      </div>
-    </div>
+    <div class="card-header"><span class="card-title">${icon} ${title}</span><span id="${prefix}_cnt" style="font-size:12px;color:var(--text-muted)"></span></div>
     <div class="table-wrap" id="${prefix}_tbl"></div>
   </div>
   <div class="modal-overlay hidden" id="${prefix}_modal">
@@ -473,336 +1193,92 @@ function renderDailyLedger(el,cfg){
 }
 function calcLedger(prefix){const r=num(document.getElementById(`${prefix}_revenue`)?.value);const m=num(document.getElementById(`${prefix}_mgmt`)?.value);const el=document.getElementById(`${prefix}_profit`);if(el)el.value=r-m;}
 function calcSettle(prefix){const c=num(document.getElementById(`${prefix}_cash`)?.value);const t=num(document.getElementById(`${prefix}_transfer`)?.value);const k=num(document.getElementById(`${prefix}_card`)?.value);const v=num(document.getElementById(`${prefix}_voucher`)?.value);const el=document.getElementById(`${prefix}_settle`);if(el)el.value=c+t+k+v;}
-function openLedger_snb(){openLedgerNew(KEYS.sonobel,'snb');}
-function openLedger_spa2(){openLedgerNew(KEYS.spa,'spa2');}
-function searchLedger_snb(){searchLedger(KEYS.sonobel,'snb');}
-function searchLedger_spa2(){searchLedger(KEYS.spa,'spa2');}
-function openLedgerNew(key,prefix){
-  document.getElementById(`${prefix}_mtitle`).textContent='➕ 추가';
-  document.getElementById(`${prefix}_eid`).value='';
-  document.getElementById(`${prefix}_date`).value=today();
-  document.getElementById(`${prefix}_wday`).value=getWeekDay(today());
+function openLedger(prefix,title){
+  document.getElementById(`${prefix}_mtitle`).textContent=`➕ ${title} 추가`;document.getElementById(`${prefix}_eid`).value='';
+  const t=today();document.getElementById(`${prefix}_date`).value=t;
+  const wEl=document.getElementById(`${prefix}_wday`);if(wEl)wEl.value=getWeekDay(t);
   ['revenue','mgmt','profit','cash','transfer','card','voucher','settle','note'].forEach(f=>{const el=document.getElementById(`${prefix}_${f}`);if(el)el.value='';});
-  document.getElementById(`${prefix}_modal`).classList.remove('hidden');
-}
-function openLedgerEdit(key,prefix,id){
-  const rec=DataService.getAll(key).find(r=>r.id===id);if(!rec)return;
-  document.getElementById(`${prefix}_mtitle`).textContent='✏️ 수정';
-  document.getElementById(`${prefix}_eid`).value=id;
-  document.getElementById(`${prefix}_date`).value=rec.date||'';
-  document.getElementById(`${prefix}_wday`).value=rec.wday||'';
-  ['revenue','mgmt','profit','cash','transfer','card','voucher','settle','note'].forEach(f=>{const el=document.getElementById(`${prefix}_${f}`);if(el)el.value=rec[f]||'';});
   document.getElementById(`${prefix}_modal`).classList.remove('hidden');
 }
 function closeLedger(prefix){document.getElementById(`${prefix}_modal`).classList.add('hidden');}
 function saveLedger(key,prefix){
-  const id=document.getElementById(`${prefix}_eid`).value;
-  const date=document.getElementById(`${prefix}_date`).value;
-  const wday=document.getElementById(`${prefix}_wday`).value||getWeekDay(date);
-  const revenue=num(document.getElementById(`${prefix}_revenue`).value);
-  const mgmt=num(document.getElementById(`${prefix}_mgmt`).value);
-  const cash=num(document.getElementById(`${prefix}_cash`).value);
-  const transfer=num(document.getElementById(`${prefix}_transfer`).value);
-  const card=num(document.getElementById(`${prefix}_card`).value);
-  const voucher=num(document.getElementById(`${prefix}_voucher`).value);
+  const id=document.getElementById(`${prefix}_eid`).value;const date=document.getElementById(`${prefix}_date`).value;
+  const revenue=num(document.getElementById(`${prefix}_revenue`).value);const mgmt=num(document.getElementById(`${prefix}_mgmt`).value);
+  const cash=num(document.getElementById(`${prefix}_cash`).value);const transfer=num(document.getElementById(`${prefix}_transfer`).value);
+  const card=num(document.getElementById(`${prefix}_card`).value);const voucher=num(document.getElementById(`${prefix}_voucher`).value);
   const note=document.getElementById(`${prefix}_note`).value;
-  if(!date){showToast('날짜를 입력해 주세요','error');return;}
-  if(!revenue){showToast('수익금을 입력해 주세요','error');return;}
-  const profit=revenue-mgmt;const settle=cash+transfer+card+voucher;
+  if(!date){showToast('날짜를 입력해 주세요','error');return;}if(!revenue){showToast('수익금을 입력해 주세요','error');return;}
+  const wday=getWeekDay(date);const profit=revenue-mgmt;const settle=cash+transfer+card+voucher;
   const rec={date,wday,revenue,mgmt,profit,cash,transfer,card,voucher,settle,note};
   if(id)DataService.update(key,id,rec);else DataService.add(key,rec);
-  closeLedger(prefix);showToast(id?'수정되었습니다 ✅':'추가되었습니다 ✅');
-  searchLedger(key,prefix);
+  closeLedger(prefix);showToast(id?'수정되었습니다 ✅':'추가되었습니다 ✅');searchLedger(key,prefix);
 }
-function delLedger(key,prefix,id){if(!confirm('삭제하시겠습니까?'))return;DataService.remove(key,id);showToast('삭제되었습니다');searchLedger(key,prefix);}
 function searchLedger(key,prefix){
-  const from=document.getElementById(`${prefix}_from`)?.value||'';
-  const to=document.getElementById(`${prefix}_to`)?.value||'';
+  const from=document.getElementById(`${prefix}_from`)?.value||'';const to=document.getElementById(`${prefix}_to`)?.value||'';
   let list=DataService.getAll(key);
   if(from)list=list.filter(r=>r.date>=from);if(to)list=list.filter(r=>r.date<=to);
   list.sort((a,b)=>b.date.localeCompare(a.date));
-  const sumRev=list.reduce((a,r)=>a+num(r.revenue),0);
-  const sumMgmt=list.reduce((a,r)=>a+num(r.mgmt),0);
-  const sumProfit=list.reduce((a,r)=>a+num(r.profit),0);
-  const sumSettle=list.reduce((a,r)=>a+num(r.settle),0);
+  const sumRev=list.reduce((a,r)=>a+num(r.revenue),0);const sumMgmt=list.reduce((a,r)=>a+num(r.mgmt),0);const sumProfit=list.reduce((a,r)=>a+num(r.profit),0);const sumSettle=list.reduce((a,r)=>a+num(r.settle),0);
   const kpiEl=document.getElementById(`${prefix}_kpi`);
-  if(kpiEl)kpiEl.innerHTML=`
-    <div class="kpi-card"><div class="kpi-label">📋 건수</div><div class="kpi-value">${list.length}건</div></div>
-    <div class="kpi-card info"><div class="kpi-label">💰 수익금 합계</div><div class="kpi-value">${fmtNum(sumRev)}원</div></div>
-    <div class="kpi-card warning"><div class="kpi-label">🔧 관리비 합계</div><div class="kpi-value">${fmtNum(sumMgmt)}원</div></div>
-    <div class="kpi-card success"><div class="kpi-label">📈 이익금 합계</div><div class="kpi-value">${fmtNum(sumProfit)}원</div></div>`;
+  if(kpiEl)kpiEl.innerHTML=`<div class="kpi-card"><div class="kpi-label">📋 건수</div><div class="kpi-value">${list.length}건</div></div>
+    <div class="kpi-card info"><div class="kpi-label">💰 수익금</div><div class="kpi-value">${fmtNum(sumRev)}원</div></div>
+    <div class="kpi-card warning"><div class="kpi-label">🔧 관리비</div><div class="kpi-value">${fmtNum(sumMgmt)}원</div></div>
+    <div class="kpi-card success"><div class="kpi-label">📈 이익금</div><div class="kpi-value">${fmtNum(sumProfit)}원</div></div>
+    <div class="kpi-card primary"><div class="kpi-label">🧾 결산합</div><div class="kpi-value">${fmtNum(sumSettle)}원</div></div>`;
   const cntEl=document.getElementById(`${prefix}_cnt`);if(cntEl)cntEl.textContent=`총 ${list.length}건`;
   const tbl=document.getElementById(`${prefix}_tbl`);if(!tbl)return;
   if(!list.length){tbl.innerHTML=`<div class="empty-state"><div class="empty-icon">📋</div><p>등록된 내역이 없습니다</p></div>`;return;}
-  const srcBadge=(r)=>r.source==='freesam'?`<span class="badge badge-warning" style="font-size:10px;margin-left:4px">프리샘↓</span>`:'';
-  tbl.innerHTML=`<table id="${prefix}_table_el"><thead><tr>
-    <th>날짜</th><th>요일</th><th style="text-align:right">수익금</th><th style="text-align:right">관리비</th>
-    <th style="text-align:right">이익금</th><th style="text-align:right">현금</th><th style="text-align:right">이체</th>
-    <th style="text-align:right">카드</th><th style="text-align:right">상품권</th><th style="text-align:right">결산합</th>
-    <th>메모</th><th>관리</th></tr></thead>
-    <tbody>${list.map(r=>`<tr>
-      <td>${fmtDate(r.date)}${srcBadge(r)}</td><td>${r.wday||''}</td>
-      <td style="text-align:right">${fmtNum(num(r.revenue))}원</td>
-      <td style="text-align:right">${fmtNum(num(r.mgmt))}원</td>
-      <td style="text-align:right;color:var(--success);font-weight:600">${fmtNum(num(r.profit))}원</td>
-      <td style="text-align:right">${fmtNum(num(r.cash))}원</td>
-      <td style="text-align:right">${fmtNum(num(r.transfer))}원</td>
-      <td style="text-align:right">${fmtNum(num(r.card))}원</td>
-      <td style="text-align:right">${fmtNum(num(r.voucher||0))}원</td>
-      <td style="text-align:right;color:var(--primary);font-weight:600">${fmtNum(num(r.settle))}원</td>
-      <td>${r.note||'-'}</td>
-      <td>${!r.source?`<button class="btn btn-sm btn-outline" onclick="openLedgerEdit('${key}','${prefix}','${r.id}')">✏️</button>
-        <button class="btn btn-sm btn-danger" onclick="delLedger('${key}','${prefix}','${r.id}')">🗑️</button>`
-        :`<span style="font-size:11px;color:var(--text-muted)">자동</span>`}</td>
-    </tr>`).join('')}</tbody>
-    <tfoot><tr><td colspan="2"><strong>합계</strong></td>
-      <td style="text-align:right"><strong>${fmtNum(sumRev)}원</strong></td>
-      <td style="text-align:right"><strong>${fmtNum(sumMgmt)}원</strong></td>
-      <td style="text-align:right;color:var(--success)"><strong>${fmtNum(sumProfit)}원</strong></td>
-      <td colspan="4"></td>
-      <td style="text-align:right;color:var(--primary)"><strong>${fmtNum(sumSettle)}원</strong></td>
-      <td colspan="2"></td>
-    </tr></tfoot></table>`;
+  tbl.innerHTML=`<table id="${prefix}_table_el"><thead><tr><th>날짜</th><th>요일</th><th style="text-align:right">수익금</th><th style="text-align:right">관리비</th><th style="text-align:right">이익금</th><th style="text-align:right">현금</th><th style="text-align:right">이체</th><th style="text-align:right">카드</th><th style="text-align:right">상품권</th><th style="text-align:right">결산합</th><th>메모</th><th>관리</th></tr></thead>
+  <tbody>${list.map(r=>`<tr><td>${fmtDate(r.date)}</td><td>${r.wday||''}</td>
+    <td style="text-align:right">${fmtNum(num(r.revenue))}원</td><td style="text-align:right;color:var(--danger)">${fmtNum(num(r.mgmt))}원</td>
+    <td style="text-align:right;color:var(--success);font-weight:600">${fmtNum(num(r.profit))}원</td>
+    <td style="text-align:right">${fmtNum(num(r.cash))}원</td><td style="text-align:right">${fmtNum(num(r.transfer))}원</td>
+    <td style="text-align:right">${fmtNum(num(r.card))}원</td><td style="text-align:right">${fmtNum(num(r.voucher||0))}원</td>
+    <td style="text-align:right;color:var(--primary);font-weight:600">${fmtNum(num(r.settle))}원</td>
+    <td>${r.note||'-'}</td>
+    <td><button class="btn btn-sm btn-outline" onclick="editLedger('${key}','${prefix}','${r.id}')">✏️</button>
+        <button class="btn btn-sm btn-danger" onclick="delLedger('${key}','${prefix}','${r.id}')">🗑️</button></td>
+  </tr>`).join('')}</tbody>
+  <tfoot><tr><td colspan="2"><strong>합계</strong></td>
+    <td style="text-align:right"><strong>${fmtNum(sumRev)}원</strong></td><td style="text-align:right;color:var(--danger)"><strong>${fmtNum(sumMgmt)}원</strong></td>
+    <td style="text-align:right;color:var(--success)"><strong>${fmtNum(sumProfit)}원</strong></td>
+    <td colspan="4"></td><td style="text-align:right;color:var(--primary)"><strong>${fmtNum(sumSettle)}원</strong></td>
+    <td colspan="2"></td></tr></tfoot></table>`;
 }
+function editLedger(key,prefix,id){
+  const rec=DataService.getAll(key).find(r=>r.id===id);if(!rec)return;
+  document.getElementById(`${prefix}_mtitle`).textContent='✏️ 수정';document.getElementById(`${prefix}_eid`).value=id;
+  document.getElementById(`${prefix}_date`).value=rec.date||'';
+  const wEl=document.getElementById(`${prefix}_wday`);if(wEl)wEl.value=rec.wday||'';
+  ['revenue','mgmt','profit','cash','transfer','card','voucher','settle','note'].forEach(f=>{const el=document.getElementById(`${prefix}_${f}`);if(el)el.value=rec[f]||'';});
+  document.getElementById(`${prefix}_modal`).classList.remove('hidden');
+}
+function delLedger(key,prefix,id){if(!confirm('삭제하시겠습니까?'))return;DataService.remove(key,id);showToast('삭제되었습니다');searchLedger(key,prefix);}
 function ledgerPrint(prefix,title){
-  const tbl=document.getElementById(`${prefix}_table_el`);
-  if(!tbl){showToast('출력할 데이터가 없습니다','error');return;}
-  const from=document.getElementById(`${prefix}_from`)?.value||'';
-  const to=document.getElementById(`${prefix}_to`)?.value||'';
-  const w=window.open('','_blank','width=900,height=700');
-  w.document.write(`<html><head><title>${title} 출력</title><style>body{font-family:'Malgun Gothic',sans-serif;font-size:12px;padding:20px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:6px 8px}thead{background:#f0f0f0;font-weight:bold}tfoot{background:#e8e8e8;font-weight:bold}@media print{button{display:none}}</style></head><body>
-    <h2>${title} 출력</h2><p>기간: ${fmtDate(from)} ~ ${fmtDate(to)} | 출력일: ${fmtDate(today())}</p>
-    <button onclick="window.print()" style="margin-bottom:10px;padding:6px 14px;cursor:pointer">🖨️ 인쇄</button>
-    ${tbl.outerHTML}</body></html>`);
-  w.document.close();
+  const tbl=document.getElementById(`${prefix}_table_el`);if(!tbl){showToast('출력할 데이터가 없습니다','error');return;}
+  const from=document.getElementById(`${prefix}_from`)?.value||'';const to=document.getElementById(`${prefix}_to`)?.value||'';
+  const w=window.open('','_blank','width=1100,height=700');
+  w.document.write(`<html><head><title>${title} 출력</title><style>body{font-family:'Malgun Gothic',sans-serif;font-size:11px;padding:20px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:5px 7px}thead{background:#f0f0f0;font-weight:bold}tfoot{background:#e8e8e8;font-weight:bold}@media print{button{display:none}}</style></head><body><h2>${title}</h2><p>기간: ${fmtDate(from)} ~ ${fmtDate(to)} | 출력일: ${fmtDate(today())}</p><button onclick="window.print()" style="margin-bottom:10px;padding:6px 14px;cursor:pointer">🖨️ 인쇄</button>${tbl.outerHTML}</body></html>`);w.document.close();
 }
 function exportLedgerCSV(key,prefix,title){
-  const from=document.getElementById(`${prefix}_from`)?.value||'';
-  const to=document.getElementById(`${prefix}_to`)?.value||'';
+  const from=document.getElementById(`${prefix}_from`)?.value||'';const to=document.getElementById(`${prefix}_to`)?.value||'';
   let list=DataService.getAll(key);
   if(from)list=list.filter(r=>r.date>=from);if(to)list=list.filter(r=>r.date<=to);
-  list.sort((a,b)=>a.date.localeCompare(b.date));
   if(!list.length){showToast('다운로드할 데이터가 없습니다','error');return;}
   const header=['날짜','요일','수익금','관리비','이익금','현금','이체','카드','상품권','결산합','메모'];
   const toLine=arr=>arr.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',');
-  const rows=list.map(r=>[r.date||'',r.wday||'',num(r.revenue),num(r.mgmt),num(r.profit),num(r.cash),num(r.transfer),num(r.card),num(r.voucher||0),num(r.settle),(r.note||'').replace(/,/g,' ')]);
-  const sumRow=['합계','',list.reduce((a,r)=>a+num(r.revenue),0),list.reduce((a,r)=>a+num(r.mgmt),0),list.reduce((a,r)=>a+num(r.profit),0),'','','','',list.reduce((a,r)=>a+num(r.settle),0),''];
-  const csv=[toLine([title]),toLine([`기간: ${fmtDate(from)||'전체'} ~ ${fmtDate(to)||'전체'}`]),'',toLine(header),...rows.map(toLine),toLine(sumRow)].join('\r\n');
-  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
-  const url=URL.createObjectURL(blob);const link=document.createElement('a');
-  link.setAttribute('href',url);link.setAttribute('download',`${title.replace(/\s/g,'')}_${today()}.csv`);
-  document.body.appendChild(link);link.click();document.body.removeChild(link);URL.revokeObjectURL(url);
-  showToast(`📊 엑셀 다운로드 완료!`);
-}
-function renderSonobel(el){renderDailyLedger(el,{key:KEYS.sonobel,prefix:'snb',title:'소노벨 일일관리',icon:'🏠'});}
-function renderSpa(el){renderDailyLedger(el,{key:KEYS.spa,prefix:'spa2',title:'스파 일일관리',icon:'💆'});}
-/* ===== 프리샘 일일관리 ===== */
-function renderFreesam(el){
-  const freeNames=loadFreesamNames();
-  el.innerHTML=`
-  <div class="search-bar">
-    <label>📅 기간</label>
-    <input type="date" id="fs_from" value="${monthStart()}">
-    <span class="date-separator">~</span>
-    <input type="date" id="fs_to" value="${monthEnd()}">
-    <div class="search-shortcut-btns">
-      <button class="btn-shortcut" onclick="setRange('fs','today')">오늘</button>
-      <button class="btn-shortcut" onclick="setRange('fs','week')">이번주</button>
-      <button class="btn-shortcut" onclick="setRange('fs','month')">이번달</button>
-      <button class="btn-shortcut" onclick="setRange('fs','last')">지난달</button>
-    </div>
-    <button class="btn btn-primary" onclick="searchFreesam()">🔍 조회</button>
-    <button class="btn btn-success" onclick="openFreesamNew()">➕ 추가</button>
-    <button class="btn btn-outline" onclick="freesamPrint()">🖨️ 인쇄</button>
-  </div>
-  <div id="fs_kpi" class="kpi-grid"></div>
-  <div class="card">
-    <div class="card-header">
-      <span class="card-title">🧖 프리샘 일일관리</span>
-      <span id="fs_cnt" style="font-size:12px;color:var(--text-muted)"></span>
-    </div>
-    <div class="table-wrap" id="fs_tbl"></div>
-  </div>
-  <div class="modal-overlay hidden" id="fs_modal">
-    <div class="modal" style="max-width:600px">
-      <div class="modal-title" id="fs_mtitle">🧖 프리샘 내역 추가</div>
-      <input type="hidden" id="fs_eid">
-      <div class="form-row">
-        <div class="form-group"><label>날짜 *</label><input type="date" id="fs_date" value="${today()}"></div>
-        <div class="form-group"><label>요일</label><input type="text" id="fs_wday" readonly style="background:#f8fafc;color:var(--text-muted)"></div>
-      </div>
-      <div class="form-group">
-        <label>영업장 *</label>
-        <div style="display:flex;gap:8px;margin-top:6px">
-          <button type="button" class="chip-btn active" id="fs_place_sono" onclick="selectFsPlace('소노벨')">소노벨</button>
-          <button type="button" class="chip-btn" id="fs_place_spa" onclick="selectFsPlace('스파')">스파</button>
-        </div>
-        <input type="hidden" id="fs_place" value="소노벨">
-      </div>
-      <div class="form-group">
-        <label>프리샘명 *</label>
-        <div id="fs_name_chips" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px">
-          ${freeNames.length?freeNames.map(n=>`<button type="button" class="chip-btn" id="fs_chip_${n.replace(/\s+/g,'_')}" onclick="selectFsName('${n}')">${n}</button>`).join(''):`<span style="color:var(--text-muted);font-size:13px">⚠️ 프리샘 관리 메뉴에서 먼저 등록해 주세요</span>`}
-        </div>
-        <input type="hidden" id="fs_name">
-      </div>
-      <div class="form-row3">
-        <div class="form-group"><label>수익금 *</label><input type="number" id="fs_revenue" placeholder="0" min="0" oninput="calcFsProfit()"></div>
-        <div class="form-group"><label>관리비</label><input type="number" id="fs_mgmt" placeholder="0" min="0" oninput="calcFsProfit()"></div>
-        <div class="form-group"><label>이익금</label><input type="number" id="fs_profit" placeholder="자동계산" readonly style="background:#f0fdf4;font-weight:700;color:var(--success)"></div>
-      </div>
-      <div class="form-group"><label>결제방법</label>
-        <div class="form-row4" style="margin-top:6px">
-          <div class="form-group" style="margin:0"><label style="font-size:11px;color:var(--text-muted)">현금</label><input type="number" id="fs_cash" placeholder="0" min="0" oninput="calcFsSettle()"></div>
-          <div class="form-group" style="margin:0"><label style="font-size:11px;color:var(--text-muted)">이체</label><input type="number" id="fs_transfer" placeholder="0" min="0" oninput="calcFsSettle()"></div>
-          <div class="form-group" style="margin:0"><label style="font-size:11px;color:var(--text-muted)">카드</label><input type="number" id="fs_card" placeholder="0" min="0" oninput="calcFsSettle()"></div>
-          <div class="form-group" style="margin:0"><label style="font-size:11px;color:var(--text-muted)">상품권</label><input type="number" id="fs_voucher" placeholder="0" min="0" oninput="calcFsSettle()"></div>
-        </div>
-        <div style="margin-top:8px"><label style="font-size:11px;color:var(--text-muted)">결산합 (자동)</label>
-          <input type="number" id="fs_settle" placeholder="자동계산" readonly style="background:#eff6ff;font-weight:700;color:var(--primary)"></div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label>고객유형</label>
-          <select id="fs_custtype"><option value="투숙객">투숙객</option><option value="관광객">관광객</option><option value="도민">도민</option><option value="지명손님">지명손님</option><option value="기타">기타</option></select>
-        </div>
-        <div class="form-group"><label>비고</label><input type="text" id="fs_note" placeholder="비고 (선택)"></div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-outline" onclick="closeFsModal()">취소</button>
-        <button class="btn btn-primary" onclick="saveFreesam()">💾 저장</button>
-      </div>
-    </div>
-  </div>`;
-  setTimeout(()=>{
-    const dateEl=document.getElementById('fs_date');
-    if(dateEl){dateEl.addEventListener('change',()=>{document.getElementById('fs_wday').value=getWeekDay(dateEl.value);});document.getElementById('fs_wday').value=getWeekDay(dateEl.value);}
-    searchFreesam();
-  },50);
-}
-function selectFsPlace(place){document.getElementById('fs_place').value=place;document.getElementById('fs_place_sono').classList.toggle('active',place==='소노벨');document.getElementById('fs_place_spa').classList.toggle('active',place==='스파');}
-function selectFsName(name){document.getElementById('fs_name').value=name;document.querySelectorAll('#fs_name_chips .chip-btn').forEach(b=>b.classList.remove('active'));const chipEl=document.getElementById('fs_chip_'+name.replace(/\s+/g,'_'));if(chipEl)chipEl.classList.add('active');}
-function calcFsProfit(){const r=num(document.getElementById('fs_revenue')?.value);const m=num(document.getElementById('fs_mgmt')?.value);const el=document.getElementById('fs_profit');if(el)el.value=r-m;}
-function calcFsSettle(){const c=num(document.getElementById('fs_cash')?.value);const t=num(document.getElementById('fs_transfer')?.value);const k=num(document.getElementById('fs_card')?.value);const v=num(document.getElementById('fs_voucher')?.value);const el=document.getElementById('fs_settle');if(el)el.value=c+t+k+v;}
-function openFreesamNew(){
-  document.getElementById('fs_mtitle').textContent='🧖 프리샘 내역 추가';
-  document.getElementById('fs_eid').value='';
-  const t=today();document.getElementById('fs_date').value=t;document.getElementById('fs_wday').value=getWeekDay(t);
-  selectFsPlace('소노벨');document.getElementById('fs_name').value='';
-  document.querySelectorAll('#fs_name_chips .chip-btn').forEach(b=>b.classList.remove('active'));
-  ['fs_revenue','fs_mgmt','fs_profit','fs_cash','fs_transfer','fs_card','fs_voucher','fs_settle','fs_note'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  document.getElementById('fs_custtype').value='투숙객';
-  document.getElementById('fs_modal').classList.remove('hidden');
-}
-function openFreesamEdit(id){
-  const rec=DataService.getAll(KEYS.freelancer).find(r=>r.id===id);if(!rec)return;
-  document.getElementById('fs_mtitle').textContent='🧖 프리샘 내역 수정';
-  document.getElementById('fs_eid').value=id;
-  document.getElementById('fs_date').value=rec.date||'';document.getElementById('fs_wday').value=rec.wday||'';
-  selectFsPlace(rec.place||'소노벨');document.getElementById('fs_name').value=rec.name||'';
-  document.querySelectorAll('#fs_name_chips .chip-btn').forEach(b=>b.classList.remove('active'));
-  if(rec.name){const chipEl=document.getElementById('fs_chip_'+rec.name.replace(/\s+/g,'_'));if(chipEl)chipEl.classList.add('active');}
-  ['revenue','mgmt','profit','cash','transfer','card','voucher','settle'].forEach(f=>{const el=document.getElementById('fs_'+f);if(el)el.value=rec[f]||'';});
-  document.getElementById('fs_custtype').value=rec.custtype||'투숙객';
-  document.getElementById('fs_note').value=rec.note||'';
-  document.getElementById('fs_modal').classList.remove('hidden');
-}
-function closeFsModal(){document.getElementById('fs_modal').classList.add('hidden');}
-function saveFreesam(){
-  const id=document.getElementById('fs_eid').value;
-  const date=document.getElementById('fs_date').value;
-  const place=document.getElementById('fs_place').value;
-  const name=document.getElementById('fs_name').value.trim();
-  const revenue=num(document.getElementById('fs_revenue').value);
-  const mgmt=num(document.getElementById('fs_mgmt').value);
-  const cash=num(document.getElementById('fs_cash').value);
-  const transfer=num(document.getElementById('fs_transfer').value);
-  const card=num(document.getElementById('fs_card').value);
-  const voucher=num(document.getElementById('fs_voucher').value);
-  const custtype=document.getElementById('fs_custtype').value;
-  const note=document.getElementById('fs_note').value;
-  if(!date){showToast('날짜를 입력해 주세요','error');return;}
-  if(!name){showToast('프리샘명을 선택해 주세요','error');return;}
-  if(!revenue){showToast('수익금을 입력해 주세요','error');return;}
-  const wday=getWeekDay(date);const profit=revenue-mgmt;const settle=cash+transfer+card+voucher;
-  const fsRec={date,wday,place,name,revenue,mgmt,profit,cash,transfer,card,voucher,settle,custtype,note,source:'freesam'};
-  let fsId=id;
-  if(id){DataService.update(KEYS.freelancer,id,fsRec);}
-  else{const added=DataService.add(KEYS.freelancer,fsRec);fsId=added.id;}
-  [KEYS.sonobel,KEYS.spa].forEach(k=>{const linked=DataService.getAll(k).find(r=>r.fsId===fsId);if(linked)DataService.remove(k,linked.id);});
-  const targetKey=(place==='소노벨')?KEYS.sonobel:KEYS.spa;
-  DataService.add(targetKey,{date,wday,revenue,mgmt,profit,cash,transfer,card,voucher,settle,note:`[프리샘:${name}] ${note}`.trim(),source:'freesam',fsId});
-  closeFsModal();showToast((id?'수정':'추가')+'되었습니다 ✅ → '+place+' 자동전달 완료');searchFreesam();
-}
-function delFreesam(id){
-  if(!confirm('삭제하시겠습니까?\n연결된 소노벨/스파 데이터도 함께 삭제됩니다.'))return;
-  const rec=DataService.getAll(KEYS.freelancer).find(r=>r.id===id);
-  if(rec){[KEYS.sonobel,KEYS.spa].forEach(k=>{const linked=DataService.getAll(k).find(r=>r.fsId===id);if(linked)DataService.remove(k,linked.id);});}
-  DataService.remove(KEYS.freelancer,id);showToast('삭제되었습니다');searchFreesam();
-}
-function searchFreesam(){
-  const from=document.getElementById('fs_from')?.value||'';const to=document.getElementById('fs_to')?.value||'';
-  let list=DataService.getAll(KEYS.freelancer);
-  if(from)list=list.filter(r=>r.date>=from);if(to)list=list.filter(r=>r.date<=to);
-  list.sort((a,b)=>b.date.localeCompare(a.date));
-  const sumRev=list.reduce((a,r)=>a+num(r.revenue),0);const sumMgmt=list.reduce((a,r)=>a+num(r.mgmt),0);
-  const sumProfit=list.reduce((a,r)=>a+num(r.profit),0);const sumSettle=list.reduce((a,r)=>a+num(r.settle),0);
-  const kpiEl=document.getElementById('fs_kpi');
-  if(kpiEl)kpiEl.innerHTML=`
-    <div class="kpi-card"><div class="kpi-label">👥 건수</div><div class="kpi-value">${list.length}건</div></div>
-    <div class="kpi-card info"><div class="kpi-label">💰 수익금 합계</div><div class="kpi-value">${fmtNum(sumRev)}원</div></div>
-    <div class="kpi-card warning"><div class="kpi-label">🔧 관리비 합계</div><div class="kpi-value">${fmtNum(sumMgmt)}원</div></div>
-    <div class="kpi-card success"><div class="kpi-label">📈 이익금 합계</div><div class="kpi-value">${fmtNum(sumProfit)}원</div></div>`;
-  const cntEl=document.getElementById('fs_cnt');if(cntEl)cntEl.textContent=`총 ${list.length}건`;
-  const tbl=document.getElementById('fs_tbl');if(!tbl)return;
-  if(!list.length){tbl.innerHTML=`<div class="empty-state"><div class="empty-icon">🧖</div><p>등록된 내역이 없습니다</p></div>`;return;}
-  tbl.innerHTML=`<table id="fs_table_el"><thead><tr>
-    <th>날짜</th><th>요일</th><th>영업장</th><th>프리샘명</th>
-    <th style="text-align:right">수익금</th><th style="text-align:right">관리비</th><th style="text-align:right">이익금</th>
-    <th style="text-align:right">현금</th><th style="text-align:right">이체</th><th style="text-align:right">카드</th>
-    <th style="text-align:right">상품권</th><th style="text-align:right">결산합</th><th>고객유형</th><th>비고</th><th>관리</th>
-  </tr></thead><tbody>${list.map(r=>`<tr>
-    <td>${fmtDate(r.date)}</td><td>${r.wday||''}</td>
-    <td><span class="badge ${r.place==='소노벨'?'badge-primary':'badge-success'}">${r.place||''}</span></td>
-    <td><strong>${r.name||''}</strong></td>
-    <td style="text-align:right">${fmtNum(num(r.revenue))}원</td>
-    <td style="text-align:right">${fmtNum(num(r.mgmt))}원</td>
-    <td style="text-align:right;color:var(--success);font-weight:600">${fmtNum(num(r.profit))}원</td>
-    <td style="text-align:right">${fmtNum(num(r.cash))}원</td>
-    <td style="text-align:right">${fmtNum(num(r.transfer))}원</td>
-    <td style="text-align:right">${fmtNum(num(r.card))}원</td>
-    <td style="text-align:right">${fmtNum(num(r.voucher||0))}원</td>
-    <td style="text-align:right;color:var(--primary);font-weight:600">${fmtNum(num(r.settle))}원</td>
-    <td>${r.custtype||''}</td><td>${r.note||'-'}</td>
-    <td><button class="btn btn-sm btn-outline" onclick="openFreesamEdit('${r.id}')">✏️</button>
-        <button class="btn btn-sm btn-danger" onclick="delFreesam('${r.id}')">🗑️</button></td>
-  </tr>`).join('')}</tbody>
-  <tfoot><tr><td colspan="4"><strong>합계</strong></td>
-    <td style="text-align:right"><strong>${fmtNum(sumRev)}원</strong></td>
-    <td style="text-align:right"><strong>${fmtNum(sumMgmt)}원</strong></td>
-    <td style="text-align:right;color:var(--success)"><strong>${fmtNum(sumProfit)}원</strong></td>
-    <td colspan="4"></td>
-    <td style="text-align:right;color:var(--primary)"><strong>${fmtNum(sumSettle)}원</strong></td>
-    <td colspan="3"></td>
-  </tr></tfoot></table>`;
-}
-function freesamPrint(){
-  const tbl=document.getElementById('fs_table_el');if(!tbl){showToast('출력할 데이터가 없습니다','error');return;}
-  const from=document.getElementById('fs_from')?.value||'';const to=document.getElementById('fs_to')?.value||'';
-  const w=window.open('','_blank','width=1100,height=700');
-  w.document.write(`<html><head><title>프리샘 일일관리 출력</title><style>body{font-family:'Malgun Gothic',sans-serif;font-size:11px;padding:20px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:5px 7px}thead{background:#f0f0f0;font-weight:bold}tfoot{background:#e8e8e8;font-weight:bold}@media print{button{display:none}}</style></head><body>
-    <h2>🧖 프리샘 일일관리</h2><p>기간: ${fmtDate(from)} ~ ${fmtDate(to)} | 출력일: ${fmtDate(today())}</p>
-    <button onclick="window.print()" style="margin-bottom:10px;padding:6px 14px;cursor:pointer">🖨️ 인쇄</button>
-    ${tbl.outerHTML}</body></html>`);w.document.close();
+  const rows=list.map(r=>[r.date||'',r.wday||'',num(r.revenue),num(r.mgmt),num(r.profit),num(r.cash),num(r.transfer),num(r.card),num(r.voucher||0),num(r.settle),r.note||'']);
+  const csv=[toLine([title]),toLine([`기간: ${fmtDate(from)||'전체'} ~ ${fmtDate(to)||'전체'}`]),'',toLine(header),...rows.map(toLine)].join('\r\n');
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});const url=URL.createObjectURL(blob);const link=document.createElement('a');
+  link.setAttribute('href',url);link.setAttribute('download',`${title}_${today()}.csv`);document.body.appendChild(link);link.click();document.body.removeChild(link);URL.revokeObjectURL(url);showToast('📊 엑셀 다운로드 완료!');
 }
 
 /* ===== 결산내역 ===== */
 function renderSettlement(el){
   el.innerHTML=`
   <div class="search-bar">
-    <label>📅 기간</label>
-    <input type="date" id="set_from" value="${monthStart()}">
-    <span class="date-separator">~</span>
-    <input type="date" id="set_to" value="${monthEnd()}">
+    <label>📅 기간</label><input type="date" id="set_from" value="${monthStart()}">
+    <span class="date-separator">~</span><input type="date" id="set_to" value="${monthEnd()}">
     <div class="search-shortcut-btns">
       <button class="btn-shortcut" onclick="setRange('set','today')">오늘</button>
       <button class="btn-shortcut" onclick="setRange('set','week')">이번주</button>
@@ -815,10 +1291,7 @@ function renderSettlement(el){
   </div>
   <div id="set_kpi" class="kpi-grid"></div>
   <div class="card">
-    <div class="card-header">
-      <span class="card-title">📋 결산내역</span>
-      <span id="set_cnt" style="font-size:12px;color:var(--text-muted)"></span>
-    </div>
+    <div class="card-header"><span class="card-title">📋 결산내역</span><span id="set_cnt" style="font-size:12px;color:var(--text-muted)"></span></div>
     <div class="table-wrap" id="set_tbl"></div>
   </div>`;
   setTimeout(()=>searchSettlement(),50);
@@ -828,8 +1301,7 @@ function searchSettlement(){
   let snbList=DataService.getAll(KEYS.sonobel);let spaList=DataService.getAll(KEYS.spa);let expList=DataService.getAll(KEYS.expense);
   if(from){snbList=snbList.filter(r=>r.date>=from);spaList=spaList.filter(r=>r.date>=from);expList=expList.filter(r=>r.date>=from);}
   if(to){snbList=snbList.filter(r=>r.date<=to);spaList=spaList.filter(r=>r.date<=to);expList=expList.filter(r=>r.date<=to);}
-  const dateMap={};
-  const ensure=(d)=>{if(!dateMap[d])dateMap[d]={date:d,snbRev:0,snbMgmt:0,snbProfit:0,spaRev:0,spaMgmt:0,spaProfit:0,expAmt:0};};
+  const dateMap={};const ensure=(d)=>{if(!dateMap[d])dateMap[d]={date:d,snbRev:0,snbMgmt:0,snbProfit:0,spaRev:0,spaMgmt:0,spaProfit:0,expAmt:0};};
   snbList.forEach(r=>{ensure(r.date);dateMap[r.date].snbRev+=num(r.revenue);dateMap[r.date].snbMgmt+=num(r.mgmt);dateMap[r.date].snbProfit+=num(r.profit);});
   spaList.forEach(r=>{ensure(r.date);dateMap[r.date].spaRev+=num(r.revenue);dateMap[r.date].spaMgmt+=num(r.mgmt);dateMap[r.date].spaProfit+=num(r.profit);});
   expList.forEach(r=>{ensure(r.date);dateMap[r.date].expAmt+=num(r.amount);});
@@ -839,8 +1311,7 @@ function searchSettlement(){
   const totSnbMgmt=list.reduce((a,r)=>a+r.snbMgmt,0);const totSpaMgmt=list.reduce((a,r)=>a+r.spaMgmt,0);
   const totRevAll=totSnbRev+totSpaRev;const totExpAmt=list.reduce((a,r)=>a+r.expAmt,0);const totNet=(totSnbProfit+totSpaProfit)-totExpAmt;
   const kpiEl=document.getElementById('set_kpi');
-  if(kpiEl)kpiEl.innerHTML=`
-    <div class="kpi-card info"><div class="kpi-label">🏠 소노벨 수익금</div><div class="kpi-value">${fmtNum(totSnbRev)}원</div></div>
+  if(kpiEl)kpiEl.innerHTML=`<div class="kpi-card info"><div class="kpi-label">🏠 소노벨 수익금</div><div class="kpi-value">${fmtNum(totSnbRev)}원</div></div>
     <div class="kpi-card info"><div class="kpi-label">💆 스파 수익금</div><div class="kpi-value">${fmtNum(totSpaRev)}원</div></div>
     <div class="kpi-card success"><div class="kpi-label">💰 총 수익금 합계</div><div class="kpi-value">${fmtNum(totRevAll)}원</div></div>
     <div class="kpi-card warning"><div class="kpi-label">💸 총 지출비용</div><div class="kpi-value">${fmtNum(totExpAmt)}원</div></div>
@@ -848,13 +1319,8 @@ function searchSettlement(){
   const cntEl=document.getElementById('set_cnt');if(cntEl)cntEl.textContent=`총 ${list.length}일`;
   const tbl=document.getElementById('set_tbl');if(!tbl)return;
   if(!list.length){tbl.innerHTML=`<div class="empty-state"><div class="empty-icon">📋</div><p>결산 데이터가 없습니다</p></div>`;return;}
-  tbl.innerHTML=`<table id="set_table_el"><thead><tr>
-    <th>날짜</th><th>요일</th>
-    <th style="text-align:right">소노벨 수익금</th><th style="text-align:right">소노벨 관리비</th><th style="text-align:right">소노벨 이익금</th>
-    <th style="text-align:right">스파 수익금</th><th style="text-align:right">스파 관리비</th><th style="text-align:right">스파 이익금</th>
-    <th style="text-align:right">일일 지출</th><th style="text-align:right">수익금 합계</th><th style="text-align:right">순이익</th>
-  </tr></thead><tbody>${list.map(r=>{
-    const revAll=r.snbRev+r.spaRev;const net=(r.snbProfit+r.spaProfit)-r.expAmt;
+  tbl.innerHTML=`<table id="set_table_el"><thead><tr><th>날짜</th><th>요일</th><th style="text-align:right">소노벨 수익금</th><th style="text-align:right">소노벨 관리비</th><th style="text-align:right">소노벨 이익금</th><th style="text-align:right">스파 수익금</th><th style="text-align:right">스파 관리비</th><th style="text-align:right">스파 이익금</th><th style="text-align:right">일일 지출</th><th style="text-align:right">수익금 합계</th><th style="text-align:right">순이익</th></tr></thead>
+  <tbody>${list.map(r=>{const revAll=r.snbRev+r.spaRev;const net=(r.snbProfit+r.spaProfit)-r.expAmt;
     return `<tr><td>${fmtDate(r.date)}</td><td>${getWeekDay(r.date)}</td>
       <td style="text-align:right">${fmtNum(r.snbRev)}원</td><td style="text-align:right">${fmtNum(r.snbMgmt)}원</td>
       <td style="text-align:right;color:var(--success);font-weight:600">${fmtNum(r.snbProfit)}원</td>
@@ -878,10 +1344,7 @@ function settlementPrint(){
   const tbl=document.getElementById('set_table_el');if(!tbl){showToast('출력할 데이터가 없습니다','error');return;}
   const from=document.getElementById('set_from')?.value||'';const to=document.getElementById('set_to')?.value||'';
   const w=window.open('','_blank','width=1200,height=700');
-  w.document.write(`<html><head><title>결산내역 출력</title><style>body{font-family:'Malgun Gothic',sans-serif;font-size:11px;padding:20px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:5px 7px}thead{background:#f0f0f0;font-weight:bold}tfoot{background:#e8e8e8;font-weight:bold}@media print{button{display:none}}</style></head><body>
-    <h2>📋 결산내역</h2><p>기간: ${fmtDate(from)} ~ ${fmtDate(to)} | 출력일: ${fmtDate(today())}</p>
-    <button onclick="window.print()" style="margin-bottom:10px;padding:6px 14px;cursor:pointer">🖨️ 인쇄</button>
-    ${tbl.outerHTML}</body></html>`);w.document.close();
+  w.document.write(`<html><head><title>결산내역 출력</title><style>body{font-family:'Malgun Gothic',sans-serif;font-size:11px;padding:20px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:5px 7px}thead{background:#f0f0f0;font-weight:bold}tfoot{background:#e8e8e8;font-weight:bold}@media print{button{display:none}}</style></head><body><h2>📋 결산내역</h2><p>기간: ${fmtDate(from)} ~ ${fmtDate(to)} | 출력일: ${fmtDate(today())}</p><button onclick="window.print()" style="margin-bottom:10px;padding:6px 14px;cursor:pointer">🖨️ 인쇄</button>${tbl.outerHTML}</body></html>`);w.document.close();
 }
 function settlementCSV(){
   const from=document.getElementById('set_from')?.value||'';const to=document.getElementById('set_to')?.value||'';
@@ -899,644 +1362,21 @@ function settlementCSV(){
   const rows=list.map(r=>[r.date,getWeekDay(r.date),r.snbRev,r.snbMgmt,r.snbProfit,r.spaRev,r.spaMgmt,r.spaProfit,r.expAmt,r.snbRev+r.spaRev,(r.snbProfit+r.spaProfit)-r.expAmt]);
   const csv=[toLine(['결산내역']),toLine([`기간: ${fmtDate(from)||'전체'} ~ ${fmtDate(to)||'전체'}`]),'',toLine(header),...rows.map(toLine)].join('\r\n');
   const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});const url=URL.createObjectURL(blob);const link=document.createElement('a');
-  link.setAttribute('href',url);link.setAttribute('download',`결산내역_${today()}.csv`);document.body.appendChild(link);link.click();document.body.removeChild(link);URL.revokeObjectURL(url);
-  showToast('📊 결산내역 엑셀 다운로드 완료!');
+  link.setAttribute('href',url);link.setAttribute('download',`결산내역_${today()}.csv`);document.body.appendChild(link);link.click();document.body.removeChild(link);URL.revokeObjectURL(url);showToast('📊 결산내역 엑셀 다운로드 완료!');
 }
 
-/* ===== 지출비용 ===== */
-function renderExpense(el){
-  const cfg=SettingsService.get();const cats=Array.isArray(cfg.expCats)?cfg.expCats:[...EXP_CATS];
-  el.innerHTML=`
-  <div class="search-bar">
-    <label>📅 기간</label><input type="date" id="exp_from" value="${monthStart()}">
-    <span class="date-separator">~</span><input type="date" id="exp_to" value="${monthEnd()}">
-    <div class="search-shortcut-btns">
-      <button class="btn-shortcut" onclick="setRange('exp','today')">오늘</button>
-      <button class="btn-shortcut" onclick="setRange('exp','week')">이번주</button>
-      <button class="btn-shortcut" onclick="setRange('exp','month')">이번달</button>
-      <button class="btn-shortcut" onclick="setRange('exp','last')">지난달</button>
-    </div>
-    <select id="exp_cat_filter" style="padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px">
-      <option value="">전체 카테고리</option>
-      ${cats.map(c=>`<option value="${c}">${c}</option>`).join('')}
-    </select>
-    <button class="btn btn-primary" onclick="searchExpense()">🔍 조회</button>
-    <button class="btn btn-success" onclick="openExpenseNew()">➕ 추가</button>
-    <button class="btn btn-outline" onclick="expensePrint()">🖨️ 인쇄</button>
-  </div>
-  <div id="exp_kpi" class="kpi-grid"></div>
-  <div class="card">
-    <div class="card-header">
-      <span class="card-title">💸 지출비용</span>
-      <span id="exp_cnt" style="font-size:12px;color:var(--text-muted)"></span>
-    </div>
-    <div class="table-wrap" id="exp_tbl"></div>
-  </div>
-  <div class="modal-overlay hidden" id="exp_modal">
-    <div class="modal">
-      <div class="modal-title" id="exp_mtitle">💸 지출 추가</div>
-      <input type="hidden" id="exp_eid">
-      <div class="form-row">
-        <div class="form-group"><label>날짜 *</label><input type="date" id="exp_date" value="${today()}"></div>
-        <div class="form-group"><label>카테고리 *</label>
-          <select id="exp_cat">${cats.map(c=>`<option value="${c}">${c}</option>`).join('')}</select>
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label>금액 *</label><input type="number" id="exp_amount" placeholder="0" min="0"></div>
-        <div class="form-group"><label>결제방법</label>
-          <select id="exp_paytype"><option value="현금">현금</option><option value="카드">카드</option><option value="이체">이체</option><option value="기타">기타</option></select>
-        </div>
-      </div>
-      <div class="form-group"><label>내용 *</label><input type="text" id="exp_desc" placeholder="지출 내용"></div>
-      <div class="form-group"><label>메모</label><input type="text" id="exp_note" placeholder="메모 (선택)"></div>
-      <div class="modal-footer">
-        <button class="btn btn-outline" onclick="closeExpModal()">취소</button>
-        <button class="btn btn-primary" onclick="saveExpense()">💾 저장</button>
-      </div>
-    </div>
-  </div>`;
-  setTimeout(()=>searchExpense(),50);
-}
-function openExpenseNew(){
-  document.getElementById('exp_mtitle').textContent='💸 지출 추가';
-  document.getElementById('exp_eid').value='';
-  document.getElementById('exp_date').value=today();
-  ['exp_amount','exp_desc','exp_note'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  document.getElementById('exp_modal').classList.remove('hidden');
-}
-function openExpenseEdit(id){
-  const rec=DataService.getAll(KEYS.expense).find(r=>r.id===id);if(!rec)return;
-  document.getElementById('exp_mtitle').textContent='💸 지출 수정';
-  document.getElementById('exp_eid').value=id;
-  document.getElementById('exp_date').value=rec.date||'';
-  document.getElementById('exp_cat').value=rec.cat||'';
-  document.getElementById('exp_amount').value=rec.amount||'';
-  document.getElementById('exp_paytype').value=rec.paytype||'현금';
-  document.getElementById('exp_desc').value=rec.desc||'';
-  document.getElementById('exp_note').value=rec.note||'';
-  document.getElementById('exp_modal').classList.remove('hidden');
-}
-function closeExpModal(){document.getElementById('exp_modal').classList.add('hidden');}
-function saveExpense(){
-  const id=document.getElementById('exp_eid').value;
-  const date=document.getElementById('exp_date').value;
-  const cat=document.getElementById('exp_cat').value;
-  const amount=num(document.getElementById('exp_amount').value);
-  const paytype=document.getElementById('exp_paytype').value;
-  const desc=document.getElementById('exp_desc').value.trim();
-  const note=document.getElementById('exp_note').value;
-  if(!date){showToast('날짜를 입력해 주세요','error');return;}
-  if(!amount){showToast('금액을 입력해 주세요','error');return;}
-  if(!desc){showToast('내용을 입력해 주세요','error');return;}
-  const rec={date,cat,amount,paytype,desc,note};
-  if(id)DataService.update(KEYS.expense,id,rec);else DataService.add(KEYS.expense,rec);
-  closeExpModal();showToast(id?'수정되었습니다 ✅':'추가되었습니다 ✅');searchExpense();
-}
-function delExpense(id){if(!confirm('삭제하시겠습니까?'))return;DataService.remove(KEYS.expense,id);showToast('삭제되었습니다');searchExpense();}
-function searchExpense(){
-  const from=document.getElementById('exp_from')?.value||'';const to=document.getElementById('exp_to')?.value||'';
-  const catF=document.getElementById('exp_cat_filter')?.value||'';
-  let list=DataService.getAll(KEYS.expense);
-  if(from)list=list.filter(r=>r.date>=from);if(to)list=list.filter(r=>r.date<=to);
-  if(catF)list=list.filter(r=>r.cat===catF);
-  list.sort((a,b)=>b.date.localeCompare(a.date));
-  const totAmt=list.reduce((a,r)=>a+num(r.amount),0);
-  const catMap={};list.forEach(r=>{catMap[r.cat]=(catMap[r.cat]||0)+num(r.amount);});
-  const kpiEl=document.getElementById('exp_kpi');
-  if(kpiEl)kpiEl.innerHTML=`<div class="kpi-card danger"><div class="kpi-label">💸 총 지출</div><div class="kpi-value">${fmtNum(totAmt)}원</div></div>
-    ${Object.entries(catMap).map(([k,v])=>`<div class="kpi-card"><div class="kpi-label">${k}</div><div class="kpi-value" style="font-size:18px">${fmtNum(v)}원</div></div>`).join('')}`;
-  const cntEl=document.getElementById('exp_cnt');if(cntEl)cntEl.textContent=`총 ${list.length}건`;
-  const tbl=document.getElementById('exp_tbl');if(!tbl)return;
-  if(!list.length){tbl.innerHTML=`<div class="empty-state"><div class="empty-icon">💸</div><p>지출 내역이 없습니다</p></div>`;return;}
-  tbl.innerHTML=`<table id="exp_table_el"><thead><tr><th>날짜</th><th>카테고리</th><th style="text-align:right">금액</th><th>결제방법</th><th>내용</th><th>메모</th><th>관리</th></tr></thead>
-  <tbody>${list.map(r=>`<tr><td>${fmtDate(r.date)}</td><td><span class="badge badge-warning">${r.cat||''}</span></td>
-    <td style="text-align:right;font-weight:600;color:var(--danger)">${fmtNum(num(r.amount))}원</td>
-    <td>${r.paytype||''}</td><td>${r.desc||''}</td><td>${r.note||'-'}</td>
-    <td><button class="btn btn-sm btn-outline" onclick="openExpenseEdit('${r.id}')">✏️</button>
-        <button class="btn btn-sm btn-danger" onclick="delExpense('${r.id}')">🗑️</button></td>
-  </tr>`).join('')}</tbody>
-  <tfoot><tr><td colspan="2"><strong>합계</strong></td><td style="text-align:right;color:var(--danger)"><strong>${fmtNum(totAmt)}원</strong></td><td colspan="4"></td></tr></tfoot></table>`;
-}
-function expensePrint(){
-  const tbl=document.getElementById('exp_table_el');if(!tbl){showToast('출력할 데이터가 없습니다','error');return;}
-  const from=document.getElementById('exp_from')?.value||'';const to=document.getElementById('exp_to')?.value||'';
-  const w=window.open('','_blank','width=900,height=700');
-  w.document.write(`<html><head><title>지출비용 출력</title><style>body{font-family:'Malgun Gothic',sans-serif;font-size:12px;padding:20px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:6px 8px}thead{background:#f0f0f0;font-weight:bold}tfoot{background:#e8e8e8;font-weight:bold}@media print{button{display:none}}</style></head><body>
-    <h2>💸 지출비용</h2><p>기간: ${fmtDate(from)} ~ ${fmtDate(to)} | 출력일: ${fmtDate(today())}</p>
-    <button onclick="window.print()" style="margin-bottom:10px;padding:6px 14px;cursor:pointer">🖨️ 인쇄</button>
-    ${tbl.outerHTML}</body></html>`);w.document.close();
-}
-
-/* ===== 예약관리 ===== */
-function renderReservation(el){
-  const freeNames=loadFreesamNames();
-  el.innerHTML=`
-  <div class="search-bar">
-    <label>📅 기간</label><input type="date" id="rsv_from" value="${monthStart()}">
-    <span class="date-separator">~</span><input type="date" id="rsv_to" value="${monthEnd()}">
-    <div class="search-shortcut-btns">
-      <button class="btn-shortcut" onclick="setRange('rsv','today')">오늘</button>
-      <button class="btn-shortcut" onclick="setRange('rsv','week')">이번주</button>
-      <button class="btn-shortcut" onclick="setRange('rsv','month')">이번달</button>
-      <button class="btn-shortcut" onclick="setRange('rsv','last')">지난달</button>
-    </div>
-    <button class="btn btn-primary" onclick="searchReservation()">🔍 조회</button>
-    <button class="btn btn-success" onclick="openRsvNew()">➕ 예약 추가</button>
-    <button class="btn btn-outline" onclick="rsvPrint()">🖨️ 인쇄</button>
-  </div>
-  <div id="rsv_kpi" class="kpi-grid"></div>
-  <div class="card">
-    <div class="card-header">
-      <span class="card-title">📅 예약관리</span>
-      <span id="rsv_cnt" style="font-size:12px;color:var(--text-muted)"></span>
-    </div>
-    <div class="table-wrap" id="rsv_tbl"></div>
-  </div>
-  <div class="modal-overlay hidden" id="rsv_modal">
-    <div class="modal" style="max-width:560px">
-      <div class="modal-title" id="rsv_mtitle">📅 예약 추가</div>
-      <input type="hidden" id="rsv_eid">
-      <div class="form-row">
-        <div class="form-group"><label>예약일 *</label><input type="date" id="rsv_date" value="${today()}"></div>
-        <div class="form-group"><label>시간 *</label>
-          <select id="rsv_time">${TIMES.map(t=>`<option value="${t}">${t}</option>`).join('')}</select>
-        </div>
-      </div>
-      <div class="form-group"><label>영업장 *</label>
-        <div style="display:flex;gap:8px;margin-top:6px">
-          <button type="button" class="chip-btn active" id="rsv_place_sono" onclick="selectRsvPlace('소노벨')">소노벨</button>
-          <button type="button" class="chip-btn" id="rsv_place_spa" onclick="selectRsvPlace('스파')">스파</button>
-        </div>
-        <input type="hidden" id="rsv_place" value="소노벨">
-      </div>
-      <div class="form-group"><label>서비스</label>
-        <div id="rsv_svc_chips" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px">
-          ${RSV_SERVICES.map(s=>`<button type="button" class="chip-btn" id="rsv_svc_${s.replace(/\s+/g,'_')}" onclick="selectRsvSvc('${s}')">${s}</button>`).join('')}
-        </div>
-        <input type="hidden" id="rsv_svc">
-      </div>
-      <div class="form-group"><label>담당 프리샘</label>
-        <div id="rsv_fs_chips" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px">
-          <button type="button" class="chip-btn active" id="rsv_fs_none" onclick="selectRsvFs('')">미지정</button>
-          ${freeNames.map(n=>`<button type="button" class="chip-btn" id="rsv_fs_${n.replace(/\s+/g,'_')}" onclick="selectRsvFs('${n}')">${n}</button>`).join('')}
-        </div>
-        <input type="hidden" id="rsv_fs">
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label>고객명 *</label><input type="text" id="rsv_cust" placeholder="고객명"></div>
-        <div class="form-group"><label>연락처</label><input type="tel" id="rsv_phone" placeholder="010-0000-0000"></div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label>예약금</label><input type="number" id="rsv_deposit" placeholder="0" min="0"></div>
-        <div class="form-group"><label>상태</label>
-          <select id="rsv_status"><option value="확정">확정</option><option value="대기">대기</option><option value="취소">취소</option><option value="완료">완료</option></select>
-        </div>
-      </div>
-      <div class="form-group"><label>메모</label><input type="text" id="rsv_memo" placeholder="메모 (선택)"></div>
-      <div class="modal-footer">
-        <button class="btn btn-outline" onclick="closeRsvModal()">취소</button>
-        <button class="btn btn-primary" onclick="saveReservation()">💾 저장</button>
-      </div>
-    </div>
-  </div>`;
-  setTimeout(()=>searchReservation(),50);
-}
-function selectRsvPlace(place){document.getElementById('rsv_place').value=place;document.getElementById('rsv_place_sono').classList.toggle('active',place==='소노벨');document.getElementById('rsv_place_spa').classList.toggle('active',place==='스파');}
-function selectRsvSvc(svc){document.getElementById('rsv_svc').value=svc;document.querySelectorAll('#rsv_svc_chips .chip-btn').forEach(b=>b.classList.remove('active'));const el=document.getElementById('rsv_svc_'+svc.replace(/\s+/g,'_'));if(el)el.classList.add('active');}
-function selectRsvFs(name){document.getElementById('rsv_fs').value=name;document.querySelectorAll('#rsv_fs_chips .chip-btn').forEach(b=>b.classList.remove('active'));const id=name?'rsv_fs_'+name.replace(/\s+/g,'_'):'rsv_fs_none';const el=document.getElementById(id);if(el)el.classList.add('active');}
-function openRsvNew(){
-  document.getElementById('rsv_mtitle').textContent='📅 예약 추가';
-  document.getElementById('rsv_eid').value='';document.getElementById('rsv_date').value=today();document.getElementById('rsv_time').value='10:00';
-  selectRsvPlace('소노벨');document.getElementById('rsv_svc').value='';document.querySelectorAll('#rsv_svc_chips .chip-btn').forEach(b=>b.classList.remove('active'));
-  selectRsvFs('');document.getElementById('rsv_cust').value='';document.getElementById('rsv_phone').value='';
-  document.getElementById('rsv_deposit').value='';document.getElementById('rsv_status').value='확정';document.getElementById('rsv_memo').value='';
-  document.getElementById('rsv_modal').classList.remove('hidden');
-}
-function openRsvEdit(id){
-  const rec=DataService.getAll(KEYS.reservation).find(r=>r.id===id);if(!rec)return;
-  document.getElementById('rsv_mtitle').textContent='📅 예약 수정';document.getElementById('rsv_eid').value=id;
-  document.getElementById('rsv_date').value=rec.date||'';document.getElementById('rsv_time').value=rec.time||'10:00';
-  selectRsvPlace(rec.place||'소노벨');document.getElementById('rsv_svc').value=rec.svc||'';
-  document.querySelectorAll('#rsv_svc_chips .chip-btn').forEach(b=>b.classList.remove('active'));
-  if(rec.svc){const el=document.getElementById('rsv_svc_'+rec.svc.replace(/\s+/g,'_'));if(el)el.classList.add('active');}
-  selectRsvFs(rec.fs||'');document.getElementById('rsv_cust').value=rec.cust||'';document.getElementById('rsv_phone').value=rec.phone||'';
-  document.getElementById('rsv_deposit').value=rec.deposit||'';document.getElementById('rsv_status').value=rec.status||'확정';document.getElementById('rsv_memo').value=rec.memo||'';
-  document.getElementById('rsv_modal').classList.remove('hidden');
-}
-function closeRsvModal(){document.getElementById('rsv_modal').classList.add('hidden');}
-function saveReservation(){
-  const id=document.getElementById('rsv_eid').value;const date=document.getElementById('rsv_date').value;
-  const time=document.getElementById('rsv_time').value;const place=document.getElementById('rsv_place').value;
-  const svc=document.getElementById('rsv_svc').value;const fs=document.getElementById('rsv_fs').value;
-  const cust=document.getElementById('rsv_cust').value.trim();const phone=document.getElementById('rsv_phone').value;
-  const deposit=num(document.getElementById('rsv_deposit').value);const status=document.getElementById('rsv_status').value;const memo=document.getElementById('rsv_memo').value;
-  if(!date){showToast('날짜를 입력해 주세요','error');return;}if(!cust){showToast('고객명을 입력해 주세요','error');return;}
-  const rec={date,time,place,svc,fs,cust,phone,deposit,status,memo};
-  if(id)DataService.update(KEYS.reservation,id,rec);else DataService.add(KEYS.reservation,rec);
-  closeRsvModal();showToast(id?'수정되었습니다 ✅':'예약이 추가되었습니다 ✅');searchReservation();
-}
-function delReservation(id){if(!confirm('삭제하시겠습니까?'))return;DataService.remove(KEYS.reservation,id);showToast('삭제되었습니다');searchReservation();}
-function searchReservation(){
-  const from=document.getElementById('rsv_from')?.value||'';const to=document.getElementById('rsv_to')?.value||'';
-  let list=DataService.getAll(KEYS.reservation);
-  if(from)list=list.filter(r=>r.date>=from);if(to)list=list.filter(r=>r.date<=to);
-  list.sort((a,b)=>a.date===b.date?a.time.localeCompare(b.time):b.date.localeCompare(a.date));
-  const totDep=list.reduce((a,r)=>a+num(r.deposit),0);const statusMap={};list.forEach(r=>{statusMap[r.status]=(statusMap[r.status]||0)+1;});
-  const statusColor={확정:'badge-success',대기:'badge-warning',취소:'badge-danger',완료:'badge-primary'};
-  const kpiEl=document.getElementById('rsv_kpi');
-  if(kpiEl)kpiEl.innerHTML=`<div class="kpi-card"><div class="kpi-label">📅 총 예약</div><div class="kpi-value">${list.length}건</div></div>
-    <div class="kpi-card info"><div class="kpi-label">💰 예약금 합계</div><div class="kpi-value">${fmtNum(totDep)}원</div></div>
-    ${Object.entries(statusMap).map(([k,v])=>`<div class="kpi-card"><div class="kpi-label">${k}</div><div class="kpi-value" style="font-size:18px">${v}건</div></div>`).join('')}`;
-  const cntEl=document.getElementById('rsv_cnt');if(cntEl)cntEl.textContent=`총 ${list.length}건`;
-  const tbl=document.getElementById('rsv_tbl');if(!tbl)return;
-  if(!list.length){tbl.innerHTML=`<div class="empty-state"><div class="empty-icon">📅</div><p>예약 내역이 없습니다</p></div>`;return;}
-  tbl.innerHTML=`<table id="rsv_table_el"><thead><tr><th>예약일</th><th>시간</th><th>영업장</th><th>서비스</th><th>담당 프리샘</th><th>고객명</th><th>연락처</th><th style="text-align:right">예약금</th><th>상태</th><th>메모</th><th>관리</th></tr></thead>
-  <tbody>${list.map(r=>`<tr><td>${fmtDate(r.date)}</td><td><strong>${r.time||''}</strong></td>
-    <td><span class="badge ${r.place==='소노벨'?'badge-primary':'badge-success'}">${r.place||''}</span></td>
-    <td>${r.svc||''}</td><td>${r.fs||'-'}</td><td><strong>${r.cust||''}</strong></td><td>${r.phone||'-'}</td>
-    <td style="text-align:right">${fmtNum(num(r.deposit))}원</td>
-    <td><span class="badge ${statusColor[r.status]||'badge-info'}">${r.status||''}</span></td>
-    <td>${r.memo||'-'}</td>
-    <td><button class="btn btn-sm btn-outline" onclick="openRsvEdit('${r.id}')">✏️</button>
-        <button class="btn btn-sm btn-danger" onclick="delReservation('${r.id}')">🗑️</button></td>
-  </tr>`).join('')}</tbody></table>`;
-}
-function rsvPrint(){
-  const tbl=document.getElementById('rsv_table_el');if(!tbl){showToast('출력할 데이터가 없습니다','error');return;}
-  const from=document.getElementById('rsv_from')?.value||'';const to=document.getElementById('rsv_to')?.value||'';
-  const w=window.open('','_blank','width=1100,height=700');
-  w.document.write(`<html><head><title>예약관리 출력</title><style>body{font-family:'Malgun Gothic',sans-serif;font-size:11px;padding:20px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:5px 7px}thead{background:#f0f0f0;font-weight:bold}@media print{button{display:none}}</style></head><body>
-    <h2>📅 예약관리</h2><p>기간: ${fmtDate(from)} ~ ${fmtDate(to)} | 출력일: ${fmtDate(today())}</p>
-    <button onclick="window.print()" style="margin-bottom:10px;padding:6px 14px;cursor:pointer">🖨️ 인쇄</button>
-    ${tbl.outerHTML}</body></html>`);w.document.close();
-}
-/* ===== 프리샘 관리 (작업 E) ===== */
-const THERAPIST_KEY='spa_therapist_detail';
-function loadTherapistDetail(){try{return JSON.parse(localStorage.getItem(THERAPIST_KEY)||'[]');}catch(e){return[];}}
-function saveTherapistDetail(arr){localStorage.setItem(THERAPIST_KEY,JSON.stringify(arr));}
-function syncFreesamNames(detailArr){const cfg=SettingsService.get();const names=detailArr.filter(t=>t.active!==false).map(t=>t.name);SettingsService.save({...cfg,freesamNames:names});}
-function loadFreesamNames(){const detail=loadTherapistDetail();if(detail.length){return detail.filter(t=>t.active!==false).map(t=>t.name);}const cfg=SettingsService.get();return Array.isArray(cfg.freesamNames)?cfg.freesamNames:[];}
-
-function renderTherapist(el){
-  const list=loadTherapistDetail();const total=list.length;const active=list.filter(t=>t.active!==false).length;
-  el.innerHTML=`
-  <div class="kpi-grid" style="margin-bottom:20px">
-    <div class="kpi-card info"><div class="kpi-label">👥 전체 프리샘</div><div class="kpi-value">${total}명</div></div>
-    <div class="kpi-card success"><div class="kpi-label">✅ 활성 프리샘</div><div class="kpi-value">${active}명</div></div>
-    <div class="kpi-card warning"><div class="kpi-label">⏸️ 비활성 프리샘</div><div class="kpi-value">${total-active}명</div></div>
-  </div>
-  <div class="card">
-    <div class="card-header">
-      <span class="card-title">👥 프리샘 관리</span>
-      <div style="display:flex;gap:8px">
-        <button class="btn btn-success" onclick="openTherapistModal()">➕ 신규 등록</button>
-        <button class="btn btn-outline" onclick="therapistPDF()">🖨️ PDF 인쇄</button>
-      </div>
-    </div>
-    <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center">
-      <input type="text" id="th_search" placeholder="🔍 이름·전문분야 검색"
-        style="flex:1;min-width:160px;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px"
-        oninput="renderTherapistTable()">
-      <select id="th_filter_active" style="padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px" onchange="renderTherapistTable()">
-        <option value="">전체</option><option value="active">활성만</option><option value="inactive">비활성만</option>
-      </select>
-      <select id="th_filter_place" style="padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px" onchange="renderTherapistTable()">
-        <option value="">전체 영업장</option><option value="소노벨">소노벨</option><option value="스파">스파</option><option value="소노벨+스파">소노벨+스파</option>
-      </select>
-    </div>
-    <div class="table-wrap" id="th_table_wrap"></div>
-  </div>
-  <div id="th_modal" class="modal-overlay hidden">
-    <div class="modal" style="max-width:520px">
-      <div class="modal-header">
-        <span id="th_modal_title" class="modal-title" style="margin-bottom:0">👤 프리샘 등록</span>
-        <button class="modal-close" onclick="closeTherapistModal()">✕</button>
-      </div>
-      <div class="modal-body">
-        <input type="hidden" id="th_eid">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-          <div class="form-group"><label>이름 <span style="color:var(--danger)">*</span></label><input type="text" id="th_name" placeholder="프리샘 이름"></div>
-          <div class="form-group"><label>생년월일</label><input type="date" id="th_dob"></div>
-          <div class="form-group"><label>연락처</label><input type="tel" id="th_phone" placeholder="010-0000-0000"></div>
-          <div class="form-group"><label>전문 분야</label><input type="text" id="th_specialty" placeholder="예: 아로마, 스포츠마사지"></div>
-          <div class="form-group"><label>소속 영업장</label>
-            <select id="th_place"><option value="소노벨">소노벨</option><option value="스파">스파</option><option value="소노벨+스파">소노벨+스파</option></select>
-          </div>
-          <div class="form-group"><label>활성 상태</label>
-            <select id="th_active"><option value="true">✅ 활성</option><option value="false">⏸️ 비활성</option></select>
-          </div>
-        </div>
-        <div class="form-group" style="margin-top:4px"><label>메모</label>
-          <textarea id="th_memo" rows="2" placeholder="특이사항 등" style="width:100%;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;resize:vertical"></textarea>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-outline" onclick="closeTherapistModal()">취소</button>
-        <button class="btn btn-primary" onclick="saveTherapist()">💾 저장</button>
-      </div>
-    </div>
-  </div>`;
-  renderTherapistTable();
-}
-function renderTherapistTable(){
-  let list=loadTherapistDetail();
-  const kw=(document.getElementById('th_search')?.value||'').trim().toLowerCase();
-  const af=document.getElementById('th_filter_active')?.value||'';
-  const pf=document.getElementById('th_filter_place')?.value||'';
-  if(kw)list=list.filter(t=>t.name.toLowerCase().includes(kw)||(t.specialty||'').toLowerCase().includes(kw));
-  if(af==='active')list=list.filter(t=>t.active!==false);
-  if(af==='inactive')list=list.filter(t=>t.active===false);
-  if(pf)list=list.filter(t=>(t.place||'')===pf);
-  const wrap=document.getElementById('th_table_wrap');if(!wrap)return;
-  if(!list.length){wrap.innerHTML=`<div class="empty-state"><div class="empty-icon">👥</div><p>등록된 프리샘이 없습니다</p><button class="btn btn-success" onclick="openTherapistModal()">➕ 첫 번째 프리샘 등록</button></div>`;return;}
-  const calcAge=dob=>{if(!dob)return '-';const b=new Date(dob),n=new Date();let age=n.getFullYear()-b.getFullYear();if(n<new Date(n.getFullYear(),b.getMonth(),b.getDate()))age--;return age+'세';};
-  const fsList=DataService.getAll(KEYS.freelancer);const countByName=name=>fsList.filter(r=>r.name===name).length;
-  wrap.innerHTML=`<table id="th_table_el"><thead><tr><th>번호</th><th>이름</th><th>생년월일/나이</th><th>연락처</th><th>전문분야</th><th>소속 영업장</th><th style="text-align:center">관리건수</th><th style="text-align:center">활성</th><th>메모</th><th>관리</th></tr></thead>
-  <tbody>${list.map((t,i)=>`<tr style="${t.active===false?'opacity:0.55;':''}">
-    <td>${i+1}</td><td><strong>${t.name}</strong></td>
-    <td>${t.dob?fmtDate(t.dob)+' / '+calcAge(t.dob):'-'}</td>
-    <td>${t.phone||'-'}</td><td>${t.specialty||'-'}</td>
-    <td><span class="badge ${t.place==='소노벨'?'badge-primary':t.place==='스파'?'badge-success':'badge-info'}">${t.place||'-'}</span></td>
-    <td style="text-align:center"><span style="font-weight:700;color:var(--primary)">${countByName(t.name)}건</span></td>
-    <td style="text-align:center"><button onclick="toggleTherapistActive('${t.id}')" style="border:none;background:none;font-size:20px;cursor:pointer;line-height:1">${t.active!==false?'✅':'⏸️'}</button></td>
-    <td style="font-size:12px;color:var(--text-muted)">${t.memo||'-'}</td>
-    <td><button class="btn btn-sm btn-outline" onclick="openTherapistModal('${t.id}')">✏️</button>
-        <button class="btn btn-sm btn-danger" onclick="delTherapist('${t.id}')">🗑️</button></td>
-  </tr>`).join('')}</tbody></table>`;
-}
-function openTherapistModal(id){
-  const modal=document.getElementById('th_modal');const title=document.getElementById('th_modal_title');
-  if(id){const t=loadTherapistDetail().find(x=>x.id===id);if(!t)return;
-    title.textContent='✏️ 프리샘 수정';document.getElementById('th_eid').value=t.id;
-    document.getElementById('th_name').value=t.name||'';document.getElementById('th_dob').value=t.dob||'';
-    document.getElementById('th_phone').value=t.phone||'';document.getElementById('th_specialty').value=t.specialty||'';
-    document.getElementById('th_place').value=t.place||'소노벨';document.getElementById('th_active').value=String(t.active!==false);
-    document.getElementById('th_memo').value=t.memo||'';
-  }else{
-    title.textContent='👤 프리샘 신규 등록';
-    ['th_eid','th_name','th_dob','th_phone','th_specialty','th_memo'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-    document.getElementById('th_place').value='소노벨';document.getElementById('th_active').value='true';
-  }
-  modal.classList.remove('hidden');setTimeout(()=>document.getElementById('th_name').focus(),50);
-}
-function closeTherapistModal(){document.getElementById('th_modal').classList.add('hidden');}
-function saveTherapist(){
-  const id=document.getElementById('th_eid').value.trim();const name=document.getElementById('th_name').value.trim();
-  const dob=document.getElementById('th_dob').value;const phone=document.getElementById('th_phone').value.trim();
-  const specialty=document.getElementById('th_specialty').value.trim();const place=document.getElementById('th_place').value;
-  const active=document.getElementById('th_active').value!=='false';const memo=document.getElementById('th_memo').value.trim();
-  if(!name){showToast('이름을 입력해 주세요','error');return;}
-  let list=loadTherapistDetail();
-  if(id){const idx=list.findIndex(t=>t.id===id);if(idx===-1){showToast('데이터를 찾을 수 없습니다','error');return;}list[idx]={...list[idx],name,dob,phone,specialty,place,active,memo};}
-  else{if(list.some(t=>t.name===name)){showToast('이미 등록된 이름입니다','error');return;}list.push({id:genId(),name,dob,phone,specialty,place,active,memo});}
-  saveTherapistDetail(list);syncFreesamNames(list);closeTherapistModal();
-  showToast(id?`${name} 수정 완료 ✅`:`${name} 등록 완료 ✅`);
-  renderTherapist(document.getElementById('content'));
-}
-function toggleTherapistActive(id){
-  const list=loadTherapistDetail();const idx=list.findIndex(t=>t.id===id);if(idx===-1)return;
-  list[idx].active=!(list[idx].active!==false);saveTherapistDetail(list);syncFreesamNames(list);
-  showToast(`${list[idx].name} – ${list[idx].active?'활성':'비활성'} 전환 ✅`);
-  renderTherapist(document.getElementById('content'));
-}
-function delTherapist(id){
-  let list=loadTherapistDetail();const t=list.find(x=>x.id===id);if(!t)return;
-  if(!confirm(`'${t.name}'을(를) 삭제하시겠습니까?`))return;
-  list=list.filter(x=>x.id!==id);saveTherapistDetail(list);syncFreesamNames(list);
-  showToast(`${t.name} 삭제 완료`);renderTherapist(document.getElementById('content'));
-}
-function therapistPDF(){
-  const tbl=document.getElementById('th_table_el');if(!tbl){showToast('출력할 데이터가 없습니다','error');return;}
-  const list=loadTherapistDetail();const total=list.length;const active=list.filter(t=>t.active!==false).length;
-  const w=window.open('','_blank','width=1100,height=750');
-  w.document.write(`<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><title>프리샘 관리 명단</title>
-  <style>*{box-sizing:border-box;}body{font-family:'Malgun Gothic',sans-serif;font-size:11px;padding:24px;color:#111;}h2{font-size:18px;margin:0 0 4px;color:#1e1b4b;}.meta{color:#666;font-size:11px;margin-bottom:16px;}.summary{display:flex;gap:20px;margin-bottom:16px;}.s-box{background:#f5f3ff;border:1px solid #c4b5fd;border-radius:8px;padding:8px 18px;text-align:center;}.s-box .sv{font-size:20px;font-weight:700;color:#4f46e5;}.s-box .sl{font-size:10px;color:#666;margin-top:2px;}table{width:100%;border-collapse:collapse;margin-top:8px;}th,td{border:1px solid #d1d5db;padding:5px 7px;text-align:left;vertical-align:middle;}thead{background:#ede9fe;font-weight:700;}tbody tr:nth-child(even){background:#fafafa;}@media print{button{display:none}}</style>
-  </head><body>
-  <h2>👥 프리샘 관리 명단</h2>
-  <p class="meta">출력일: ${fmtDate(today())} | 소노벨 &amp; 스파 비용관리 플랫폼</p>
-  <div class="summary">
-    <div class="s-box"><div class="sv">${total}</div><div class="sl">전체 프리샘</div></div>
-    <div class="s-box"><div class="sv">${active}</div><div class="sl">활성 프리샘</div></div>
-    <div class="s-box"><div class="sv">${total-active}</div><div class="sl">비활성 프리샘</div></div>
-  </div>
-  <button onclick="window.print()" style="margin-bottom:12px;padding:6px 16px;cursor:pointer;background:#4f46e5;color:#fff;border:none;border-radius:6px">🖨️ 인쇄</button>
-  ${tbl.outerHTML.replace(/✅/g,'활성').replace(/⏸️/g,'비활성').replace(/<button[^>]*>.*?<\/button>/gs,'')}
-  </body></html>`);w.document.close();
-}
-
-/* ===== 프리샘 개인별 마사지 현황 (작업 F) ===== */
-function renderTherapistStats(el){
-  const names=loadFreesamNames();
-  el.innerHTML=`
-  <div class="search-bar" style="flex-wrap:wrap;gap:10px">
-    <label>📅 기간</label>
-    <input type="date" id="ts_from" value="${monthStart()}">
-    <span class="date-separator">~</span>
-    <input type="date" id="ts_to" value="${monthEnd()}">
-    <div class="search-shortcut-btns">
-      <button class="btn-shortcut" onclick="setRange('ts','today')">오늘</button>
-      <button class="btn-shortcut" onclick="setRange('ts','week')">이번주</button>
-      <button class="btn-shortcut" onclick="setRange('ts','month')">이번달</button>
-      <button class="btn-shortcut" onclick="setRange('ts','last')">지난달</button>
-    </div>
-    <select id="ts_name" style="padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;min-width:130px">
-      <option value="">👥 전체 프리샘</option>
-      ${names.map(n=>`<option value="${n}">${n}</option>`).join('')}
-    </select>
-    <select id="ts_place" style="padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;min-width:110px">
-      <option value="">전체 영업장</option><option value="소노벨">소노벨</option><option value="스파">스파</option>
-    </select>
-    <button class="btn btn-primary" onclick="searchTherapistStats()">🔍 조회</button>
-    <button class="btn btn-outline" onclick="therapistStatsPDF()">🖨️ PDF</button>
-    <button class="btn btn-success" onclick="therapistStatsCSV()">📊 엑셀</button>
-  </div>
-  <div id="ts_kpi" class="kpi-grid" style="margin-bottom:20px"></div>
-  <div class="card" style="margin-bottom:20px">
-    <div class="card-header">
-      <span class="card-title">📊 프리샘별 실적 요약</span>
-      <span id="ts_period_label" style="font-size:12px;color:var(--text-muted)"></span>
-    </div>
-    <div class="table-wrap" id="ts_summary_tbl"></div>
-  </div>
-  <div class="card" style="margin-bottom:20px">
-    <div class="card-header"><span class="card-title">📅 월별 추이</span></div>
-    <div class="table-wrap" id="ts_monthly_tbl"></div>
-  </div>
-  <div class="card" id="ts_detail_card" style="display:none">
-    <div class="card-header">
-      <span class="card-title" id="ts_detail_title">📋 상세 내역</span>
-      <span id="ts_detail_cnt" style="font-size:12px;color:var(--text-muted)"></span>
-    </div>
-    <div class="table-wrap" id="ts_detail_tbl"></div>
-  </div>`;
-  setTimeout(()=>searchTherapistStats(),50);
-}
-function searchTherapistStats(){
-  const from=document.getElementById('ts_from')?.value||'';const to=document.getElementById('ts_to')?.value||'';
-  const selName=document.getElementById('ts_name')?.value||'';const selPlace=document.getElementById('ts_place')?.value||'';
-  let list=DataService.getAll(KEYS.freelancer);
-  if(from)list=list.filter(r=>r.date>=from);if(to)list=list.filter(r=>r.date<=to);
-  if(selName)list=list.filter(r=>r.name===selName);if(selPlace)list=list.filter(r=>r.place===selPlace);
-  list.sort((a,b)=>a.date.localeCompare(b.date));
-  const totRev=list.reduce((a,r)=>a+num(r.revenue),0);const totMgmt=list.reduce((a,r)=>a+num(r.mgmt),0);const totProfit=list.reduce((a,r)=>a+num(r.profit),0);
-  const kpiEl=document.getElementById('ts_kpi');
-  if(kpiEl)kpiEl.innerHTML=`
-    <div class="kpi-card info"><div class="kpi-label">📋 총 건수</div><div class="kpi-value">${list.length}건</div></div>
-    <div class="kpi-card"><div class="kpi-label">💰 총 수익금</div><div class="kpi-value">${fmtNum(totRev)}원</div></div>
-    <div class="kpi-card warning"><div class="kpi-label">🔧 총 관리비</div><div class="kpi-value">${fmtNum(totMgmt)}원</div></div>
-    <div class="kpi-card success"><div class="kpi-label">📈 총 이익금</div><div class="kpi-value">${fmtNum(totProfit)}원</div></div>`;
-  const periodLbl=document.getElementById('ts_period_label');if(periodLbl)periodLbl.textContent=`${fmtDate(from)||'전체'} ~ ${fmtDate(to)||'전체'}`;
-  renderTsSummary(list);renderTsMonthly(list,selName);renderTsDetail(list,selName);
-}
-function renderTsSummary(list){
-  const wrap=document.getElementById('ts_summary_tbl');if(!wrap)return;
-  const byName={};
-  list.forEach(r=>{const n=r.name||'미지정';if(!byName[n])byName[n]={name:n,cnt:0,snbRev:0,snbMgmt:0,snbProfit:0,snbCnt:0,spaRev:0,spaMgmt:0,spaProfit:0,spaCnt:0,totRev:0,totMgmt:0,totProfit:0};
-    const b=byName[n];const rev=num(r.revenue),mgmt=num(r.mgmt),profit=num(r.profit);
-    b.cnt++;b.totRev+=rev;b.totMgmt+=mgmt;b.totProfit+=profit;
-    if(r.place==='소노벨'){b.snbRev+=rev;b.snbMgmt+=mgmt;b.snbProfit+=profit;b.snbCnt++;}
-    else if(r.place==='스파'){b.spaRev+=rev;b.spaMgmt+=mgmt;b.spaProfit+=profit;b.spaCnt++;}
-  });
-  const rows=Object.values(byName).sort((a,b)=>b.totRev-a.totRev);
-  if(!rows.length){wrap.innerHTML=`<div class="empty-state"><div class="empty-icon">📊</div><p>조회된 데이터가 없습니다</p></div>`;return;}
-  const sumRev=rows.reduce((a,r)=>a+r.totRev,0);const sumMgmt=rows.reduce((a,r)=>a+r.totMgmt,0);const sumProfit=rows.reduce((a,r)=>a+r.totProfit,0);const sumCnt=rows.reduce((a,r)=>a+r.cnt,0);
-  wrap.innerHTML=`<table id="ts_summary_table_el"><thead><tr>
-    <th>순위</th><th>프리샘명</th><th style="text-align:center">소노벨 건수</th><th style="text-align:right">소노벨 수익금</th><th style="text-align:right">소노벨 이익금</th>
-    <th style="text-align:center">스파 건수</th><th style="text-align:right">스파 수익금</th><th style="text-align:right">스파 이익금</th>
-    <th style="text-align:center">총 건수</th><th style="text-align:right">총 수익금</th><th style="text-align:right">총 관리비</th><th style="text-align:right">총 이익금</th>
-  </tr></thead><tbody>${rows.map((r,i)=>`<tr style="cursor:pointer" onclick="document.getElementById('ts_name').value='${r.name}';searchTherapistStats()">
-    <td style="text-align:center;font-weight:700">${i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'위'}</td>
-    <td><strong style="color:var(--primary)">${r.name}</strong></td>
-    <td style="text-align:center">${r.snbCnt}건</td><td style="text-align:right">${fmtNum(r.snbRev)}원</td>
-    <td style="text-align:right;color:var(--success)">${fmtNum(r.snbProfit)}원</td>
-    <td style="text-align:center">${r.spaCnt}건</td><td style="text-align:right">${fmtNum(r.spaRev)}원</td>
-    <td style="text-align:right;color:var(--success)">${fmtNum(r.spaProfit)}원</td>
-    <td style="text-align:center;font-weight:700">${r.cnt}건</td>
-    <td style="text-align:right;font-weight:700;color:var(--primary)">${fmtNum(r.totRev)}원</td>
-    <td style="text-align:right;color:var(--danger)">${fmtNum(r.totMgmt)}원</td>
-    <td style="text-align:right;font-weight:700;color:var(--success)">${fmtNum(r.totProfit)}원</td>
-  </tr>`).join('')}</tbody>
-  <tfoot><tr><td colspan="2"><strong>합계</strong></td><td colspan="6"></td>
-    <td style="text-align:center"><strong>${sumCnt}건</strong></td>
-    <td style="text-align:right;color:var(--primary)"><strong>${fmtNum(sumRev)}원</strong></td>
-    <td style="text-align:right;color:var(--danger)"><strong>${fmtNum(sumMgmt)}원</strong></td>
-    <td style="text-align:right;color:var(--success)"><strong>${fmtNum(sumProfit)}원</strong></td>
-  </tr></tfoot></table>
-  <p style="font-size:11px;color:var(--text-muted);margin:8px 4px 0">💡 이름 행을 클릭하면 해당 프리샘 상세 내역을 조회합니다</p>`;
-}
-function renderTsMonthly(list,selName){
-  const wrap=document.getElementById('ts_monthly_tbl');if(!wrap)return;
-  const byMonth={};
-  list.forEach(r=>{if(!r.date)return;const ym=r.date.slice(0,7);if(!byMonth[ym])byMonth[ym]={ym,cnt:0,rev:0,mgmt:0,profit:0,snbCnt:0,snbRev:0,spaCnt:0,spaRev:0};
-    const b=byMonth[ym];const rev=num(r.revenue);b.cnt++;b.rev+=rev;b.mgmt+=num(r.mgmt);b.profit+=num(r.profit);
-    if(r.place==='소노벨'){b.snbCnt++;b.snbRev+=rev;}if(r.place==='스파'){b.spaCnt++;b.spaRev+=rev;}
-  });
-  const months=Object.values(byMonth).sort((a,b)=>a.ym.localeCompare(b.ym));
-  if(!months.length){wrap.innerHTML=`<div class="empty-state"><div class="empty-icon">📅</div><p>월별 데이터가 없습니다</p></div>`;return;}
-  const sumRev=months.reduce((a,m)=>a+m.rev,0);const sumProfit=months.reduce((a,m)=>a+m.profit,0);const sumCnt=months.reduce((a,m)=>a+m.cnt,0);
-  wrap.innerHTML=`<table id="ts_monthly_table_el"><thead><tr>
-    <th>년월</th><th style="text-align:center">소노벨 건수</th><th style="text-align:right">소노벨 수익금</th>
-    <th style="text-align:center">스파 건수</th><th style="text-align:right">스파 수익금</th>
-    <th style="text-align:center">월 총 건수</th><th style="text-align:right">월 총 수익금</th><th style="text-align:right">월 총 관리비</th><th style="text-align:right">월 총 이익금</th>
-  </tr></thead><tbody>${months.map(m=>{const[yr,mo]=m.ym.split('-');return `<tr>
-    <td><strong>${yr}년 ${mo}월</strong></td>
-    <td style="text-align:center">${m.snbCnt}건</td><td style="text-align:right">${fmtNum(m.snbRev)}원</td>
-    <td style="text-align:center">${m.spaCnt}건</td><td style="text-align:right">${fmtNum(m.spaRev)}원</td>
-    <td style="text-align:center;font-weight:700">${m.cnt}건</td>
-    <td style="text-align:right;font-weight:700;color:var(--primary)">${fmtNum(m.rev)}원</td>
-    <td style="text-align:right;color:var(--danger)">${fmtNum(m.mgmt)}원</td>
-    <td style="text-align:right;font-weight:700;color:var(--success)">${fmtNum(m.profit)}원</td>
-  </tr>`;}).join('')}</tbody>
-  <tfoot><tr><td><strong>합계</strong></td><td colspan="4"></td>
-    <td style="text-align:center"><strong>${sumCnt}건</strong></td>
-    <td style="text-align:right;color:var(--primary)"><strong>${fmtNum(sumRev)}원</strong></td><td></td>
-    <td style="text-align:right;color:var(--success)"><strong>${fmtNum(sumProfit)}원</strong></td>
-  </tr></tfoot></table>`;
-}
-function renderTsDetail(list,selName){
-  const card=document.getElementById('ts_detail_card');if(!card)return;
-  if(!selName){card.style.display='none';return;}
-  card.style.display='';
-  const title=document.getElementById('ts_detail_title');const cntEl=document.getElementById('ts_detail_cnt');const wrap=document.getElementById('ts_detail_tbl');
-  if(title)title.textContent=`📋 ${selName} 상세 내역`;if(cntEl)cntEl.textContent=`총 ${list.length}건`;
-  if(!list.length){wrap.innerHTML=`<div class="empty-state"><div class="empty-icon">📋</div><p>내역이 없습니다</p></div>`;return;}
-  const sorted=[...list].sort((a,b)=>b.date.localeCompare(a.date));
-  wrap.innerHTML=`<table id="ts_detail_table_el"><thead><tr>
-    <th>날짜</th><th>요일</th><th>영업장</th><th style="text-align:right">수익금</th><th style="text-align:right">관리비</th>
-    <th style="text-align:right">이익금</th><th style="text-align:right">현금</th><th style="text-align:right">이체</th>
-    <th style="text-align:right">카드</th><th style="text-align:right">상품권</th><th style="text-align:right">결산합</th><th>고객유형</th><th>비고</th>
-  </tr></thead><tbody>${sorted.map(r=>`<tr>
-    <td>${fmtDate(r.date)}</td><td>${r.wday||''}</td>
-    <td><span class="badge ${r.place==='소노벨'?'badge-primary':'badge-success'}">${r.place||''}</span></td>
-    <td style="text-align:right">${fmtNum(num(r.revenue))}원</td><td style="text-align:right">${fmtNum(num(r.mgmt))}원</td>
-    <td style="text-align:right;color:var(--success);font-weight:600">${fmtNum(num(r.profit))}원</td>
-    <td style="text-align:right">${fmtNum(num(r.cash))}원</td><td style="text-align:right">${fmtNum(num(r.transfer))}원</td>
-    <td style="text-align:right">${fmtNum(num(r.card))}원</td><td style="text-align:right">${fmtNum(num(r.voucher||0))}원</td>
-    <td style="text-align:right;color:var(--primary);font-weight:600">${fmtNum(num(r.settle))}원</td>
-    <td>${r.custtype||'-'}</td><td>${r.note||'-'}</td>
-  </tr>`).join('')}</tbody>
-  <tfoot><tr><td colspan="3"><strong>합계</strong></td>
-    <td style="text-align:right"><strong>${fmtNum(list.reduce((a,r)=>a+num(r.revenue),0))}원</strong></td>
-    <td style="text-align:right"><strong>${fmtNum(list.reduce((a,r)=>a+num(r.mgmt),0))}원</strong></td>
-    <td style="text-align:right;color:var(--success)"><strong>${fmtNum(list.reduce((a,r)=>a+num(r.profit),0))}원</strong></td>
-    <td colspan="4"></td>
-    <td style="text-align:right;color:var(--primary)"><strong>${fmtNum(list.reduce((a,r)=>a+num(r.settle),0))}원</strong></td>
-    <td colspan="2"></td>
-  </tr></tfoot></table>`;
-}
-function therapistStatsPDF(){
-  const sumTbl=document.getElementById('ts_summary_table_el');const monthTbl=document.getElementById('ts_monthly_table_el');const detailTbl=document.getElementById('ts_detail_table_el');
-  if(!sumTbl&&!monthTbl){showToast('출력할 데이터가 없습니다','error');return;}
-  const from=document.getElementById('ts_from')?.value||'';const to=document.getElementById('ts_to')?.value||'';
-  const selName=document.getElementById('ts_name')?.value||'';const selPlace=document.getElementById('ts_place')?.value||'';
-  const w=window.open('','_blank','width=1200,height=800');
-  w.document.write(`<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><title>프리샘 개인별 마사지 현황</title>
-  <style>*{box-sizing:border-box;}body{font-family:'Malgun Gothic',sans-serif;font-size:11px;padding:24px;color:#111;}h1{font-size:18px;margin:0 0 4px;color:#1e1b4b;}h2{font-size:14px;margin:18px 0 6px;color:#374151;border-left:4px solid #4f46e5;padding-left:8px;}.meta{color:#666;font-size:11px;margin-bottom:6px;}.filter{color:#4f46e5;font-size:11px;margin-bottom:16px;font-weight:600;}table{width:100%;border-collapse:collapse;margin-bottom:20px;}th,td{border:1px solid #d1d5db;padding:5px 7px;text-align:left;vertical-align:middle;}thead{background:#ede9fe;font-weight:700;}tfoot{background:#e8e8e8;font-weight:700;}tbody tr:nth-child(even){background:#fafafa;}@media print{button{display:none}}</style>
-  </head><body>
-  <h1>📊 프리샘 개인별 마사지 현황</h1>
-  <p class="meta">기간: ${fmtDate(from)||'전체'} ~ ${fmtDate(to)||'전체'} | 출력일: ${fmtDate(today())}</p>
-  <p class="filter">조회 조건: ${selName||'전체 프리샘'} | ${selPlace||'전체 영업장'}</p>
-  <button onclick="window.print()" style="margin-bottom:14px;padding:6px 16px;cursor:pointer;background:#4f46e5;color:#fff;border:none;border-radius:6px">🖨️ 인쇄</button>
-  <h2>① 프리샘별 실적 요약</h2>${sumTbl?sumTbl.outerHTML:'<p>데이터 없음</p>'}
-  <h2>② 월별 추이</h2>${monthTbl?monthTbl.outerHTML:'<p>데이터 없음</p>'}
-  ${detailTbl?`<h2>③ ${selName} 상세 내역</h2>${detailTbl.outerHTML}`:''}
-  </body></html>`);w.document.close();
-}
-function therapistStatsCSV(){
-  const from=document.getElementById('ts_from')?.value||'';const to=document.getElementById('ts_to')?.value||'';
-  const selName=document.getElementById('ts_name')?.value||'';const selPlace=document.getElementById('ts_place')?.value||'';
-  let list=DataService.getAll(KEYS.freelancer);
-  if(from)list=list.filter(r=>r.date>=from);if(to)list=list.filter(r=>r.date<=to);
-  if(selName)list=list.filter(r=>r.name===selName);if(selPlace)list=list.filter(r=>r.place===selPlace);
-  if(!list.length){showToast('다운로드할 데이터가 없습니다','error');return;}
-  list.sort((a,b)=>a.date.localeCompare(b.date));
-  const toLine=arr=>arr.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',');
-  const h1=['프리샘명','소노벨 건수','소노벨 수익금','소노벨 이익금','스파 건수','스파 수익금','스파 이익금','총 건수','총 수익금','총 관리비','총 이익금'];
-  const byName={};list.forEach(r=>{const n=r.name||'미지정';if(!byName[n])byName[n]={name:n,cnt:0,snbCnt:0,snbRev:0,snbProfit:0,spaCnt:0,spaRev:0,spaProfit:0,totRev:0,totMgmt:0,totProfit:0};
-    const b=byName[n];b.cnt++;b.totRev+=num(r.revenue);b.totMgmt+=num(r.mgmt);b.totProfit+=num(r.profit);
-    if(r.place==='소노벨'){b.snbCnt++;b.snbRev+=num(r.revenue);b.snbProfit+=num(r.profit);}else if(r.place==='스파'){b.spaCnt++;b.spaRev+=num(r.revenue);b.spaProfit+=num(r.profit);}
-  });
-  const sumRows=Object.values(byName).sort((a,b)=>b.totRev-a.totRev);
-  const r1=sumRows.map(r=>[r.name,r.snbCnt,r.snbRev,r.snbProfit,r.spaCnt,r.spaRev,r.spaProfit,r.cnt,r.totRev,r.totMgmt,r.totProfit]);
-  r1.push(['합계',sumRows.reduce((a,r)=>a+r.snbCnt,0),sumRows.reduce((a,r)=>a+r.snbRev,0),sumRows.reduce((a,r)=>a+r.snbProfit,0),sumRows.reduce((a,r)=>a+r.spaCnt,0),sumRows.reduce((a,r)=>a+r.spaRev,0),sumRows.reduce((a,r)=>a+r.spaProfit,0),sumRows.reduce((a,r)=>a+r.cnt,0),sumRows.reduce((a,r)=>a+r.totRev,0),sumRows.reduce((a,r)=>a+r.totMgmt,0),sumRows.reduce((a,r)=>a+r.totProfit,0)]);
-  const h2=['날짜','요일','영업장','프리샘명','수익금','관리비','이익금','현금','이체','카드','상품권','결산합','고객유형','비고'];
-  const r2=list.map(r=>[r.date||'',r.wday||'',r.place||'',r.name||'',num(r.revenue),num(r.mgmt),num(r.profit),num(r.cash),num(r.transfer),num(r.card),num(r.voucher||0),num(r.settle),r.custtype||'',(r.note||'').replace(/,/g,' ')]);
-  const csv=[toLine(['프리샘 개인별 마사지 현황']),toLine([`기간: ${fmtDate(from)||'전체'} ~ ${fmtDate(to)||'전체'}`]),'',toLine(['[프리샘별 요약]']),toLine(h1),...r1.map(toLine),'',toLine(['[상세 내역]']),toLine(h2),...r2.map(toLine)].join('\r\n');
-  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});const url=URL.createObjectURL(blob);const link=document.createElement('a');
-  link.setAttribute('href',url);link.setAttribute('download',`프리샘마사지현황_${selName||'전체'}_${today()}.csv`);
-  document.body.appendChild(link);link.click();document.body.removeChild(link);URL.revokeObjectURL(url);
-  showToast(`📊 엑셀 다운로드 완료!`);
-}
-/* ===== 분석/통계 (작업 G) ===== */
+/* ===== 분석/통계 ===== */
 let _anaMode='day';
+function setAnaMode(m){
+  _anaMode=m;document.querySelectorAll('.ana-mode-btn').forEach(b=>b.classList.remove('active'));
+  const el=document.getElementById('ana_mode_'+m);if(el)el.classList.add('active');
+}
+function anaSetYear(){const y=new Date().getFullYear();const fEl=document.getElementById('ana_from');const tEl=document.getElementById('ana_to');if(fEl)fEl.value=`${y}-01-01`;if(tEl)tEl.value=`${y}-12-31`;}
 function renderAnalysis(el){
   el.innerHTML=`
   <div class="search-bar" style="flex-wrap:wrap;gap:10px">
-    <label>📅 기간</label>
-    <input type="date" id="ana_from" value="${monthStart()}">
-    <span class="date-separator">~</span>
-    <input type="date" id="ana_to" value="${monthEnd()}">
+    <label>📅 기간</label><input type="date" id="ana_from" value="${monthStart()}">
+    <span class="date-separator">~</span><input type="date" id="ana_to" value="${monthEnd()}">
     <div class="search-shortcut-btns">
       <button class="btn-shortcut" onclick="setRange('ana','today')">오늘</button>
       <button class="btn-shortcut" onclick="setRange('ana','week')">이번주</button>
@@ -1555,34 +1395,19 @@ function renderAnalysis(el){
   </div>
   <div id="ana_kpi" class="kpi-grid" style="margin-bottom:20px"></div>
   <div class="chart-grid" style="margin-bottom:20px">
-    <div class="card">
-      <div class="card-header"><span class="card-title" id="ana_bar_title">📊 소노벨 vs 스파 수익 비교</span></div>
-      <div class="chart-container"><canvas id="ana_bar_chart"></canvas></div>
-    </div>
-    <div class="card">
-      <div class="card-header"><span class="card-title">🥧 수익 구성 비율</span></div>
-      <div class="chart-container"><canvas id="ana_pie_chart"></canvas></div>
-    </div>
+    <div class="card"><div class="card-header"><span class="card-title" id="ana_bar_title">📊 소노벨 vs 스파 수익 비교</span></div><div class="chart-container"><canvas id="ana_bar_chart"></canvas></div></div>
+    <div class="card"><div class="card-header"><span class="card-title">🥧 수익 구성 비율</span></div><div class="chart-container"><canvas id="ana_pie_chart"></canvas></div></div>
   </div>
   <div class="card" style="margin-bottom:20px">
     <div class="card-header"><span class="card-title" id="ana_line_title">📈 수익·지출 추이</span></div>
     <div class="chart-container" style="height:260px"><canvas id="ana_line_chart"></canvas></div>
   </div>
   <div class="card">
-    <div class="card-header">
-      <span class="card-title" id="ana_tbl_title">📋 일별 상세 현황</span>
-      <span id="ana_cnt" style="font-size:12px;color:var(--text-muted)"></span>
-    </div>
+    <div class="card-header"><span class="card-title" id="ana_tbl_title">📋 일별 상세 현황</span><span id="ana_cnt" style="font-size:12px;color:var(--text-muted)"></span></div>
     <div class="table-wrap" id="ana_tbl"></div>
   </div>`;
   setTimeout(()=>searchAnalysis(),50);
 }
-function setAnaMode(mode){
-  _anaMode=mode;
-  ['day','month','year'].forEach(m=>{const btn=document.getElementById(`ana_mode_${m}`);if(btn)btn.classList.toggle('active',m===mode);});
-  if(mode==='year')anaSetYear();searchAnalysis();
-}
-function anaSetYear(){const y=new Date().getFullYear();const fEl=document.getElementById('ana_from');const tEl=document.getElementById('ana_to');if(fEl)fEl.value=`${y}-01-01`;if(tEl)tEl.value=`${y}-12-31`;}
 function searchAnalysis(){
   const from=document.getElementById('ana_from')?.value||'';const to=document.getElementById('ana_to')?.value||'';const mode=_anaMode||'day';
   let snbList=DataService.getAll(KEYS.sonobel);let spaList=DataService.getAll(KEYS.spa);let expList=DataService.getAll(KEYS.expense);
@@ -1592,8 +1417,7 @@ function searchAnalysis(){
   const totRevAll=totSnbRev+totSpaRev;const totSnbProfit=snbList.reduce((a,r)=>a+num(r.profit),0);const totSpaProfit=spaList.reduce((a,r)=>a+num(r.profit),0);
   const totProfit=totSnbProfit+totSpaProfit;const totExpAmt=expList.reduce((a,r)=>a+num(r.amount),0);const totNet=totProfit-totExpAmt;
   const kpiEl=document.getElementById('ana_kpi');
-  if(kpiEl)kpiEl.innerHTML=`
-    <div class="kpi-card info"><div class="kpi-label">🏠 소노벨 수익금</div><div class="kpi-value">${fmtNum(totSnbRev)}원</div></div>
+  if(kpiEl)kpiEl.innerHTML=`<div class="kpi-card info"><div class="kpi-label">🏠 소노벨 수익금</div><div class="kpi-value">${fmtNum(totSnbRev)}원</div></div>
     <div class="kpi-card info"><div class="kpi-label">💆 스파 수익금</div><div class="kpi-value">${fmtNum(totSpaRev)}원</div></div>
     <div class="kpi-card success"><div class="kpi-label">💰 총 수익금 합계</div><div class="kpi-value">${fmtNum(totRevAll)}원</div></div>
     <div class="kpi-card warning"><div class="kpi-label">💸 총 지출비용</div><div class="kpi-value">${fmtNum(totExpAmt)}원</div></div>
@@ -1657,37 +1481,28 @@ function searchAnalysis(){
 }
 function analysisPrint(){
   const tbl=document.getElementById('ana_table_el');if(!tbl){showToast('출력할 데이터가 없습니다','error');return;}
-  const from=document.getElementById('ana_from')?.value||'';const to=document.getElementById('ana_to')?.value||'';const modeLabel=_anaMode==='day'?'일별':_anaMode==='month'?'월별':'연간';
-  const w=window.open('','_blank','width=1100,height=750');
-  w.document.write(`<html><head><title>분석/통계 출력</title><style>*{box-sizing:border-box;}body{font-family:'Malgun Gothic',sans-serif;font-size:11px;padding:24px;color:#111;}h2{font-size:17px;margin:0 0 4px;color:#1e1b4b;}.meta{color:#666;font-size:11px;margin-bottom:16px;}table{width:100%;border-collapse:collapse;}th,td{border:1px solid #d1d5db;padding:5px 8px;text-align:left;}thead{background:#ede9fe;font-weight:700;}tfoot{background:#e8e8e8;font-weight:700;}tbody tr:nth-child(even){background:#fafafa;}@media print{button{display:none}}</style></head><body>
-    <h2>📈 분석/통계 – ${modeLabel} 현황</h2>
-    <p class="meta">기간: ${fmtDate(from)||'전체'} ~ ${fmtDate(to)||'전체'} | 뷰: ${modeLabel} | 출력일: ${fmtDate(today())}</p>
-    <button onclick="window.print()" style="margin-bottom:12px;padding:6px 16px;cursor:pointer;background:#4f46e5;color:#fff;border:none;border-radius:6px">🖨️ 인쇄</button>
-    ${tbl.outerHTML}</body></html>`);w.document.close();
+  const from=document.getElementById('ana_from')?.value||'';const to=document.getElementById('ana_to')?.value||'';
+  const w=window.open('','_blank','width=1200,height=700');
+  w.document.write(`<html><head><title>분석/통계</title><style>body{font-family:'Malgun Gothic',sans-serif;font-size:11px;padding:20px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:5px 7px}thead{background:#f0f0f0;font-weight:bold}tfoot{background:#e8e8e8;font-weight:bold}@media print{button{display:none}}</style></head><body><h2>📈 분석/통계</h2><p>기간: ${fmtDate(from)} ~ ${fmtDate(to)} | 출력일: ${fmtDate(today())}</p><button onclick="window.print()" style="margin-bottom:10px;padding:6px 14px;cursor:pointer">🖨️ 인쇄</button>${tbl.outerHTML}</body></html>`);w.document.close();
 }
 function analysisCSV(){
   const from=document.getElementById('ana_from')?.value||'';const to=document.getElementById('ana_to')?.value||'';const mode=_anaMode||'day';
   let snbList=DataService.getAll(KEYS.sonobel);let spaList=DataService.getAll(KEYS.spa);let expList=DataService.getAll(KEYS.expense);
   if(from){snbList=snbList.filter(r=>r.date>=from);spaList=spaList.filter(r=>r.date>=from);expList=expList.filter(r=>r.date>=from);}
   if(to){snbList=snbList.filter(r=>r.date<=to);spaList=spaList.filter(r=>r.date<=to);expList=expList.filter(r=>r.date<=to);}
-  if(!snbList.length&&!spaList.length&&!expList.length){showToast('다운로드할 데이터가 없습니다','error');return;}
   const getKey=d=>{if(!d)return '';if(mode==='day')return d;if(mode==='month')return d.slice(0,7);return d.slice(0,4);};
-  const fmtKey=k=>{if(mode==='day')return fmtDate(k);if(mode==='month'){const[y,m]=k.split('-');return `${y}년 ${m}월`;}return `${k}년`;};
-  const dataMap={};const ensure=k=>{if(!dataMap[k])dataMap[k]={key:k,snbRev:0,snbMgmt:0,snbProfit:0,spaRev:0,spaMgmt:0,spaProfit:0,expAmt:0};};
-  snbList.forEach(r=>{const k=getKey(r.date);if(!k)return;ensure(k);dataMap[k].snbRev+=num(r.revenue);dataMap[k].snbMgmt+=num(r.mgmt);dataMap[k].snbProfit+=num(r.profit);});
-  spaList.forEach(r=>{const k=getKey(r.date);if(!k)return;ensure(k);dataMap[k].spaRev+=num(r.revenue);dataMap[k].spaMgmt+=num(r.mgmt);dataMap[k].spaProfit+=num(r.profit);});
+  const dataMap={};const ensure=k=>{if(!dataMap[k])dataMap[k]={key:k,snbRev:0,spaRev:0,snbProfit:0,spaProfit:0,snbMgmt:0,spaMgmt:0,expAmt:0};};
+  snbList.forEach(r=>{const k=getKey(r.date);if(!k)return;ensure(k);dataMap[k].snbRev+=num(r.revenue);dataMap[k].snbProfit+=num(r.profit);dataMap[k].snbMgmt+=num(r.mgmt);});
+  spaList.forEach(r=>{const k=getKey(r.date);if(!k)return;ensure(k);dataMap[k].spaRev+=num(r.revenue);dataMap[k].spaProfit+=num(r.profit);dataMap[k].spaMgmt+=num(r.mgmt);});
   expList.forEach(r=>{const k=getKey(r.date);if(!k)return;ensure(k);dataMap[k].expAmt+=num(r.amount);});
   const rows=Object.values(dataMap).sort((a,b)=>a.key.localeCompare(b.key));
-  const modeLabel=mode==='day'?'일별':mode==='month'?'월별':'연간';
-  const header=[mode==='year'?'연도':mode==='month'?'년월':'날짜','소노벨 수익금','소노벨 관리비','소노벨 이익금','스파 수익금','스파 관리비','스파 이익금','수익금 합계','관리비 합계','이익금 합계','지출비용','순이익'];
+  if(!rows.length){showToast('다운로드할 데이터가 없습니다','error');return;}
+  const header=['기간','소노벨 수익금','소노벨 관리비','소노벨 이익금','스파 수익금','스파 관리비','스파 이익금','수익금 합계','지출비용','순이익'];
   const toLine=arr=>arr.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',');
-  const dataRows=rows.map(r=>{const revAll=r.snbRev+r.spaRev;const mgmtAll=r.snbMgmt+r.spaMgmt;const profitAll=r.snbProfit+r.spaProfit;const net=profitAll-r.expAmt;return[fmtKey(r.key),r.snbRev,r.snbMgmt,r.snbProfit,r.spaRev,r.spaMgmt,r.spaProfit,revAll,mgmtAll,profitAll,r.expAmt,net];});
-  const sumRow=['합계',rows.reduce((a,r)=>a+r.snbRev,0),rows.reduce((a,r)=>a+r.snbMgmt,0),rows.reduce((a,r)=>a+r.snbProfit,0),rows.reduce((a,r)=>a+r.spaRev,0),rows.reduce((a,r)=>a+r.spaMgmt,0),rows.reduce((a,r)=>a+r.spaProfit,0),rows.reduce((a,r)=>a+r.snbRev+r.spaRev,0),rows.reduce((a,r)=>a+r.snbMgmt+r.spaMgmt,0),rows.reduce((a,r)=>a+r.snbProfit+r.spaProfit,0),rows.reduce((a,r)=>a+r.expAmt,0),rows.reduce((a,r)=>a+(r.snbProfit+r.spaProfit-r.expAmt),0)];
-  const csv=[toLine(['소노벨 & 스파 분석/통계']),toLine([`기간: ${fmtDate(from)||'전체'} ~ ${fmtDate(to)||'전체'} | 뷰: ${modeLabel}`]),'',toLine(header),...dataRows.map(toLine),toLine(sumRow)].join('\r\n');
+  const csvRows=rows.map(r=>[r.key,r.snbRev,r.snbMgmt,r.snbProfit,r.spaRev,r.spaMgmt,r.spaProfit,r.snbRev+r.spaRev,r.expAmt,(r.snbProfit+r.spaProfit)-r.expAmt]);
+  const csv=[toLine(['분석/통계']),toLine([`기간: ${fmtDate(from)||'전체'} ~ ${fmtDate(to)||'전체'}`]),'',toLine(header),...csvRows.map(toLine)].join('\r\n');
   const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});const url=URL.createObjectURL(blob);const link=document.createElement('a');
-  link.setAttribute('href',url);link.setAttribute('download',`분석통계_${modeLabel}_${today()}.csv`);
-  document.body.appendChild(link);link.click();document.body.removeChild(link);URL.revokeObjectURL(url);
-  showToast(`📊 분석통계_${modeLabel}_${today()}.csv 다운로드 완료!`);
+  link.setAttribute('href',url);link.setAttribute('download',`분석통계_${today()}.csv`);document.body.appendChild(link);link.click();document.body.removeChild(link);URL.revokeObjectURL(url);showToast('📊 엑셀 다운로드 완료!');
 }
 
 /* ===== 설정 ===== */
@@ -1697,9 +1512,7 @@ function renderSettings(el){
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
     <div class="card">
       <div class="card-header"><span class="card-title">🔐 PIN 번호 변경</span></div>
-      <div class="form-group"><label>사용자 선택</label>
-        <select id="cfg_pin_user"><option value="user1">쭌대디 (관리자)</option><option value="user2">쭌마미 (스태프)</option></select>
-      </div>
+      <div class="form-group"><label>사용자 선택</label><select id="cfg_pin_user"><option value="user1">쭌대디 (관리자)</option><option value="user2">쭌마미 (스태프)</option></select></div>
       <div class="form-group"><label>새 PIN (숫자 4자리)</label><input type="password" id="cfg_pin_new" maxlength="4" placeholder="새 PIN 4자리" inputmode="numeric"></div>
       <div class="form-group"><label>새 PIN 확인</label><input type="password" id="cfg_pin_confirm" maxlength="4" placeholder="PIN 재입력" inputmode="numeric"></div>
       <button class="btn btn-primary" onclick="savePin()">🔐 PIN 변경 저장</button>
@@ -1714,9 +1527,7 @@ function renderSettings(el){
     <div class="card">
       <div class="card-header"><span class="card-title">💸 지출 카테고리 관리</span></div>
       <div style="display:flex;gap:8px;margin-bottom:12px">
-        <input type="text" id="cfg_cat_input" placeholder="카테고리 이름"
-          style="flex:1;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px"
-          onkeydown="if(event.key==='Enter') addExpCat()">
+        <input type="text" id="cfg_cat_input" placeholder="카테고리 이름" style="flex:1;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px" onkeydown="if(event.key==='Enter') addExpCat()">
         <button class="btn btn-success" onclick="addExpCat()">➕ 추가</button>
       </div>
       <div id="cfg_cat_list"></div>
@@ -1724,44 +1535,38 @@ function renderSettings(el){
     <div class="card">
       <div class="card-header"><span class="card-title">📊 데이터 현황</span></div>
       <div class="kpi-grid" style="grid-template-columns:1fr 1fr">
-        ${[['🏠 소노벨',KEYS.sonobel],['💆 스파',KEYS.spa],['🧖 프리샘',KEYS.freelancer],['📅 예약',KEYS.reservation],['💸 지출',KEYS.expense]]
-          .map(([label,key])=>`<div class="kpi-card"><div class="kpi-label">${label}</div><div class="kpi-value" style="font-size:18px">${DataService.getAll(key).length}건</div></div>`).join('')}
+        ${[['🏠 소노벨',KEYS.sonobel],['💆 스파',KEYS.spa],['🧖 프리샘',KEYS.freelancer],['📅 예약',KEYS.reservation],['💸 지출',KEYS.expense]].map(([label,key])=>`<div class="kpi-card"><div class="kpi-label">${label}</div><div class="kpi-value" style="font-size:18px">${DataService.getAll(key).length}건</div></div>`).join('')}
       </div>
-      <div style="margin-top:16px">
-        <button class="btn btn-danger" onclick="resetAllData()" style="width:100%">⚠️ 전체 데이터 초기화</button>
-      </div>
+      <div style="margin-top:16px"><button class="btn btn-danger" onclick="resetAllData()" style="width:100%">⚠️ 전체 데이터 초기화</button></div>
     </div>
   </div>`;
   renderCatList();
 }
 function savePin(){
-  const uid=document.getElementById('cfg_pin_user').value;const newPin=document.getElementById('cfg_pin_new').value;const confirm=document.getElementById('cfg_pin_confirm').value;
+  const uid=document.getElementById('cfg_pin_user').value;const newPin=document.getElementById('cfg_pin_new').value;const confirmPin=document.getElementById('cfg_pin_confirm').value;
   if(newPin.length!==4||!/^\d{4}$/.test(newPin)){showToast('PIN은 숫자 4자리로 입력해 주세요','error');return;}
-  if(newPin!==confirm){showToast('PIN이 일치하지 않습니다','error');return;}
+  if(newPin!==confirmPin){showToast('PIN이 일치하지 않습니다','error');return;}
   const cfg=SettingsService.get();const users=cfg.users||{};users[uid]={...(users[uid]||{}),pin:newPin};
-  SettingsService.save({...cfg,users});document.getElementById('cfg_pin_new').value='';document.getElementById('cfg_pin_confirm').value='';
-  showToast('PIN이 변경되었습니다 ✅');
+  SettingsService.save({...cfg,users});document.getElementById('cfg_pin_new').value='';document.getElementById('cfg_pin_confirm').value='';showToast('PIN이 변경되었습니다 ✅');
 }
 function saveBizInfo(){
-  const cfg=SettingsService.get();SettingsService.save({...cfg,bizName:document.getElementById('cfg_biz_name').value,bizAddr:document.getElementById('cfg_biz_addr').value,bizTel:document.getElementById('cfg_biz_tel').value});
-  showToast('사업장 정보가 저장되었습니다 ✅');
+  const cfg=SettingsService.get();cfg.bizName=document.getElementById('cfg_biz_name').value;cfg.bizAddr=document.getElementById('cfg_biz_addr').value;cfg.bizTel=document.getElementById('cfg_biz_tel').value;
+  SettingsService.save(cfg);showToast('사업장 정보가 저장되었습니다 ✅');
 }
 function renderCatList(){
   const cfg=SettingsService.get();const cats=Array.isArray(cfg.expCats)?cfg.expCats:[...EXP_CATS];
   const el=document.getElementById('cfg_cat_list');if(!el)return;
-  el.innerHTML=`<table><thead><tr><th>번호</th><th>카테고리</th><th>관리</th></tr></thead>
-  <tbody>${cats.map((c,i)=>`<tr><td>${i+1}</td><td>${c}</td><td><button class="btn btn-sm btn-danger" onclick="delExpCat(${i})">🗑️</button></td></tr>`).join('')}</tbody></table>`;
+  el.innerHTML=`<div style="display:flex;flex-wrap:wrap;gap:8px">${cats.map((c,i)=>`<div style="display:flex;align-items:center;gap:4px;background:#f1f5f9;border-radius:20px;padding:4px 12px"><span style="font-size:13px">${c}</span><button onclick="delExpCat(${i})" style="background:none;border:none;cursor:pointer;color:var(--danger);font-size:14px">✕</button></div>`).join('')}</div>`;
 }
 function addExpCat(){
-  const input=document.getElementById('cfg_cat_input');const name=input?.value.trim();
-  if(!name){showToast('카테고리 이름을 입력해 주세요','error');return;}
+  const input=document.getElementById('cfg_cat_input');const val=input?.value.trim();if(!val){showToast('카테고리 이름을 입력해 주세요','error');return;}
   const cfg=SettingsService.get();const cats=Array.isArray(cfg.expCats)?cfg.expCats:[...EXP_CATS];
-  if(cats.includes(name)){showToast('이미 존재하는 카테고리입니다','error');return;}
-  cats.push(name);SettingsService.save({...cfg,expCats:cats});input.value='';showToast(`'${name}' 추가되었습니다 ✅`);renderCatList();
+  if(cats.includes(val)){showToast('이미 존재하는 카테고리입니다','error');return;}
+  cats.push(val);cfg.expCats=cats;SettingsService.save(cfg);if(input)input.value='';renderCatList();showToast('카테고리가 추가되었습니다 ✅');
 }
 function delExpCat(idx){
   const cfg=SettingsService.get();const cats=Array.isArray(cfg.expCats)?cfg.expCats:[...EXP_CATS];
-  if(!confirm(`'${cats[idx]}'을(를) 삭제하시겠습니까?`))return;cats.splice(idx,1);SettingsService.save({...cfg,expCats:cats});showToast('삭제되었습니다');renderCatList();
+  cats.splice(idx,1);cfg.expCats=cats;SettingsService.save(cfg);renderCatList();showToast('삭제되었습니다');
 }
 function resetAllData(){
   if(!confirm('⚠️ 전체 데이터를 초기화하시겠습니까?\n이 작업은 되돌릴 수 없습니다!'))return;
@@ -1778,17 +1583,14 @@ function renderBackup(el){
       <div class="card-header"><span class="card-title">📥 데이터 백업</span></div>
       <p style="font-size:13px;color:var(--text-muted);margin-bottom:20px;line-height:1.6">현재 저장된 모든 데이터를 JSON 파일로 내보냅니다.<br>PC에 저장하여 안전하게 보관하세요.</p>
       <div class="kpi-grid" style="grid-template-columns:1fr 1fr;margin-bottom:20px">
-        ${[['🏠 소노벨',KEYS.sonobel],['💆 스파',KEYS.spa],['🧖 프리샘',KEYS.freelancer],['📅 예약',KEYS.reservation],['💸 지출',KEYS.expense]]
-          .map(([label,key])=>`<div class="kpi-card"><div class="kpi-label">${label}</div><div class="kpi-value" style="font-size:18px">${DataService.getAll(key).length}건</div></div>`).join('')}
+        ${[['🏠 소노벨',KEYS.sonobel],['💆 스파',KEYS.spa],['🧖 프리샘',KEYS.freelancer],['📅 예약',KEYS.reservation],['💸 지출',KEYS.expense]].map(([label,key])=>`<div class="kpi-card"><div class="kpi-label">${label}</div><div class="kpi-value" style="font-size:18px">${DataService.getAll(key).length}건</div></div>`).join('')}
       </div>
       <button class="btn btn-success" onclick="exportBackup()" style="width:100%;padding:12px">📥 JSON 백업 파일 다운로드</button>
     </div>
     <div class="card">
       <div class="card-header"><span class="card-title">📤 데이터 복원</span></div>
       <p style="font-size:13px;color:var(--text-muted);margin-bottom:20px;line-height:1.6">백업한 JSON 파일을 불러와 데이터를 복원합니다.<br>⚠️ 현재 데이터가 <strong>덮어씌워</strong>집니다.</p>
-      <div class="form-group"><label>백업 파일 선택 (.json)</label>
-        <input type="file" id="backup_file" accept=".json" style="padding:8px;border:1.5px dashed var(--border);border-radius:8px;width:100%;font-size:13px">
-      </div>
+      <div class="form-group"><label>백업 파일 선택 (.json)</label><input type="file" id="backup_file" accept=".json" style="padding:8px;border:1.5px dashed var(--border);border-radius:8px;width:100%;font-size:13px"></div>
       <button class="btn btn-warning" onclick="importBackup()" style="width:100%;padding:12px;margin-top:8px">📤 선택한 파일로 복원</button>
     </div>
   </div>`;
@@ -1796,8 +1598,7 @@ function renderBackup(el){
 function exportBackup(){
   const data={exportDate:today(),version:'v2026',sonobel:DataService.getAll(KEYS.sonobel),spa:DataService.getAll(KEYS.spa),freelancer:DataService.getAll(KEYS.freelancer),reservation:DataService.getAll(KEYS.reservation),expense:DataService.getAll(KEYS.expense),settings:SettingsService.get(),therapistDetail:loadTherapistDetail()};
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');
-  a.href=url;a.download=`sonobell_spa_backup_${today()}.json`;a.click();URL.revokeObjectURL(url);
-  showToast('백업 파일이 다운로드되었습니다 ✅');
+  a.href=url;a.download=`sonobell_spa_backup_${today()}.json`;a.click();URL.revokeObjectURL(url);showToast('백업 파일이 다운로드되었습니다 ✅');
 }
 function importBackup(){
   const fileEl=document.getElementById('backup_file');if(!fileEl?.files?.length){showToast('복원할 파일을 선택해 주세요','error');return;}
@@ -1813,10 +1614,12 @@ function importBackup(){
   reader.readAsText(fileEl.files[0]);
 }
 
-/* ===== 앱 초기화 ===== */
+/* ===== 초기화 ===== */
 document.addEventListener('DOMContentLoaded',()=>{
-  updateHeaderDate();setInterval(updateHeaderDate,60000);
-  buildNav();selectUser('user1');
+  updateHeaderDate();
+  setInterval(updateHeaderDate,60000);
+  buildNav();
+  selectUser('user1');
 });
 </script>
 </body>
