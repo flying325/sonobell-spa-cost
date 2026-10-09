@@ -322,7 +322,7 @@ const DataService={
   add:(key,rec)=>{
     const list=DB.get(key,[]);
     /* ★ 수정: date 필드 slice(0,10) — ISO 전체 문자열 방지 */
-    const safeDate=rec.date?String(rec.date).slice(0,10):rec.date;
+    const safeDate=rec.date?normDate(rec.date):rec.date;
     const newRec={...rec,date:safeDate,id:genId(),createdAt:today()};
     list.push(newRec);DB.set(key,list);
     const sheetMap={[KEYS.sonobel]:'spa_sonobel',[KEYS.spa]:'spa_spa',[KEYS.freelancer]:'spa_freelancer',[KEYS.reservation]:'spa_reservation',[KEYS.expense]:'spa_expense'};
@@ -332,7 +332,7 @@ const DataService={
   update:(key,id,data)=>{
     const list=DB.get(key,[]);const idx=list.findIndex(r=>r.id===id);if(idx<0)return;
     /* ★ 수정: date 필드 slice(0,10) — ISO 전체 문자열 방지 */
-    const safeDate=data.date?String(data.date).slice(0,10):data.date;
+    const safeDate=data.date?normDate(data.date):data.date;
     list[idx]={...list[idx],...data,date:safeDate,id,updatedAt:new Date().toISOString()};DB.set(key,list);
     const sheetMap={[KEYS.sonobel]:'spa_sonobel',[KEYS.spa]:'spa_spa',[KEYS.freelancer]:'spa_freelancer',[KEYS.reservation]:'spa_reservation',[KEYS.expense]:'spa_expense'};
     if(sheetMap[key])pushToSheets(sheetMap[key],list[idx]);
@@ -380,28 +380,45 @@ function monthEnd(){
   return`${p.y}-${p.m}-${String(lastDay).padStart(2,'0')}`;
 }
 
-/* ★ 수정: parseDateSafe — ISO 전체 문자열 UTC→로컬 보정 */
-function parseDateSafe(val){
-  if(!val)return null;
-  if(typeof val==='string'){
-    const s=val.trim();
-    if(/^\d{4}-\d{2}-\d{2}$/.test(s)){
-      const[y,mn,d]=s.split('-').map(Number);return new Date(y,mn-1,d);
-    }
-    if(s.includes('T')){
-      const ds=s.split('T')[0];
-      if(/^\d{4}-\d{2}-\d{2}$/.test(ds)){const[y,mn,d]=ds.split('-').map(Number);return new Date(y,mn-1,d);}
-    }
-    if(/^\d{4}\/\d{2}\/\d{2}$/.test(s)){
-      const[y,mn,d]=s.split('/').map(Number);return new Date(y,mn-1,d);
-    }
-    if(/^\d{4}\.\d{2}\.\d{2}/.test(s)){
-      const pts=s.replace(/\./g,'-').split('-');
-      if(pts.length>=3){const[y,mn,d]=[Number(pts[0]),Number(pts[1]),Number(pts[2])];if(y>0&&mn>0&&d>0)return new Date(y,mn-1,d);}
-    }
+/* ★ v6 신규: 요일 상수 */
+const V6_WDAYS=['일','월','화','수','목','금','토'];
+
+/* ★ v6 신규: 어떤 형태의 날짜든 KST 기준 'YYYY-MM-DD'로 변환
+   - 날짜-only 문자열(2026-09-25, 2026.09.25)은 변환 없이 그대로 사용
+   - UTC ISO(…T15:00:00.000Z)는 KST로 환산 후 날짜 추출 */
+function toKstYmd(val){
+  if(val===null||val===undefined||val==='')return'';
+  if(val instanceof Date){
+    if(isNaN(val.getTime()))return'';
+    const pt=new Intl.DateTimeFormat('ko-KR',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(val);
+    const g=t=>(pt.find(p=>p.type===t)||{}).value||'';
+    return`${g('year')}-${g('month').padStart(2,'0')}-${g('day').padStart(2,'0')}`;
   }
-  const dt=new Date(val);if(isNaN(dt))return null;
-  return new Date(dt.getFullYear(),dt.getMonth(),dt.getDate());
+  if(typeof val==='number'){
+    if(val>30000&&val<80000)return new Date(Math.round((val-25569)*86400000)).toISOString().slice(0,10);
+    return'';
+  }
+  const s=String(val).trim();
+  if(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(s)&&/(Z|[+\-]\d{2}:?\d{2})$/.test(s)){
+    const d=new Date(s);if(!isNaN(d.getTime()))return toKstYmd(d);
+  }
+  const m=s.match(/^(\d{4})\s*[.\-\/]\s*(\d{1,2})\s*[.\-\/]\s*(\d{1,2})/);
+  if(m)return`${m[1]}-${m[2].padStart(2,'0')}-${m[3].padStart(2,'0')}`;
+  const d=new Date(s);if(!isNaN(d.getTime()))return toKstYmd(d);
+  return'';
+}
+
+/* ★ v6 신규: 'YYYY-MM-DD' + n일 (시간대 영향 없음) */
+function addDaysYmd(ymd,n){
+  const[y,m,d]=ymd.split('-').map(Number);
+  return new Date(Date.UTC(y,m-1,d+n)).toISOString().slice(0,10);
+}
+
+/* ★ v6 수정: parseDateSafe — KST 날짜 기준 로컬 Date 생성 (하루 밀림 방지) */
+function parseDateSafe(val){
+  const ymd=toKstYmd(val);if(!ymd)return null;
+  const[y,mn,d]=ymd.split('-').map(Number);
+  return new Date(y,mn-1,d);
 }
 
 /* yyyy.mm.dd 형식 출력 */
@@ -418,38 +435,52 @@ function getWeekDay(val){
   return['일','월','화','수','목','금','토'][dt.getDay()];
 }
 
-/* ★ 신규: normDate — 날짜값을 yyyy-mm-dd 10자리로 정규화 */
+/* ★ v6 수정: normDate — 잘라내기(slice) 대신 KST 변환 */
 function normDate(val){
   if(!val)return'';
-  const s=String(val).trim();
-  const clean=s.slice(0,10);
-  if(/^\d{4}-\d{2}-\d{2}$/.test(clean))return clean;
-  const conv=clean.replace(/[./]/g,'-');
-  if(/^\d{4}-\d{2}-\d{2}$/.test(conv))return conv;
-  return s;
+  return toKstYmd(val)||String(val).trim();
 }
 
-/* ★ 신규: normalizeDateField — 배열 전체 date 필드 정규화 */
+/* ★ v6 수정: normalizeDateField — 배열 전체 date 필드 KST 정규화 */
 function normalizeDateField(arr){
   if(!Array.isArray(arr))return arr;
   return arr.map(rec=>{
-    if(!rec.date)return rec;
+    if(!rec||!rec.date)return rec;
     return{...rec,date:normDate(rec.date)};
   });
 }
 
-/* ★ 신규: migrateLocalDateFields — 앱 시작 시 1회 LocalStorage 날짜 정규화 */
-function migrateLocalDateFields(){
-  /* v2: 강제 재실행(기존 v1 완료 기기도 재정규화) */
-  if(localStorage.getItem('_dateMigrated_v2')==='done')return;
-  [KEYS.sonobel,KEYS.spa,KEYS.freelancer,KEYS.reservation,KEYS.expense].forEach(key=>{
-    const list=DB.get(key,[]);
-    DB.set(key,normalizeDateField(list));
-  });
-  localStorage.setItem('_dateMigrated_v2','done');
-  localStorage.removeItem('_dateMigrated_v1');
-  console.log('[DateMigration v2] 날짜 필드 정규화 완료');
+/* ★ v6 신규: 요일(wday) 기준 하루 전 날짜 보정 (기존 데이터 복구용) */
+function fixDateByWday(rec){
+  if(!rec||!rec.date||!rec.wday)return rec;
+  const w=String(rec.wday).trim().charAt(0);
+  if(!V6_WDAYS.includes(w)||!/^\d{4}-\d{2}-\d{2}$/.test(rec.date))return rec;
+  if(getWeekDay(rec.date)===w)return rec;
+  const next=addDaysYmd(rec.date,1);
+  return getWeekDay(next)===w?{...rec,date:next}:rec;
 }
+
+/* ★ v6 수정: migrateLocalDateFields v3 — 기존 하루 전 날짜 일괄 복구 (1회) */
+function migrateLocalDateFields(){
+  if(localStorage.getItem('_dateMigrated_v3')==='done')return;
+  const keys=[KEYS.sonobel,KEYS.spa,KEYS.freelancer,KEYS.reservation,KEYS.expense];
+  try{
+    const bk={};keys.forEach(k=>bk[k]=DB.get(k,[]));
+    localStorage.setItem('_dateBackup_v3',JSON.stringify(bk));
+  }catch(e){console.warn('[DateMigration v3] 백업 생략(용량):',e);}
+  let fixed=0;
+  keys.forEach(key=>{
+    const out=normalizeDateField(DB.get(key,[])).map(r=>{
+      const f=fixDateByWday(r);if(f!==r)fixed++;return f;
+    });
+    DB.set(key,out);
+  });
+  localStorage.setItem('_dateMigrated_v3','done');
+  localStorage.removeItem('_dateMigrated_v2');
+  localStorage.removeItem('_dateMigrated_v1');
+  console.log(`[DateMigration v3] KST 정규화 완료 / 요일기준 보정 ${fixed}건`);
+}
+
 
 /* 숫자 천단위 포맷 */
 function fmtNum(v){return Math.round(v).toLocaleString('ko-KR');}
@@ -480,38 +511,38 @@ function parseTimeStr(val){
   }
   return String(val);
 }
-
+/* ★ v6 수정: setRange — KST 기준 (기존 계산 방식 유지) */
 function setRange(prefix,type){
   const fEl=document.getElementById(`${prefix}_from`);
   const tEl=document.getElementById(`${prefix}_to`);
   if(!fEl||!tEl)return;
-  const n=new Date();
-  if(type==='today'){const d=today();fEl.value=d;tEl.value=d;}
+  const p=_kstParts();const y=Number(p.y),m=Number(p.m),d=Number(p.d);
+  const ymd=(Y,M,D)=>new Date(Date.UTC(Y,M-1,D)).toISOString().slice(0,10);
+  if(type==='today'){const t=today();fEl.value=t;tEl.value=t;}
   else if(type==='week'){
-    const day=n.getDay();
-    const mon=new Date(n);mon.setDate(n.getDate()-day+1);
-    const sun=new Date(mon);sun.setDate(mon.getDate()+6);
-    fEl.value=`${mon.getFullYear()}-${String(mon.getMonth()+1).padStart(2,'0')}-${String(mon.getDate()).padStart(2,'0')}`;
-    tEl.value=`${sun.getFullYear()}-${String(sun.getMonth()+1).padStart(2,'0')}-${String(sun.getDate()).padStart(2,'0')}`;
+    const day=new Date(Date.UTC(y,m-1,d)).getUTCDay();
+    fEl.value=ymd(y,m,d-day+1);
+    tEl.value=ymd(y,m,d-day+7);
   }
   else if(type==='month'){fEl.value=monthStart();tEl.value=monthEnd();}
   else if(type==='last'){
-    const y=n.getMonth()===0?n.getFullYear()-1:n.getFullYear();
-    const m=n.getMonth()===0?12:n.getMonth();
-    const last=new Date(y,m,0);
-    fEl.value=`${y}-${String(m).padStart(2,'0')}-01`;
-    tEl.value=`${y}-${String(m).padStart(2,'0')}-${String(last.getDate()).padStart(2,'0')}`;
+    const ly=m===1?y-1:y;const lm=m===1?12:m-1;
+    const last=new Date(Date.UTC(ly,lm,0)).getUTCDate();
+    fEl.value=`${ly}-${String(lm).padStart(2,'0')}-01`;
+    tEl.value=`${ly}-${String(lm).padStart(2,'0')}-${String(last).padStart(2,'0')}`;
   }
 }
 
 /* =====================================================
    UI 헬퍼
 ===================================================== */
+/* ★ v6 수정: 헤더 요일도 KST 기준 */
 function updateHeaderDate(){
   const days=['일','월','화','수','목','금','토'];
   const p=_kstParts();
+  const w=new Date(Date.UTC(Number(p.y),Number(p.m)-1,Number(p.d))).getUTCDay();
   const el=document.getElementById('headerDate');
-  if(el)el.textContent=`${p.y}.${p.m}.${p.d} (${days[new Date().getDay()]})`;
+  if(el)el.textContent=`${p.y}.${p.m}.${p.d} (${days[w]})`;
 }
 
 let _toastTimer=null;
